@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
-import Navigation from "@/components/Navigation";
-import ClickSpark from "@/components/ClickSpark";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -23,18 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${outfit.className} ${outfit.variable} antialiased m-0 p-0`}>
-        <ClickSpark
-          sparkColor="#1a1a1a"
-          sparkSize={10}
-          sparkRadius={30}
-          sparkCount={8}
-          duration={400}
-          easing="ease-out"
-          extraScale={1.5}
-        >
-          <Navigation />
-          {children}
-        </ClickSpark>
+        {children}
       </body>
     </html>
   );
