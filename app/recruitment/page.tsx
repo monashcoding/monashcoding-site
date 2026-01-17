@@ -2,7 +2,6 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import styles from "./page.module.css";
 
 const positions = [
   {
@@ -141,11 +140,11 @@ export default function RecruitmentPage() {
   const currentPosition = positions.find((p) => p.id === selectedPosition);
 
   return (
-    <main className={styles.container}>
+    <main className="min-h-screen bg-linear-to-b from-background to-secondary pt-32">
       {/* Hero Section */}
-      <section className={styles.heroSection}>
+      <section className="py-16 px-8 pb-24 text-center">
         <motion.h1
-          className={styles.title}
+          className="text-[clamp(3rem,6vw,5rem)] font-extrabold text-foreground mb-4"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -153,7 +152,7 @@ export default function RecruitmentPage() {
           Join Our Team
         </motion.h1>
         <motion.p
-          className={styles.subtitle}
+          className="text-xl text-black/60 max-w-[600px] mx-auto"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
@@ -163,20 +162,22 @@ export default function RecruitmentPage() {
       </section>
 
       {/* Positions Section */}
-      <section className={styles.positionsSection}>
+      <section className="py-16 px-8 max-w-[1200px] mx-auto">
         <motion.h2
-          className={styles.sectionTitle}
+          className="text-3xl font-bold text-foreground mb-8"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
           Open Positions
         </motion.h2>
-        <div className={styles.pillsContainer}>
+        <div className="flex flex-wrap gap-4 justify-center md:flex-col md:items-stretch">
           {positions.map((position, index) => (
             <motion.button
               key={position.id}
-              className={`${styles.pill} ${selectedPosition === position.id ? styles.pillActive : ""}`}
+              className={`py-4 px-8 bg-white/50 border border-black/10 rounded-full text-foreground font-medium cursor-pointer transition-all duration-300 flex items-center gap-3 hover:bg-gold-700/10 hover:border-gold-700/30 hover:text-gold-800 hover:-translate-y-0.5 md:justify-center ${
+                selectedPosition === position.id ? "bg-gold-700/15 border-gold-700/40 text-gold-800" : ""
+              }`}
               onClick={() => setSelectedPosition(selectedPosition === position.id ? null : position.id)}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -185,7 +186,7 @@ export default function RecruitmentPage() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <span className={styles.pillIcon}>{position.icon}</span>
+              <span className="w-6 h-6 flex items-center justify-center">{position.icon}</span>
               {position.name}
             </motion.button>
           ))}
@@ -194,19 +195,20 @@ export default function RecruitmentPage() {
         <AnimatePresence mode="wait">
           {currentPosition && (
             <motion.div
-              className={styles.positionDetails}
+              className="mt-12 p-8 bg-white/50 border border-black/10 rounded-3xl"
               initial={{ opacity: 0, y: 20, height: 0 }}
               animate={{ opacity: 1, y: 0, height: "auto" }}
               exit={{ opacity: 0, y: -20, height: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <h3 className={styles.positionTitle}>{currentPosition.name}</h3>
-              <p className={styles.positionDescription}>{currentPosition.description}</p>
-              <h4 style={{ color: "white", marginBottom: "1rem", fontWeight: 600 }}>Requirements</h4>
-              <ul className={styles.positionRequirements}>
+              <h3 className="text-2xl font-bold text-gold-800 mb-4">{currentPosition.name}</h3>
+              <p className="text-black/70 leading-relaxed mb-6">{currentPosition.description}</p>
+              <h4 className="text-foreground font-semibold mb-4">Requirements</h4>
+              <ul className="list-none p-0 m-0">
                 {currentPosition.requirements.map((req, index) => (
                   <motion.li
                     key={index}
+                    className="text-black/60 py-2 pl-6 relative before:content-['→'] before:absolute before:left-0 before:text-gold-700"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
@@ -221,29 +223,31 @@ export default function RecruitmentPage() {
       </section>
 
       {/* Perks Section */}
-      <section className={styles.perksSection}>
-        <div className={styles.perksContainer}>
+      <section className="py-24 px-8 bg-gold-700/[0.03]">
+        <div className="max-w-[1200px] mx-auto">
           <motion.h2
-            className={styles.sectionTitle}
+            className="text-3xl font-bold text-foreground mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
             Perks of Joining MAC
           </motion.h2>
-          <div className={styles.perksGrid}>
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-8 mt-12">
             {perks.map((perk, index) => (
               <motion.div
                 key={perk.title}
-                className={styles.perkCard}
+                className="p-8 bg-white/50 border border-black/10 rounded-3xl transition-all duration-300 hover:bg-white/80 hover:border-gold-700/20 hover:-translate-y-1"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
               >
-                <div className={styles.perkIcon}>{perk.icon}</div>
-                <h3 className={styles.perkTitle}>{perk.title}</h3>
-                <p className={styles.perkDescription}>{perk.description}</p>
+                <div className="w-[60px] h-[60px] bg-linear-to-br from-gold-700/15 to-gold-700/5 rounded-2xl flex items-center justify-center mb-6 text-2xl">
+                  {perk.icon}
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-3">{perk.title}</h3>
+                <p className="text-black/60 leading-relaxed">{perk.description}</p>
               </motion.div>
             ))}
           </div>
@@ -251,37 +255,37 @@ export default function RecruitmentPage() {
       </section>
 
       {/* Timeline Section */}
-      <section className={styles.timelineSection}>
+      <section className="py-24 px-8 max-w-[800px] mx-auto">
         <motion.h2
-          className={styles.sectionTitle}
+          className="text-3xl font-bold text-foreground mb-8"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
           Recruitment Timeline
         </motion.h2>
-        <div className={styles.timeline}>
+        <div className="relative pl-8 before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-0.5 before:bg-linear-to-b before:from-gold-700 before:to-gold-700/20">
           {timeline.map((item, index) => (
             <motion.div
               key={item.date}
-              className={styles.timelineItem}
+              className="relative pb-12 pl-8 before:content-[''] before:absolute before:-left-8 before:top-2 before:w-3 before:h-3 before:bg-gold-700 before:rounded-full before:-translate-x-[5px]"
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.15 }}
             >
-              <span className={styles.timelineDate}>{item.date}</span>
-              <h3 className={styles.timelineTitle}>{item.title}</h3>
-              <p className={styles.timelineDescription}>{item.description}</p>
+              <span className="text-sm text-gold-700 font-semibold mb-2 block">{item.date}</span>
+              <h3 className="text-xl font-semibold text-foreground mb-2">{item.title}</h3>
+              <p className="text-black/60 leading-relaxed">{item.description}</p>
             </motion.div>
           ))}
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className={styles.ctaSection}>
+      <section className="py-24 px-8 text-center bg-linear-to-b from-transparent to-gold-700/5">
         <motion.h2
-          className={styles.ctaTitle}
+          className="text-[clamp(2rem,4vw,3rem)] font-bold text-foreground mb-4"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -289,7 +293,7 @@ export default function RecruitmentPage() {
           Ready to Make an Impact?
         </motion.h2>
         <motion.p
-          className={styles.ctaSubtitle}
+          className="text-black/60 max-w-[500px] mx-auto mb-8"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -299,7 +303,7 @@ export default function RecruitmentPage() {
         </motion.p>
         <motion.a
           href="#apply"
-          className={styles.ctaButton}
+          className="inline-flex items-center gap-3 py-4 px-10 bg-linear-to-br from-gold-700 to-gold-600 text-white font-semibold text-lg rounded-full no-underline transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_40px_rgba(180,83,9,0.3)]"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}

@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { motion, useAnimation, useMotionValue } from 'motion/react';
 
-import './CircularText.css';
 
 const getRotationTransition = (duration, from, loop = true) => ({
   from,
@@ -82,7 +81,7 @@ const CircularText = ({ text, spinDuration = 20, onHover = 'speedUp', className 
 
   return (
     <motion.div
-      className={`circular-text ${className}`}
+      className={`mx-auto rounded-full w-[90px] h-[90px] relative font-black text-foreground text-center cursor-pointer origin-center ${className}`}
       style={{ rotate: rotation }}
       initial={{ rotate: 0 }}
       animate={controls}
@@ -97,7 +96,11 @@ const CircularText = ({ text, spinDuration = 20, onHover = 'speedUp', className 
         const transform = `rotateZ(${rotationDeg}deg) translate3d(${x}px, ${y}px, 0)`;
 
         return (
-          <span key={i} style={{ transform, WebkitTransform: transform }}>
+          <span
+            key={i}
+            className="absolute inset-0 text-[8px] transition-all duration-500 ease-[cubic-bezier(0,0,0,1)]"
+            style={{ transform, WebkitTransform: transform }}
+          >
             {letter}
           </span>
         );
