@@ -24,13 +24,14 @@ const LOGO_COLOR = "#FFD200";
 
 const CAMERA_POSITION: [number, number, number] = [0, 0, 5];
 const CAMERA_FOV = 45;
+const GLTF_PATH = "/logo/mac_logo.glb";
 const AMBIENT_LIGHT_INTENSITY = 0.3;
 const FRONT_LIGHT_INTENSITY = 2;
 const SIDE_LIGHT_INTENSITY = 1;
 
 function MacLogoModel({ mouse, isMobile }: { mouse: { x: number; y: number }; isMobile: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
-  const { nodes } = useGLTF("/logo/mac_logo.glb");
+  const { nodes } = useGLTF(GLTF_PATH);
   const targetRotation = useRef({ x: BASE_ROTATION, y: 0 });
 
   const logoMesh = nodes.logo as THREE.Mesh;
@@ -133,4 +134,4 @@ export default function MacLogo3D({ className }: { className?: string }) {
 }
 
 // Preload the model
-useGLTF.preload("/logo/mac_logo_chubby.glb");
+useGLTF.preload(GLTF_PATH);
