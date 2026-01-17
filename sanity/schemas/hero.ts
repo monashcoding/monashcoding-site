@@ -40,6 +40,7 @@ export const hero = defineType({
           },
         },
       ],
+      validation: (Rule) => Rule.required().min(1),
     }),
     defineField({
       name: 'heroImage',
@@ -56,6 +57,7 @@ export const hero = defineType({
           validation: (Rule) => Rule.required(),
         },
       ],
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'scrollIndicatorText',

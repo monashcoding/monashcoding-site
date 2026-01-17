@@ -181,7 +181,7 @@ export function Hero({ data }: HeroProps) {
           {scrollIndicatorText || 'Scroll'}
         </span>
         <motion.div
-          className="w-px h-[60px] bg-linear-to-b from-black/50 to-transparent"
+          className="w-px h-[60px] bg-gradient-to-b from-black/50 to-transparent"
           animate={{ scaleY: [1, 0.5, 1] }}
           transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
         />
