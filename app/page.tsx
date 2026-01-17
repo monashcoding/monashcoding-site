@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 import styles from "./page.module.css";
 
 const Ribbons = dynamic(() => import("@/components/Ribbons"), { ssr: false });
+const MacLogo3D = dynamic(() => import("@/components/MacLogo3D"), { ssr: false });
 
 const letterVariants = {
   hidden: { opacity: 0, y: 50 },
@@ -127,16 +128,15 @@ function StoryItem({ item, index }: { item: typeof storyItems[0]; index: number 
 }
 
 export default function Home() {
-  const titleLine1 = "MONASH ASSOCIATION";
-  const titleLine2 = "OF CODING";
+  const titleLines = ["MONASH", "ASSOCIATION", "OF CODING"];
   const heroRef = useRef<HTMLElement>(null);
 
   return (
     <main className="bg-[#deddda]">
       {/* Hero Section */}
       <section ref={heroRef} className={styles.heroContainer}>
-        {/* Ribbons Mouse Trail Effect Layer */}
-        <div className="absolute inset-0 w-full h-full">
+        {/* Ribbons Mouse Trail Effect */}
+        <div className="absolute inset-0 w-full h-full z-10 pointer-events-auto">
           <Ribbons
             colors={["#FFD700"]}
             baseSpring={0.03}
@@ -153,45 +153,73 @@ export default function Home() {
         </div>
 
         {/* Content Layer */}
-        <div className="relative z-20 flex flex-col items-center justify-center pointer-events-none">
-          <h1 className={styles.heroTitle}>
-            <span className="block">
-              {titleLine1.split("").map((char, i) => (
-                <motion.span
-                  key={`l1-${i}`}
-                  custom={i}
-                  variants={letterVariants}
-                  initial="hidden"
-                  animate="visible"
-                  className="inline-block"
-                >
-                  {char === " " ? "\u00A0" : char}
-                </motion.span>
-              ))}
-            </span>
-            <span className="block">
-              {titleLine2.split("").map((char, i) => (
-                <motion.span
-                  key={`l2-${i}`}
-                  custom={i + titleLine1.length}
-                  variants={letterVariants}
-                  initial="hidden"
-                  animate="visible"
-                  className="inline-block"
-                >
-                  {char === " " ? "\u00A0" : char}
-                </motion.span>
-              ))}
-            </span>
-          </h1>
-          <motion.p
-            className={styles.heroSubtitle}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.6 }}
+        <div className={styles.heroContent}>
+          {/* Left: Title */}
+          <div className={styles.heroLeftColumn}>
+            <h1 className={styles.heroTitle}>
+              {titleLines.map((line, lineIndex) => {
+                const charOffset = titleLines.slice(0, lineIndex).join("").length;
+                return (
+                  <span key={lineIndex} className="block">
+                    {line.split("").map((char, i) => (
+                      <motion.span
+                        key={`l${lineIndex}-${i}`}
+                        custom={charOffset + i}
+                        variants={letterVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="inline-block"
+                      >
+                        {char === " " ? "\u00A0" : char}
+                      </motion.span>
+                    ))}
+                  </span>
+                );
+              })}
+            </h1>
+            <motion.p
+              className={styles.heroSubtitle}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1, duration: 0.6 }}
+            >
+              Empowering students through code
+            </motion.p>
+          </div>
+
+          {/* Center: Logo */}
+          <motion.div
+            className={styles.heroCenterColumn}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            Empowering students through code
-          </motion.p>
+            <MacLogo3D className={styles.heroLogo} />
+          </motion.div>
+
+          {/* Right: Description + Image */}
+          <div className={styles.heroRightColumn}>
+            <motion.p
+              className={styles.heroDescription}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 0.6 }}
+            >
+              At MAC, we aim to impart <span className={styles.highlight}>technical skills and industry-relevant experiences</span> to students to <span className={styles.highlight}>bridge the gap between the classroom</span> and industry. We want to make coding a fun experience for all—regardless of degree, year level, and experience—by providing <span className={styles.highlight}>collaborative learning opportunities</span> for our members.
+            </motion.p>
+            <motion.div
+              className={styles.heroImageWrapper}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
+            >
+              <img
+                src="/hero-image.jpg"
+                alt="MAC community"
+                className={styles.heroImage}
+              />
+            </motion.div>
+          </div>
         </div>
 
         {/* Scroll Indicator */}

@@ -115,7 +115,7 @@ export default function Navigation() {
         {/* Logo */}
         <Link href="/" className={styles.logo}>
           <Image
-            src="/logo.jpg"
+            src="/logo/logo.jpg"
             alt="MAC Logo"
             width={48}
             height={48}
@@ -157,7 +157,7 @@ export default function Navigation() {
       <div className={styles.circularTextWrapper}>
         <CircularText
           text="MNSH*ASSOC*OF*CODING*"
-          onHover={null}
+          onHover={undefined}
           spinDuration={20}
           className={styles.circularText}
         />
