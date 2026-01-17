@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useRef, useState, useEffect } from "react";
+import { Suspense, useRef, useState, useEffect, useCallback } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF, Float } from "@react-three/drei";
 import * as THREE from "three";
@@ -10,7 +10,6 @@ const MAX_TILT_DEGREES = 40;
 const MAX_TILT = (MAX_TILT_DEGREES * Math.PI) / 180;
 const TILT_FALLOFF_RATE = 0.2;
 const LERP_FACTOR = 0.1;
-const MOBILE_ROTATION_SPEED = 1;
 const BASE_ROTATION = Math.PI / 2;
 
 const FLOAT_SPEED = 4;
@@ -29,26 +28,31 @@ const AMBIENT_LIGHT_INTENSITY = 0.3;
 const FRONT_LIGHT_INTENSITY = 2;
 const SIDE_LIGHT_INTENSITY = 1;
 
-function MacLogoModel({ mouse, isMobile }: { mouse: { x: number; y: number }; isMobile: boolean }) {
+interface ModelProps {
+  mouse: { x: number; y: number };
+  gyro: { beta: number; gamma: number };
+  isMobile: boolean;
+}
+
+function MacLogoModel({ mouse, gyro, isMobile }: ModelProps) {
   const groupRef = useRef<THREE.Group>(null);
   const { nodes } = useGLTF(GLTF_PATH);
-  const targetRotation = useRef({ x: BASE_ROTATION, y: 0 });
+  const targetRotation = useRef({ x: BASE_ROTATION, z: 0 });
 
   const logoMesh = nodes.logo as THREE.Mesh;
 
-  useFrame((state) => {
+  useFrame(() => {
     if (!groupRef.current) return;
 
     if (isMobile) {
-      // Mobile: simple rotation
-      groupRef.current.rotation.x = BASE_ROTATION;
-      groupRef.current.rotation.y = state.clock.elapsedTime * MOBILE_ROTATION_SPEED;
-    } else {
-      // Desktop: follow cursor with smooth falloff (tilt decreases when cursor is far)
-      const falloffX = Math.tanh(mouse.x * TILT_FALLOFF_RATE);
-      const falloffY = Math.tanh(mouse.y * TILT_FALLOFF_RATE);
-      targetRotation.current.x = BASE_ROTATION - falloffY * MAX_TILT;
-      targetRotation.current.y = -falloffX * MAX_TILT;
+      // Mobile: react to gyroscope
+      // beta = front-back tilt (-180 to 180), gamma = left-right tilt (-90 to 90)
+      // Normalize to -1 to 1 range and apply sensitivity
+      const normalizedBeta = THREE.MathUtils.clamp((gyro.beta - 45) / 45, -1, 1);
+      const normalizedGamma = THREE.MathUtils.clamp(gyro.gamma / 45, -1, 1);
+
+      targetRotation.current.x = BASE_ROTATION - normalizedBeta * MAX_TILT;
+      targetRotation.current.z = -normalizedGamma * MAX_TILT;
 
       // Smooth interpolation
       groupRef.current.rotation.x = THREE.MathUtils.lerp(
@@ -56,10 +60,27 @@ function MacLogoModel({ mouse, isMobile }: { mouse: { x: number; y: number }; is
         targetRotation.current.x,
         LERP_FACTOR
       );
-      groupRef.current.rotation.y = 0;
       groupRef.current.rotation.z = THREE.MathUtils.lerp(
         groupRef.current.rotation.z,
-        targetRotation.current.y,
+        targetRotation.current.z,
+        LERP_FACTOR
+      );
+    } else {
+      // Desktop: follow cursor with smooth falloff
+      const falloffX = Math.tanh(mouse.x * TILT_FALLOFF_RATE);
+      const falloffY = Math.tanh(mouse.y * TILT_FALLOFF_RATE);
+      targetRotation.current.x = BASE_ROTATION - falloffY * MAX_TILT;
+      targetRotation.current.z = -falloffX * MAX_TILT;
+
+      // Smooth interpolation
+      groupRef.current.rotation.x = THREE.MathUtils.lerp(
+        groupRef.current.rotation.x,
+        targetRotation.current.x,
+        LERP_FACTOR
+      );
+      groupRef.current.rotation.z = THREE.MathUtils.lerp(
+        groupRef.current.rotation.z,
+        targetRotation.current.z,
         LERP_FACTOR
       );
     }
@@ -86,6 +107,7 @@ function MacLogoModel({ mouse, isMobile }: { mouse: { x: number; y: number }; is
 
 export default function MacLogo3D({ className }: { className?: string }) {
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  const [gyro, setGyro] = useState({ beta: 45, gamma: 0 });
   const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -98,6 +120,42 @@ export default function MacLogo3D({ className }: { className?: string }) {
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  // Gyroscope handler for mobile
+  const handleOrientation = useCallback((e: DeviceOrientationEvent) => {
+    setGyro({
+      beta: e.beta ?? 45,
+      gamma: e.gamma ?? 0,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const requestGyroPermission = async () => {
+      // iOS 13+ requires permission request
+      if (
+        typeof DeviceOrientationEvent !== "undefined" &&
+        "requestPermission" in DeviceOrientationEvent &&
+        typeof (DeviceOrientationEvent as unknown as { requestPermission: () => Promise<string> }).requestPermission === "function"
+      ) {
+        try {
+          const permission = await (DeviceOrientationEvent as unknown as { requestPermission: () => Promise<string> }).requestPermission();
+          if (permission === "granted") {
+            window.addEventListener("deviceorientation", handleOrientation);
+          }
+        } catch {
+          // Permission denied or error, gyro won't work
+        }
+      } else {
+        // Non-iOS or older iOS, just add listener
+        window.addEventListener("deviceorientation", handleOrientation);
+      }
+    };
+
+    requestGyroPermission();
+    return () => window.removeEventListener("deviceorientation", handleOrientation);
+  }, [isMobile, handleOrientation]);
 
   useEffect(() => {
     if (isMobile) return;
@@ -126,7 +184,7 @@ export default function MacLogo3D({ className }: { className?: string }) {
           <ambientLight intensity={AMBIENT_LIGHT_INTENSITY} />
           <directionalLight position={[0, 0, 5]} intensity={FRONT_LIGHT_INTENSITY} />
           <directionalLight position={[3, 3, 3]} intensity={SIDE_LIGHT_INTENSITY} />
-          <MacLogoModel mouse={mouse} isMobile={isMobile} />
+          <MacLogoModel mouse={mouse} gyro={gyro} isMobile={isMobile} />
         </Suspense>
       </Canvas>
     </div>
