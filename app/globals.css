@@ -1,60 +1,59 @@
+@import "tailwindcss";
 @import "tw-animate-css";
 
 @plugin "tailwindcss-animate";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-}
-
-:root {
+@theme {
   --radius: 0.625rem;
-  --background: #deddda;
-  --foreground: #1a1a1a;
-  --card: #e8e7e4;
-  --card-foreground: #1a1a1a;
-  --popover: #e8e7e4;
-  --popover-foreground: #1a1a1a;
-  --primary: #1a1a1a;
-  --primary-foreground: #deddda;
-  --secondary: #c9c8c5;
-  --secondary-foreground: #1a1a1a;
-  --muted: #c9c8c5;
-  --muted-foreground: #6b6b6b;
-  --accent: #FFD700;
-  --accent-foreground: #1a1a1a;
-  --destructive: #dc2626;
-  --border: #b8b7b4;
-  --input: #c9c8c5;
-  --ring: #1a1a1a;
 
-  /* Custom gold theme colors */
-  --gold-50: #fffbeb;
-  --gold-100: #fef3c7;
-  --gold-200: #fde68a;
-  --gold-300: #fcd34d;
-  --gold-400: #fbbf24;
-  --gold-500: #FFD700;
-  --gold-600: #d97706;
-  --gold-700: #b45309;
-  --gold-800: #92400e;
-  --gold-900: #78350f;
+  /* Colors */
+  --color-background: #deddda;
+  --color-foreground: #1a1a1a;
+  --color-card: #e8e7e4;
+  --color-card-foreground: #1a1a1a;
+  --color-popover: #e8e7e4;
+  --color-popover-foreground: #1a1a1a;
+  --color-primary: #1a1a1a;
+  --color-primary-foreground: #deddda;
+  --color-secondary: #c9c8c5;
+  --color-secondary-foreground: #1a1a1a;
+  --color-muted: #c9c8c5;
+  --color-muted-foreground: #6b6b6b;
+  --color-accent: #FFD700;
+  --color-accent-foreground: #1a1a1a;
+  --color-destructive: #dc2626;
+  --color-border: #b8b7b4;
+  --color-input: #c9c8c5;
+  --color-ring: #1a1a1a;
+
+  /* Gold palette */
+  --color-gold-50: #fffbeb;
+  --color-gold-100: #fef3c7;
+  --color-gold-200: #fde68a;
+  --color-gold-300: #fcd34d;
+  --color-gold-400: #fbbf24;
+  --color-gold-500: #FFD700;
+  --color-gold-600: #d97706;
+  --color-gold-700: #b45309;
+  --color-gold-800: #92400e;
+  --color-gold-900: #78350f;
+
+  /* Font sizes */
+  --font-size-nav-link: clamp(3rem, 6vw, 5rem);
+  --font-size-nav-link--line-height: 1.2;
+  --font-size-nav-link-mobile: clamp(2rem, 8vw, 3rem);
+  --font-size-nav-link-mobile--line-height: 1.2;
 }
 
 @layer base {
   * {
-    border-color: var(--border);
+    border-color: var(--color-border);
     box-sizing: border-box;
   }
   html,
   body {
-    background: var(--background);
-    color: var(--foreground);
+    background: var(--color-background);
+    color: var(--color-foreground);
     margin: 0;
     padding: 0;
     width: 100%;

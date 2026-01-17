@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import styles from "./Navigation.module.css";
 import CircularText from "./CircularText";
 
 interface NavItem {
@@ -36,12 +35,12 @@ function NavLink({ item, onClick }: { item: NavItem; onClick: () => void }) {
       onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={styles.navLink}
+      className="relative block no-underline py-1"
     >
-      <div className={styles.navLinkText}>
+      <div className="relative overflow-hidden h-[clamp(2.4rem,9.6vw,3.6rem)] lg:h-[clamp(3.6rem,7.2vw,6rem)]">
         {/* Original text that slides up */}
         <motion.span
-          className={styles.navLinkTextPrimary}
+          className="block text-[clamp(2rem,8vw,3rem)] lg:text-[clamp(3rem,6vw,5rem)] font-semibold text-foreground leading-[1.2] transition-colors duration-300"
           animate={{
             y: isHovered ? "-100%" : "0%",
           }}
@@ -55,7 +54,7 @@ function NavLink({ item, onClick }: { item: NavItem; onClick: () => void }) {
 
         {/* New text that slides in from bottom */}
         <motion.span
-          className={styles.navLinkTextSecondary}
+          className="absolute top-0 left-0 w-full block text-[clamp(2rem,8vw,3rem)] lg:text-[clamp(3rem,6vw,5rem)] font-semibold text-foreground leading-[1.2] transition-colors duration-300"
           initial={{ y: "100%" }}
           animate={{
             y: isHovered ? "0%" : "100%",
@@ -107,19 +106,19 @@ export default function Navigation() {
     <>
       {/* Fixed header bar */}
       <motion.header
-        className={styles.header}
+        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 lg:px-12 lg:py-6 pointer-events-none"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
       >
         {/* Logo */}
-        <Link href="/" className={styles.logo}>
+        <Link href="/" className="relative z-50 no-underline flex items-center pointer-events-auto">
           <Image
             src="/logo/logo.jpg"
             alt="MAC Logo"
             width={48}
             height={48}
-            className={styles.logoImage}
+            className="w-12 h-12 rounded-full object-cover transition-transform duration-300 hover:scale-105"
             priority
           />
         </Link>
@@ -127,14 +126,18 @@ export default function Navigation() {
         {/* Menu Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className={`${styles.menuButton} ${isOpen ? styles.menuButtonOpen : ""}`}
+          className={`relative z-50 flex items-center gap-3 py-3 px-5 rounded-full border cursor-pointer transition-all duration-300 backdrop-blur-[12px] pointer-events-auto ${
+            isOpen
+              ? "bg-accent border-accent text-foreground hover:bg-[#e6c200]"
+              : "bg-black/85 border-accent/30 text-accent hover:bg-black/95 hover:border-accent/50"
+          }`}
         >
-          <span className={styles.menuText}>
+          <span className="text-sm font-medium tracking-[0.05em] uppercase">
             {isOpen ? "Close" : "Menu"}
           </span>
-          <div className={styles.menuIcon}>
+          <div className="relative w-5 h-5 flex items-center justify-center">
             <motion.span
-              className={styles.menuLine}
+              className="absolute w-5 h-0.5 rounded-sm bg-current"
               animate={{
                 rotate: isOpen ? 45 : 0,
                 y: isOpen ? 0 : -4,
@@ -142,7 +145,7 @@ export default function Navigation() {
               transition={{ duration: 0.3 }}
             />
             <motion.span
-              className={styles.menuLine}
+              className="absolute w-5 h-0.5 rounded-sm bg-current"
               animate={{
                 rotate: isOpen ? -45 : 0,
                 y: isOpen ? 0 : 4,
@@ -154,12 +157,12 @@ export default function Navigation() {
       </motion.header>
 
       {/* Circular Text - separate from header for z-index control */}
-      <div className={styles.circularTextWrapper}>
+      <div className="fixed top-[calc(1rem+24px-45px)] left-[calc(1.5rem+24px-45px)] lg:top-[calc(1.5rem+24px-45px)] lg:left-[calc(3rem+24px-45px)] w-[90px] h-[90px] z-35 flex items-center justify-center pointer-events-none">
         <CircularText
           text="MNSH*ASSOC*OF*CODING*"
           onHover={undefined}
           spinDuration={20}
-          className={styles.circularText}
+          className="absolute inset-0"
         />
       </div>
 
@@ -169,7 +172,7 @@ export default function Navigation() {
           <>
             {/* Background overlay with bezier curve animation */}
             <motion.div
-              className={styles.overlay}
+              className="fixed inset-0 z-40"
               initial={{ clipPath: "circle(0% at calc(100% - 80px) 48px)" }}
               animate={{ clipPath: "circle(150% at calc(100% - 80px) 48px)" }}
               exit={{ clipPath: "circle(0% at calc(100% - 80px) 48px)" }}
@@ -178,12 +181,12 @@ export default function Navigation() {
                 ease: [0.76, 0, 0.24, 1],
               }}
             >
-              <div className={styles.overlayBackground} />
+              <div className="absolute inset-0 bg-linear-to-b from-card via-background to-secondary" />
             </motion.div>
 
             {/* Navigation content */}
             <motion.nav
-              className={styles.nav}
+              className="fixed inset-0 z-45 flex flex-col justify-between pt-20 pb-8 px-6 lg:pt-24 lg:pb-12 lg:px-12"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -191,7 +194,7 @@ export default function Navigation() {
             >
               {/* Top label */}
               <motion.span
-                className={styles.navLabel}
+                className="text-xs font-semibold tracking-[0.15em] uppercase text-black/50"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.3 }}
@@ -200,8 +203,8 @@ export default function Navigation() {
               </motion.span>
 
               {/* Main navigation links */}
-              <div className={styles.navLinks}>
-                <div className={styles.navLinksInner}>
+              <div className="flex-1 flex flex-col justify-center">
+                <div className="flex flex-col gap-2">
                   {navItems.map((item, index) => (
                     <motion.div
                       key={item.label}
@@ -221,7 +224,7 @@ export default function Navigation() {
 
               {/* Footer links */}
               <motion.div
-                className={styles.navFooter}
+                className="flex flex-wrap gap-8"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.4, delay: 0.6 }}
@@ -232,7 +235,7 @@ export default function Navigation() {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={styles.navFooterLink}
+                    className="text-sm text-black/50 no-underline transition-colors duration-300 hover:text-black/80"
                   >
                     {link.label}
                   </a>
