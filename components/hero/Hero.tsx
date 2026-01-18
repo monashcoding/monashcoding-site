@@ -89,6 +89,7 @@ export function Hero({ data }: HeroProps) {
   const heroData = data || fallbackData
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0)
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
+  const [isLogoHovered, setIsLogoHovered] = useState(false)
 
   const { titleLines, description, heroMedia, overlayOpacity, slideshowInterval, fadeDuration, scrollIndicatorText } = heroData
 
@@ -185,6 +186,8 @@ export function Hero({ data }: HeroProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, ease: 'easeOut', delay: 0.3 }}
+            onMouseEnter={() => setIsLogoHovered(true)}
+            onMouseLeave={() => setIsLogoHovered(false)}
           >
             {/* Spinning Circular Text */}
             <div className="absolute w-72 h-72 md:w-80 md:h-80 lg:w-96 lg:h-96">
@@ -194,10 +197,11 @@ export function Hero({ data }: HeroProps) {
                 onHover="speedUp"
                 fontSize="24px"
                 className="w-full! h-full! text-white! drop-shadow-lg"
+                forceHover={isLogoHovered}
               />
             </div>
             {/* 3D Logo */}
-            <MacLogo3D className="w-48 h-64 md:w-64 md:h-80 lg:w-72 lg:h-96 drop-shadow-2xl" />
+            <MacLogo3D className="w-48 h-64 md:w-64 md:h-80 lg:w-72 lg:h-96 drop-shadow-2xl pointer-events-none" />
           </motion.div>
         </div>
       </div>
