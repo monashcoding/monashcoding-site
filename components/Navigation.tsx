@@ -88,7 +88,7 @@ function NavLink({ item, onClick }: { item: NavItem; onClick: () => void }) {
 
 export default function Navigation({ data }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isPastHero, setIsPastHero] = useState(true); // Force true for testing
+  const [isPastHero, setIsPastHero] = useState(false);
   const pathname = usePathname();
   const isHomePage = pathname === "/";
 
@@ -128,23 +128,24 @@ export default function Navigation({ data }: NavigationProps) {
   return (
     <>
       {/* Fixed header bar */}
-      <motion.header
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between pl-4 pr-6 py-4 lg:pl-10 lg:pr-12 lg:py-6 pointer-events-none"
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: showNavbar ? 0 : -100, opacity: showNavbar ? 1 : 0 }}
-        transition={{ duration: 0.4, ease: [0.76, 0, 0.24, 1] }}
-      >
-        {/* Logo */}
-        <Link href="/" className="relative z-50 no-underline flex items-center pointer-events-auto">
-          <Image
-            src="/logo/logo.jpg"
-            alt="MAC Logo"
-            width={48}
-            height={48}
-            className="w-12 h-12 rounded-full object-cover transition-transform duration-300 hover:scale-105"
-            priority
-          />
-        </Link>
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between pl-4 pr-6 py-4 lg:pl-10 lg:pr-12 lg:py-6 pointer-events-none">
+        {/* Logo - animates in/out */}
+        <motion.div
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: showNavbar ? 0 : -100, opacity: showNavbar ? 1 : 0 }}
+          transition={{ duration: 0.4, ease: [0.76, 0, 0.24, 1] }}
+        >
+          <Link href="/" className="relative z-50 no-underline flex items-center pointer-events-auto">
+            <Image
+              src="/logo/logo.jpg"
+              alt="MAC Logo"
+              width={48}
+              height={48}
+              className="w-12 h-12 rounded-full object-cover transition-transform duration-300 hover:scale-105"
+              priority
+            />
+          </Link>
+        </motion.div>
 
         {/* Menu Button */}
         <button
@@ -177,7 +178,7 @@ export default function Navigation({ data }: NavigationProps) {
             />
           </div>
         </button>
-      </motion.header>
+      </header>
 
       {/* Circular Text - separate from header for z-index control */}
       <motion.div
