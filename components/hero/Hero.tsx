@@ -100,7 +100,7 @@ export function Hero({ data }: HeroProps) {
       <div className="relative z-30 flex flex-col items-center justify-center w-full h-full max-w-full p-4 gap-4 pointer-events-none md:p-6 md:gap-6 lg:flex-row lg:p-8 lg:gap-8">
         {/* Left: Title */}
         <div className="flex flex-col items-center justify-center flex-1 order-2 lg:items-end lg:order-0">
-          <h1 className="text-[clamp(2rem,8vw,3rem)] font-extrabold text-center tracking-tight leading-[1.1] text-foreground whitespace-nowrap md:text-[clamp(2.5rem,5vw,5rem)] lg:text-right">
+          <h1 className="text-[clamp(2.5rem,10vw,4rem)] font-extrabold text-center tracking-tight leading-[1.1] text-foreground whitespace-nowrap md:text-[clamp(3rem,6vw,6rem)] lg:text-right">
             {titleLines.map((line, lineIndex) => {
               const charOffset = titleLines.slice(0, lineIndex).join('').length
               return (
@@ -138,7 +138,7 @@ export function Hero({ data }: HeroProps) {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
         >
-          <MacLogo3D className="w-56 -mx-16 h-80 md:w-[clamp(280px,45vw,380px)] md:-mx-20 md:h-[clamp(350px,60vw,520px)] lg:w-[clamp(350px,35vw,500px)] lg:-mx-28 lg:h-[clamp(420px,45vw,700px)]" />
+          <MacLogo3D className="w-56 -mx-8 h-80 md:w-[clamp(280px,45vw,380px)] md:-mx-10 md:h-[clamp(350px,60vw,520px)] lg:w-[clamp(350px,35vw,500px)] lg:-mx-14 lg:h-[clamp(420px,45vw,700px)]" />
         </motion.div>
 
         {/* Right: Description + Image */}
