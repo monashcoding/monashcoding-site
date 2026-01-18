@@ -1,6 +1,6 @@
 'use client'
 
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import dynamic from 'next/dynamic'
 import { useEffect, useRef, useState } from 'react'
 import { HeroData, HeroMedia, HeroImageMedia, HeroVideoMedia, SanityImage } from '@/lib/sanity/types'
@@ -90,6 +90,7 @@ export function Hero({ data }: HeroProps) {
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0)
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
   const [isLogoHovered, setIsLogoHovered] = useState(false)
+  const prefersReducedMotion = useReducedMotion()
 
   const { titleLines, description, heroMedia, overlayOpacity, slideshowInterval, fadeDuration, scrollIndicatorText } = heroData
 
@@ -277,8 +278,8 @@ export function Hero({ data }: HeroProps) {
           </span>
           <motion.div
             className="w-px h-15 bg-linear-to-b from-black/50 to-transparent"
-            animate={{ scaleY: [1, 0.5, 1] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+            animate={prefersReducedMotion ? {} : { scaleY: [1, 0.5, 1] }}
+            transition={prefersReducedMotion ? {} : { duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
           />
         </motion.div>
       </div>
