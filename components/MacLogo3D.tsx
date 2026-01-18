@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useRef, useState, useEffect, useCallback } from "react";
+import { Suspense, useRef, useState, useEffect, useCallback, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF, Float, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
@@ -44,6 +44,14 @@ function MacLogoModel({ mouse, gyro, isMobile }: ModelProps) {
   const targetRotation = useRef({ x: BASE_ROTATION, z: 0 });
 
   const logoMesh = nodes.logo as THREE.Mesh;
+
+  // Center the geometry once on load
+  const centeredGeometry = useMemo(() => {
+    if (!logoMesh?.geometry) return null;
+    const geo = logoMesh.geometry.clone();
+    geo.center();
+    return geo;
+  }, [logoMesh?.geometry]);
 
   useFrame(() => {
     if (!groupRef.current) return;
@@ -90,22 +98,24 @@ function MacLogoModel({ mouse, gyro, isMobile }: ModelProps) {
     }
   });
 
-  if (!logoMesh?.geometry) {
+  if (!centeredGeometry) {
     return null;
   }
 
   return (
-    <Float
-      speed={FLOAT_SPEED}
-      rotationIntensity={isMobile ? FLOAT_ROTATION_MOBILE : FLOAT_ROTATION_DESKTOP}
-      floatIntensity={FLOAT_INTENSITY}
-    >
-      <group ref={groupRef} rotation={[BASE_ROTATION, 0, 0]} scale={GROUP_SCALE}>
-        <mesh geometry={logoMesh.geometry} scale={MESH_SCALE}>
-          <meshToonMaterial color={LOGO_COLOR} toneMapped={false} />
-        </mesh>
-      </group>
-    </Float>
+    <group position={[0, 0, 0]}>
+      <Float
+        speed={FLOAT_SPEED}
+        rotationIntensity={isMobile ? FLOAT_ROTATION_MOBILE : FLOAT_ROTATION_DESKTOP}
+        floatIntensity={FLOAT_INTENSITY}
+      >
+        <group ref={groupRef} rotation={[BASE_ROTATION, 0, 0]} scale={GROUP_SCALE}>
+          <mesh geometry={centeredGeometry} scale={MESH_SCALE}>
+            <meshToonMaterial color={LOGO_COLOR} toneMapped={false} />
+          </mesh>
+        </group>
+      </Float>
+    </group>
   );
 }
 
@@ -178,11 +188,17 @@ export default function MacLogo3D({ className }: { className?: string }) {
   }, [isMobile]);
 
   return (
-    <div ref={containerRef} className={className}>
+    <div ref={containerRef} className={`${className} relative`} style={{ minHeight: '1px' }}>
       <Canvas
         camera={{ position: CAMERA_POSITION, fov: CAMERA_FOV }}
         gl={{ antialias: true, alpha: true, toneMapping: 0 }}
-        style={{ background: "transparent", pointerEvents: "none" }}
+        resize={{ scroll: false, debounce: { scroll: 0, resize: 0 } }}
+        frameloop="always"
+        onCreated={({ gl }) => {
+          // Force resize after canvas is created
+          gl.setSize(gl.domElement.clientWidth, gl.domElement.clientHeight);
+        }}
+        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: "transparent", pointerEvents: "none" }}
       >
         <Suspense fallback={null}>
           <ambientLight intensity={AMBIENT_LIGHT_INTENSITY} />
