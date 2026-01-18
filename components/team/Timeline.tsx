@@ -15,56 +15,6 @@ interface YearGroup {
   events: TimelineEvent[]
 }
 
-const FALLBACK_EVENTS: TimelineEvent[] = [
-  {
-    _key: '1',
-    date: 'July 2019',
-    title: 'MAC Founded',
-    description: 'MAC was founded to impart industry-relevant skills to students',
-  },
-  {
-    _key: '2',
-    date: 'August 2019',
-    title: 'MAC x Build',
-    description: 'Created for technical skills development',
-  },
-  {
-    _key: '3',
-    date: 'March 2020',
-    title: 'Going Virtual',
-    description: 'MAC goes fully virtual due to COVID-19',
-  },
-  {
-    _key: '4',
-    date: 'April 2020',
-    title: 'MAC x Career',
-    description: 'Initiative for internships and graduate roles',
-  },
-  {
-    _key: '5',
-    date: 'May 2020',
-    title: 'MAC x Learn',
-    description: 'Series with Tech Panel launched',
-  },
-  {
-    _key: '6',
-    date: 'July 2020',
-    title: 'Discord Launch',
-    description: 'Community server launched for members',
-  },
-  {
-    _key: '7',
-    date: 'September 2020',
-    title: 'MAC x UX',
-    description: 'For product design and UX roles',
-  },
-  {
-    _key: '8',
-    date: 'June 2021',
-    title: 'Hack Sprint',
-    description: 'Two-week hackathon event',
-  },
-]
 
 function YearMenuItem({
   year,
@@ -158,10 +108,10 @@ function YearMenuItem({
       {/* Year Menu Item */}
       <div
         ref={itemRef}
-        className="relative h-[80px] overflow-hidden border-t border-white/20 first:border-t-0"
+        className="relative h-[80px] overflow-hidden border-t border-black/10 first:border-t-0"
       >
         <button
-          className="flex h-full w-full cursor-pointer items-center justify-center text-[clamp(1.5rem,5vw,2.5rem)] font-semibold text-white uppercase"
+          className="flex h-full w-full cursor-pointer items-center justify-center text-[clamp(1.5rem,5vw,2.5rem)] font-semibold text-foreground uppercase"
           onClick={onToggle}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
@@ -278,7 +228,7 @@ function EventsGrid({ events }: { events: TimelineEvent[] }) {
   return (
     <div
       ref={rootRef}
-      className="events-grid relative grid w-full gap-4 bg-black/90 p-6 md:p-8"
+      className="events-grid relative grid w-full gap-4 bg-secondary/50 p-6 md:p-8"
       style={
         {
           '--x': '50%',
@@ -293,7 +243,7 @@ function EventsGrid({ events }: { events: TimelineEvent[] }) {
       {events.map((event, i) => (
         <motion.article
           key={event._key}
-          className="event-card relative flex flex-col overflow-hidden rounded-2xl border border-white/10"
+          className="event-card relative flex flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: i * 0.1 }}
@@ -303,7 +253,6 @@ function EventsGrid({ events }: { events: TimelineEvent[] }) {
               '--card-border': '#f8e45c',
               '--mouse-x': '50%',
               '--mouse-y': '50%',
-              background: 'linear-gradient(to bottom right, rgba(248, 228, 92, 0.2), black)',
             } as React.CSSProperties
           }
         >
@@ -312,16 +261,16 @@ function EventsGrid({ events }: { events: TimelineEvent[] }) {
             className="pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-500 hover:opacity-100"
             style={{
               background:
-                'radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(248, 228, 92, 0.15), transparent 60%)',
+                'radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(248, 228, 92, 0.2), transparent 60%)',
             }}
           />
           <div className="relative z-0 p-5">
-            <span className="mb-2 inline-block rounded-full px-3 py-1 text-xs font-medium" style={{ backgroundColor: 'rgba(248, 228, 92, 0.2)', color: '#f8e45c' }}>
+            <span className="mb-2 inline-block rounded-full px-3 py-1 text-xs font-medium" style={{ backgroundColor: 'rgba(248, 228, 92, 0.3)', color: '#b8860b' }}>
               {event.date}
             </span>
-            <h3 className="mb-2 text-xl font-bold text-white">{event.title}</h3>
+            <h3 className="mb-2 text-xl font-bold text-foreground">{event.title}</h3>
             {event.description && (
-              <p className="text-sm leading-relaxed text-white/70">{event.description}</p>
+              <p className="text-sm leading-relaxed text-foreground/70">{event.description}</p>
             )}
           </div>
         </motion.article>
@@ -330,9 +279,9 @@ function EventsGrid({ events }: { events: TimelineEvent[] }) {
       <div
         className="pointer-events-none absolute inset-0 z-20"
         style={{
-          backdropFilter: 'grayscale(1) brightness(0.78)',
-          WebkitBackdropFilter: 'grayscale(1) brightness(0.78)',
-          background: 'rgba(0, 0, 0, 0.001)',
+          backdropFilter: 'grayscale(1) brightness(1.1)',
+          WebkitBackdropFilter: 'grayscale(1) brightness(1.1)',
+          background: 'rgba(255, 255, 255, 0.001)',
           maskImage:
             'radial-gradient(circle var(--r) at var(--x) var(--y), transparent 0%, transparent 15%, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0.22) 45%, rgba(0, 0, 0, 0.35) 60%, rgba(0, 0, 0, 0.5) 75%, rgba(0, 0, 0, 0.68) 88%, white 100%)',
           WebkitMaskImage:
@@ -344,9 +293,9 @@ function EventsGrid({ events }: { events: TimelineEvent[] }) {
         ref={fadeRef}
         className="pointer-events-none absolute inset-0 z-30"
         style={{
-          backdropFilter: 'grayscale(1) brightness(0.78)',
-          WebkitBackdropFilter: 'grayscale(1) brightness(0.78)',
-          background: 'rgba(0, 0, 0, 0.001)',
+          backdropFilter: 'grayscale(1) brightness(1.1)',
+          WebkitBackdropFilter: 'grayscale(1) brightness(1.1)',
+          background: 'rgba(255, 255, 255, 0.001)',
           maskImage:
             'radial-gradient(circle var(--r) at var(--x) var(--y), white 0%, white 15%, rgba(255, 255, 255, 0.9) 30%, rgba(255, 255, 255, 0.78) 45%, rgba(255, 255, 255, 0.65) 60%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.32) 88%, transparent 100%)',
           WebkitMaskImage:
@@ -442,7 +391,7 @@ function HeaderItem({ text }: { text: string }) {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="flex h-full w-full items-center justify-center text-[clamp(1.5rem,5vw,2.5rem)] font-semibold text-white uppercase">
+      <div className="flex h-full w-full items-center justify-center text-[clamp(1.5rem,5vw,2.5rem)] font-semibold text-foreground uppercase">
         {text}
       </div>
       {/* Marquee on hover */}
@@ -476,7 +425,11 @@ function HeaderItem({ text }: { text: string }) {
 export default function Timeline({ events }: TimelineProps) {
   const [expandedYear, setExpandedYear] = useState<string | null>(null)
 
-  const timelineEvents = events?.length > 0 ? events : FALLBACK_EVENTS
+  if (!events || events.length === 0) {
+    return null
+  }
+
+  const timelineEvents = events
 
   // Group events by year
   const yearGroups: YearGroup[] = timelineEvents.reduce((acc: YearGroup[], event) => {
@@ -499,7 +452,7 @@ export default function Timeline({ events }: TimelineProps) {
   }
 
   return (
-    <div className="w-full overflow-hidden bg-black/80 backdrop-blur-sm">
+    <div className="w-full overflow-hidden bg-white/80 backdrop-blur-sm border-y border-black/10">
       <HeaderItem text="Our Journey" />
       {yearGroups.map((group) => (
         <YearMenuItem
