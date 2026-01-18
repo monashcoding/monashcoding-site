@@ -31,7 +31,6 @@ interface HeroProps {
 // Fallback content when Sanity data is not available
 const fallbackData: HeroData = {
   titleLines: ['MONASH', 'ASSOCIATION', 'OF CODING'],
-  subtitle: 'Empowering students through code',
   description: [],
   heroImage: {
     asset: { _id: '', url: '/hero-image.jpg' },

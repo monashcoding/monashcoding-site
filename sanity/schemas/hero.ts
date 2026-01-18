@@ -14,13 +14,6 @@ export const hero = defineType({
       validation: (Rule) => Rule.required().min(1).max(5),
     }),
     defineField({
-      name: 'subtitle',
-      title: 'Subtitle',
-      description: 'Short tagline below the title',
-      type: 'string',
-      validation: (Rule) => Rule.required().max(100),
-    }),
-    defineField({
       name: 'description',
       title: 'Description',
       description: 'Main description paragraph with highlight support',
