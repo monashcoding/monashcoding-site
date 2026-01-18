@@ -144,7 +144,7 @@ export function Hero({ data }: HeroProps) {
         {/* Right: Description + Image */}
         <div className="flex flex-col justify-center items-center flex-1 gap-6 order-3 lg:items-start lg:order-0">
           <motion.div
-            className="text-sm text-black/70 leading-relaxed w-full max-w-[280px] text-center relative z-30 md:max-w-[350px] lg:max-w-[500px] lg:text-left lg:text-[clamp(0.875rem,1.1vw,1.1rem)]"
+            className="text-sm text-black/70 leading-relaxed w-full max-w-70 text-center relative z-30 md:max-w-87.5 lg:max-w-125 lg:text-left lg:text-[clamp(0.875rem,1.1vw,1.1rem)]"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.6 }}
@@ -156,7 +156,7 @@ export function Hero({ data }: HeroProps) {
             )}
           </motion.div>
           <motion.div
-            className="relative z-10 rounded-3xl overflow-hidden w-full max-w-[280px] md:max-w-[350px] lg:max-w-[500px]"
+            className="relative z-10 rounded-3xl overflow-hidden w-full max-w-70 md:max-w-87.5 lg:max-w-125"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: 'easeOut', delay: 0.3 }}
@@ -181,7 +181,7 @@ export function Hero({ data }: HeroProps) {
           {scrollIndicatorText || 'Scroll'}
         </span>
         <motion.div
-          className="w-px h-[60px] bg-gradient-to-b from-black/50 to-transparent"
+          className="w-px h-15 bg-linear-to-b from-black/50 to-transparent"
           animate={{ scaleY: [1, 0.5, 1] }}
           transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
         />
