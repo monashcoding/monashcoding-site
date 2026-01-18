@@ -1,236 +1,304 @@
-"use client";
+'use client'
 
-import { motion, AnimatePresence } from "framer-motion";
-import { useState, useMemo } from "react";
-import Image from "next/image";
-import { urlFor } from "@/sanity/lib/image";
-import { TeamMember, TeamPageData } from "@/lib/sanity/types";
+import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useMemo } from 'react'
+import Image from 'next/image'
+import dynamic from 'next/dynamic'
+import { urlFor } from '@/sanity/lib/image'
+import { TeamMember, TeamPageData, TeamSlug } from '@/lib/sanity/types'
+import Timeline from '@/components/team/Timeline'
 
-// Fallback data
-const defaultTeams = [
-  {
-    name: "Executive",
-    members: [
-      { name: "Alex Chen", role: "President", bio: "Leading MAC's vision to empower students through code." },
-      { name: "Sarah Kim", role: "Vice President", bio: "Coordinating club activities and partnerships." },
-      { name: "James Liu", role: "Secretary", bio: "Keeping everything organized and running smoothly." },
-      { name: "Emily Zhang", role: "Treasurer", bio: "Managing finances and budgets for all events." },
-    ],
-  },
-  {
-    name: "Education",
-    members: [
-      { name: "Michael Park", role: "Education Lead", bio: "Designing curriculum and workshop content." },
-      { name: "Lisa Wang", role: "Workshop Coordinator", bio: "Organizing weekly coding workshops." },
-      { name: "David Nguyen", role: "Mentor Lead", bio: "Managing our peer mentorship program." },
-    ],
-  },
-  {
-    name: "Events",
-    members: [
-      { name: "Rachel Lee", role: "Events Lead", bio: "Planning hackathons and networking events." },
-      { name: "Tom Anderson", role: "Logistics Coordinator", bio: "Handling venues and equipment." },
-      { name: "Amy Patel", role: "Sponsorship Coordinator", bio: "Building relationships with industry partners." },
-    ],
-  },
-  {
-    name: "Marketing",
-    members: [
-      { name: "Chris Wu", role: "Marketing Lead", bio: "Growing our community reach and engagement." },
-      { name: "Jessica Brown", role: "Content Creator", bio: "Creating engaging social media content." },
-      { name: "Ryan Martinez", role: "Designer", bio: "Crafting visual identity and materials." },
-    ],
-  },
-  {
-    name: "Technology",
-    members: [
-      { name: "Kevin Tran", role: "Tech Lead", bio: "Building and maintaining club infrastructure." },
-      { name: "Anna Johnson", role: "Web Developer", bio: "Creating our digital presence." },
-      { name: "Mark Wilson", role: "DevOps", bio: "Managing deployments and systems." },
-    ],
-  },
-];
+const Dither = dynamic(() => import('@/components/Dither'), { ssr: false })
 
 interface TeamPageClientProps {
-  pageData: TeamPageData | null;
-  members: TeamMember[] | null;
+  pageData: TeamPageData | null
+  members: TeamMember[]
 }
 
-type TeamName = "Executive" | "Education" | "Events" | "Marketing" | "Technology";
-
-interface GroupedTeam {
-  name: TeamName;
-  members: TeamMember[];
+const TEAM_LABELS: Record<TeamSlug, string> = {
+  management: 'Management',
+  events: 'Events',
+  marketing: 'Marketing',
+  design: 'Design',
+  'human-resources': 'Human Resources',
+  sponsorship: 'Sponsorship',
+  media: 'Media',
+  projects: 'Projects',
+  outreach: 'Outreach',
 }
+
+const TEAM_ORDER: TeamSlug[] = [
+  'management',
+  'events',
+  'marketing',
+  'design',
+  'human-resources',
+  'sponsorship',
+  'media',
+  'projects',
+  'outreach',
+]
 
 export default function TeamPageClient({ pageData, members }: TeamPageClientProps) {
-  const [selectedTeam, setSelectedTeam] = useState<TeamName | null>(null);
+  const [selectedTeam, setSelectedTeam] = useState<TeamSlug | 'all'>('all')
+  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null)
+
+  const title = pageData?.pageTitle || 'Meet the Team'
 
   // Group members by team
-  const teams: GroupedTeam[] = useMemo(() => {
-    if (!members || members.length === 0) {
-      // Use fallback data structure
-      return defaultTeams.map((team) => ({
-        name: team.name as TeamName,
-        members: team.members.map((m, i) => ({
-          _id: `fallback-${team.name}-${i}`,
-          name: m.name,
-          role: m.role,
-          team: team.name as TeamName,
-          bio: m.bio,
-        })),
-      }));
+  const teamGroups = useMemo(() => {
+    const groups: Record<TeamSlug, TeamMember[]> = {
+      management: [],
+      events: [],
+      marketing: [],
+      design: [],
+      'human-resources': [],
+      sponsorship: [],
+      media: [],
+      projects: [],
+      outreach: [],
     }
 
-    const teamOrder: TeamName[] = ["Executive", "Education", "Events", "Marketing", "Technology"];
-    const grouped: Record<TeamName, TeamMember[]> = {
-      Executive: [],
-      Education: [],
-      Events: [],
-      Marketing: [],
-      Technology: [],
-    };
-
     members.forEach((member) => {
-      if (member.team && grouped[member.team]) {
-        grouped[member.team].push(member);
+      if (member.team && groups[member.team]) {
+        groups[member.team].push(member)
       }
-    });
+    })
 
-    return teamOrder.map((name) => ({
-      name,
-      members: grouped[name],
-    })).filter((team) => team.members.length > 0);
-  }, [members]);
+    return groups
+  }, [members])
 
-  const currentTeam = teams.find((t) => t.name === selectedTeam);
+  // Filter members based on selected team
+  const filteredMembers = useMemo(() => {
+    if (selectedTeam === 'all') return members
+    return teamGroups[selectedTeam] || []
+  }, [selectedTeam, members, teamGroups])
 
-  const title = pageData?.title || "Meet the Team";
-  const subtitle = pageData?.subtitle || "Click on a branch to explore each team";
+  // Get teams that have members
+  const activeTeams = TEAM_ORDER.filter((team) => teamGroups[team].length > 0)
 
   return (
-    <main className="min-h-screen bg-linear-to-b from-background to-secondary pt-32">
-      <section className="py-16 px-8 pb-24 text-center">
-        <motion.h1
-          className="text-[clamp(3rem,6vw,5rem)] font-extrabold text-foreground mb-4"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          {title}
-        </motion.h1>
-        <motion.p
-          className="text-xl text-black/60 max-w-[600px] mx-auto"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-        >
-          {subtitle}
-        </motion.p>
+    <main className="relative min-h-screen bg-black">
+      {/* Hero Section with Dither Background - exactly 400px */}
+      <section className="relative h-[400px]">
+        <div className="absolute inset-0">
+          <Dither
+            waveSpeed={0.03}
+            waveFrequency={3}
+            waveAmplitude={0.3}
+            waveColor={[0.97, 0.89, 0.36]}
+            colorNum={4}
+            pixelSize={2}
+            enableMouseInteraction={true}
+            mouseRadius={0.4}
+          />
+        </div>
+        <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
+          <motion.h1
+            className="text-[clamp(2.5rem,8vw,5rem)] font-extrabold text-white"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}
+          >
+            {title}
+          </motion.h1>
+        </div>
       </section>
 
-      <AnimatePresence mode="wait">
-        {!selectedTeam ? (
+      {/* Timeline Section - positioned immediately below dither */}
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
+      >
+        <Timeline events={pageData?.timeline || []} />
+      </motion.section>
+
+      {/* Team Filter and Grid Section */}
+      <section className="bg-neutral-950 px-4 py-16">
+        {/* Filter Tabs */}
+        <div className="mx-auto mb-12 max-w-7xl">
+          <div className="flex flex-wrap justify-center gap-2">
+            <button
+              onClick={() => setSelectedTeam('all')}
+              className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 ${
+                selectedTeam === 'all'
+                  ? 'bg-[#f8e45c] text-black'
+                  : 'bg-white/10 text-white hover:bg-white/20'
+              }`}
+            >
+              All
+            </button>
+            {activeTeams.map((team) => (
+              <button
+                key={team}
+                onClick={() => setSelectedTeam(team)}
+                className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 ${
+                  selectedTeam === team
+                    ? 'bg-[#f8e45c] text-black'
+                    : 'bg-white/10 text-white hover:bg-white/20'
+                }`}
+              >
+                {TEAM_LABELS[team]}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Team Member Grid */}
+        <div className="mx-auto max-w-7xl">
           <motion.div
-            key="tree"
-            className="relative w-full max-w-[1400px] mx-auto p-8 min-h-[70vh]"
+            className="grid gap-6"
+            style={{
+              gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+            }}
+            layout
+          >
+            <AnimatePresence mode="popLayout">
+              {filteredMembers.map((member, index) => (
+                <motion.div
+                  key={member._id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.3, delay: index * 0.03 }}
+                  onClick={() => setSelectedMember(member)}
+                  className="group cursor-pointer overflow-hidden rounded-2xl bg-white/5 transition-all duration-300 hover:-translate-y-1 hover:bg-white/10"
+                >
+                  {/* Photo */}
+                  <div className="relative aspect-square overflow-hidden">
+                    {member.photo?.asset ? (
+                      <Image
+                        src={urlFor(member.photo).width(400).height(400).url()}
+                        alt={member.photo.alt || member.name}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#f8e45c]/30 to-[#f8e45c]/10">
+                        <span className="text-4xl font-bold text-white/60">
+                          {member.name
+                            .split(' ')
+                            .map((n) => n[0])
+                            .join('')}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  {/* Info */}
+                  <div className="p-4">
+                    <h3 className="text-lg font-semibold text-white">{member.name}</h3>
+                    <p className="text-sm text-[#f8e45c]">{member.role}</p>
+                    <p className="mt-1 text-xs text-white/50">
+                      {TEAM_LABELS[member.team]}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+
+          {filteredMembers.length === 0 && (
+            <div className="py-16 text-center text-white/50">
+              No team members found for this team yet.
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Member Popup */}
+      <AnimatePresence>
+        {selectedMember && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-end justify-center bg-black/80 backdrop-blur-sm sm:items-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
+            onClick={() => setSelectedMember(null)}
           >
-            <div className="relative w-full h-[600px] flex flex-col items-center md:h-auto">
-              {/* Tree Trunk */}
-              <motion.div
-                className="w-2 h-[100px] bg-linear-to-b from-[#8B4513] to-[#654321] rounded"
-                initial={{ scaleY: 0 }}
-                animate={{ scaleY: 1 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              />
-
-              {/* Branches */}
-              <div className="flex justify-center gap-8 flex-wrap -mt-5 md:flex-col md:items-center">
-                {teams.map((team, index) => (
-                  <motion.div
-                    key={team.name}
-                    className="flex flex-col items-center cursor-pointer transition-transform duration-300 hover:scale-105"
-                    onClick={() => setSelectedTeam(team.name)}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: 0.4 + index * 0.1 }}
-                  >
-                    <div className="w-1 h-[60px] bg-linear-to-b from-[#654321] to-[#8B4513] rounded" />
-                    <motion.div
-                      className="py-6 px-8 bg-gold-700/10 border-2 border-gold-700/30 rounded-2xl text-gold-800 font-semibold text-lg text-center transition-all duration-300 min-w-[150px] hover:bg-gold-700/15 hover:border-gold-700/50 hover:shadow-[0_0_30px_rgba(180,83,9,0.15)]"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      {team.name}
-                      <div className="text-xs mt-2 opacity-70">
-                        {team.members.length} members
-                      </div>
-                    </motion.div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        ) : (
-          <motion.section
-            key="team"
-            className="py-16 px-8 max-w-[1200px] mx-auto"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -40 }}
-            transition={{ duration: 0.4 }}
-          >
-            <button
-              className="inline-flex items-center gap-2 py-3 px-6 bg-black/5 border border-black/10 rounded-full text-foreground text-sm cursor-pointer transition-all duration-300 mb-8 hover:bg-black/10"
-              onClick={() => setSelectedTeam(null)}
+            <motion.div
+              className="w-full max-w-lg rounded-t-3xl bg-neutral-900 p-8 sm:rounded-3xl"
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M19 12H5M12 19l-7-7 7-7" />
-              </svg>
-              Back to Tree
-            </button>
+              {/* Close Button */}
+              <button
+                onClick={() => setSelectedMember(null)}
+                className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
 
-            <h2 className="text-3xl font-bold text-gold-800 mb-12 text-center">{selectedTeam} Team</h2>
-
-            <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-8">
-              {currentTeam?.members.map((member, index) => (
-                <motion.div
-                  key={member._id}
-                  className="bg-white/50 border border-black/10 rounded-2xl p-8 text-center transition-all duration-300 hover:bg-white/80 hover:border-gold-700/30 hover:-translate-y-1"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
-                >
-                  {member.image?.asset ? (
-                    <div className="w-[100px] h-[100px] rounded-full mx-auto mb-6 overflow-hidden">
-                      <Image
-                        src={urlFor(member.image).width(200).height(200).url()}
-                        alt={member.image.alt || member.name}
-                        width={100}
-                        height={100}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+              <div className="flex flex-col items-center text-center">
+                {/* Photo */}
+                <div className="mb-6 h-32 w-32 overflow-hidden rounded-full">
+                  {selectedMember.photo?.asset ? (
+                    <Image
+                      src={urlFor(selectedMember.photo).width(256).height(256).url()}
+                      alt={selectedMember.photo.alt || selectedMember.name}
+                      width={128}
+                      height={128}
+                      className="h-full w-full object-cover"
+                    />
                   ) : (
-                    <div className="w-[100px] h-[100px] rounded-full bg-linear-to-br from-gold-700 to-gold-600 mx-auto mb-6 flex items-center justify-center text-3xl font-bold text-white">
-                      {member.name.split(" ").map((n) => n[0]).join("")}
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#f8e45c]/30 to-[#f8e45c]/10">
+                      <span className="text-4xl font-bold text-white/60">
+                        {selectedMember.name
+                          .split(' ')
+                          .map((n) => n[0])
+                          .join('')}
+                      </span>
                     </div>
                   )}
-                  <h3 className="text-xl font-semibold text-foreground mb-2">{member.name}</h3>
-                  <p className="text-sm text-gold-800 mb-4">{member.role}</p>
-                  {member.bio && (
-                    <p className="text-sm text-black/60 leading-relaxed">{member.bio}</p>
+                </div>
+
+                {/* Info */}
+                <h2 className="mb-1 text-2xl font-bold text-white">{selectedMember.name}</h2>
+                <p className="mb-1 text-lg text-[#f8e45c]">{selectedMember.role}</p>
+                <p className="mb-4 text-sm text-white/50">{TEAM_LABELS[selectedMember.team]}</p>
+
+                {selectedMember.bio && (
+                  <p className="mb-6 text-sm leading-relaxed text-white/70">{selectedMember.bio}</p>
+                )}
+
+                {/* Social Links */}
+                <div className="flex gap-4">
+                  {selectedMember.linkedIn && (
+                    <a
+                      href={selectedMember.linkedIn}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-[#0077b5]"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                      </svg>
+                    </a>
                   )}
-                </motion.div>
-              ))}
-            </div>
-          </motion.section>
+                  {selectedMember.email && (
+                    <a
+                      href={`mailto:${selectedMember.email}`}
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-[#f8e45c] hover:text-black"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                        <polyline points="22,6 12,13 2,6" />
+                      </svg>
+                    </a>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
     </main>
-  );
+  )
 }
