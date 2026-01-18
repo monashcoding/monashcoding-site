@@ -80,7 +80,7 @@ export function Hero({ data }: HeroProps) {
       className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-[radial-gradient(ellipse_at_top_left,#ffffff_0%,#deddda_50%)]"
     >
       {/* Ribbons Mouse Trail Effect */}
-      <div className="absolute inset-0 w-full h-full z-10 pointer-events-auto">
+      <div className="absolute inset-0 w-full h-full z-10 pointer-events-none">
         <Ribbons
           colors={['#FFD700']}
           baseSpring={0.03}

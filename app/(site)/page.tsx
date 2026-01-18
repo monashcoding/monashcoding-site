@@ -19,6 +19,13 @@ export default async function Home() {
   return (
     <main className="bg-background">
       <Hero data={heroData} />
+      {/* Temporary test section - remove later */}
+      <section className="min-h-screen bg-black flex items-center justify-center">
+        <h2 className="text-white text-6xl font-bold">Test Section 1</h2>
+      </section>
+      <section className="min-h-screen bg-neutral-800 flex items-center justify-center">
+        <h2 className="text-white text-6xl font-bold">Test Section 2</h2>
+      </section>
       <HomeContent />
     </main>
   )

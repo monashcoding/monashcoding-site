@@ -169,8 +169,8 @@ const Ribbons = ({
       mouse.set((x / width) * 2 - 1, (y / height) * -2 + 1, 0);
     }
     container.addEventListener('mousemove', updateMouse);
-    container.addEventListener('touchstart', updateMouse);
-    container.addEventListener('touchmove', updateMouse);
+    container.addEventListener('touchstart', updateMouse, { passive: true });
+    container.addEventListener('touchmove', updateMouse, { passive: true });
 
     const tmp = new Vec3();
     let frameId;
@@ -230,7 +230,7 @@ const Ribbons = ({
     backgroundColor
   ]);
 
-  return <div ref={containerRef} className="w-full h-full relative" />;
+  return <div ref={containerRef} className="w-full h-full relative pointer-events-auto" />;
 };
 
 export default Ribbons;
