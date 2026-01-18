@@ -138,7 +138,7 @@ export function Hero({ data }: HeroProps) {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
         >
-          <MacLogo3D className="w-[100px] h-[150px] md:w-[clamp(120px,30vw,200px)] md:h-[clamp(180px,45vw,300px)] lg:w-[clamp(150px,20vw,280px)] lg:h-[clamp(220px,30vw,400px)]" />
+          <MacLogo3D className="w-56 -mx-16 h-80 md:w-[clamp(280px,45vw,380px)] md:-mx-20 md:h-[clamp(350px,60vw,520px)] lg:w-[clamp(350px,35vw,500px)] lg:-mx-28 lg:h-[clamp(420px,45vw,700px)]" />
         </motion.div>
 
         {/* Right: Description + Image */}
