@@ -1,9 +1,9 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import dynamic from 'next/dynamic'
-import { useRef } from 'react'
-import { HeroData } from '@/lib/sanity/types'
+import { useEffect, useRef, useState } from 'react'
+import { HeroData, HeroMedia, HeroImageMedia, HeroVideoMedia, SanityImage } from '@/lib/sanity/types'
 import { HeroDescription } from '@/lib/sanity/portableText'
 import { urlFor } from '@/sanity/lib/image'
 import CircularText from '@/components/CircularText'
@@ -32,11 +32,35 @@ interface HeroProps {
 const fallbackData: HeroData = {
   titleLines: ['MONASH', 'ASSOCIATION', 'OF CODING'],
   description: [],
-  heroImage: {
-    asset: { _id: '', url: '/hero-image.jpg' },
-    alt: 'MAC community',
-  },
+  heroMedia: [
+    {
+      _key: 'fallback-1',
+      _type: 'heroImage',
+      image: { asset: { _id: '', url: '/hero-image.jpg' } },
+      alt: 'MAC community',
+    },
+  ],
+  overlayOpacity: 40,
+  slideshowInterval: 5,
+  fadeDuration: 1,
   scrollIndicatorText: 'Scroll',
+}
+
+// Helper to build image URL from Sanity image or fallback
+function getImageUrl(image: SanityImage | undefined): string {
+  if (!image?.asset?.url) return '/hero-image.jpg'
+  if (image.asset.url.startsWith('/')) return image.asset.url
+  return urlFor(image).width(1200).height(1600).fit('crop').url()
+}
+
+// Type guard to check if media is an image
+function isImageMedia(media: HeroMedia): media is HeroImageMedia {
+  return media._type === 'heroImage'
+}
+
+// Type guard to check if media is a video
+function isVideoMedia(media: HeroMedia): media is HeroVideoMedia {
+  return media._type === 'heroVideo'
 }
 
 // Fallback description when no Sanity description is available
@@ -61,16 +85,49 @@ function FallbackDescription({ className }: { className?: string }) {
 
 export function Hero({ data }: HeroProps) {
   const heroRef = useRef<HTMLElement>(null)
+  const videoRefs = useRef<Map<string, HTMLVideoElement>>(new Map())
   const heroData = data || fallbackData
+  const [currentMediaIndex, setCurrentMediaIndex] = useState(0)
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false)
 
-  const { titleLines, description, heroImage, scrollIndicatorText } = heroData
+  const { titleLines, description, heroMedia, overlayOpacity, slideshowInterval, fadeDuration, scrollIndicatorText } = heroData
 
-  // Build image URL from Sanity or use fallback
-  const imageUrl = heroImage?.asset?.url
-    ? heroImage.asset.url.startsWith('/')
-      ? heroImage.asset.url // Local fallback image
-      : urlFor(heroImage).width(1200).height(1600).fit('crop').url()
-    : '/hero-image.jpg'
+  const currentMedia = heroMedia?.[currentMediaIndex]
+  const isCurrentVideo = currentMedia && isVideoMedia(currentMedia)
+
+  // Slideshow effect - cycle through media (only for images, videos advance on end)
+  useEffect(() => {
+    if (!heroMedia || heroMedia.length <= 1) return
+    if (isCurrentVideo && isVideoPlaying) return // Don't auto-advance during video playback
+
+    const intervalMs = (slideshowInterval || 5) * 1000
+    const timer = setInterval(() => {
+      setCurrentMediaIndex((prev) => (prev + 1) % heroMedia.length)
+    }, intervalMs)
+
+    return () => clearInterval(timer)
+  }, [heroMedia, slideshowInterval, isCurrentVideo, isVideoPlaying])
+
+  // Handle video end - advance to next media
+  const handleVideoEnd = () => {
+    setIsVideoPlaying(false)
+    if (heroMedia && heroMedia.length > 1) {
+      setCurrentMediaIndex((prev) => (prev + 1) % heroMedia.length)
+    }
+  }
+
+  // Play video when it becomes active
+  useEffect(() => {
+    if (currentMedia && isVideoMedia(currentMedia)) {
+      const video = videoRefs.current.get(currentMedia._key)
+      if (video) {
+        video.currentTime = 0
+        video.play().then(() => setIsVideoPlaying(true)).catch(() => {})
+      }
+    } else {
+      setIsVideoPlaying(false)
+    }
+  }, [currentMediaIndex, currentMedia])
 
   const hasDescription = description && description.length > 0
 
@@ -81,21 +138,45 @@ export function Hero({ data }: HeroProps) {
     >
       {/* Left Side: Image with Logo overlay */}
       <div className="relative w-full h-screen lg:w-1/2">
-        {/* Hero Image - Full height */}
-        <motion.div
-          className="absolute inset-0"
-          initial={{ opacity: 0, scale: 1.1 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, ease: 'easeOut' }}
-        >
-          <img
-            src={imageUrl}
-            alt={heroImage?.alt || 'MAC community'}
-            className="w-full h-full object-cover"
-          />
+        {/* Hero Media - Fading slideshow (images and videos) */}
+        <div className="absolute inset-0">
+          <AnimatePresence mode="sync">
+            {heroMedia?.map((media, index) => (
+              <motion.div
+                key={media._key || index}
+                className="absolute inset-0"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: index === currentMediaIndex ? 1 : 0 }}
+                transition={{ duration: fadeDuration || 1, ease: 'easeInOut' }}
+              >
+                {isImageMedia(media) ? (
+                  <img
+                    src={getImageUrl(media.image)}
+                    alt={media.alt || 'MAC community'}
+                    className="w-full h-full object-cover"
+                  />
+                ) : isVideoMedia(media) ? (
+                  <video
+                    ref={(el) => {
+                      if (el) videoRefs.current.set(media._key, el)
+                    }}
+                    src={media.video?.asset?.url}
+                    poster={media.poster ? getImageUrl(media.poster) : undefined}
+                    className="w-full h-full object-cover"
+                    muted
+                    playsInline
+                    onEnded={handleVideoEnd}
+                  />
+                ) : null}
+              </motion.div>
+            ))}
+          </AnimatePresence>
           {/* Gradient overlay for better contrast */}
-          <div className="absolute inset-0 bg-linear-to-r from-black/20 to-black/40" />
-        </motion.div>
+          <div
+            className="absolute inset-0 bg-black"
+            style={{ opacity: (overlayOpacity ?? 40) / 100 }}
+          />
+        </div>
 
         {/* Centered Logo with Spinning Text */}
         <div className="absolute inset-0 flex items-center justify-center z-20">
