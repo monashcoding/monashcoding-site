@@ -1,0 +1,1061 @@
+[
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              },
+              {
+                "flag": "min",
+                "constraint": 1
+              },
+              {
+                "flag": "max",
+                "constraint": 5
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "Each line of the main hero title (displayed one per line)",
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "titleLines",
+        "type": "array"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              },
+              {
+                "flag": "max",
+                "constraint": 100
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "Short tagline below the title",
+        "name": "subtitle",
+        "type": "string"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              },
+              {
+                "flag": "min",
+                "constraint": 1
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "Main description paragraph with highlight support",
+        "of": [
+          {
+            "marks": {
+              "annotations": [],
+              "decorators": [
+                {
+                  "value": "highlight",
+                  "title": "Highlight"
+                },
+                {
+                  "value": "strong",
+                  "title": "Strong"
+                },
+                {
+                  "value": "em",
+                  "title": "Emphasis"
+                }
+              ]
+            },
+            "styles": [
+              {
+                "value": "normal",
+                "title": "Normal"
+              }
+            ],
+            "of": [],
+            "type": "block"
+          }
+        ],
+        "name": "description",
+        "type": "array"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "fields": [
+          {
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "name": "alt",
+            "type": "string",
+            "title": "Alt Text"
+          }
+        ],
+        "name": "heroImage",
+        "type": "image"
+      },
+      {
+        "initialValue": "Scroll",
+        "name": "scrollIndicatorText",
+        "type": "string"
+      }
+    ],
+    "name": "hero",
+    "type": "document",
+    "title": "Hero Section"
+  },
+  {
+    "fields": [
+      {
+        "initialValue": "Meet the Team",
+        "name": "title",
+        "type": "string",
+        "title": "Page Title"
+      },
+      {
+        "initialValue": "Click on a branch to explore each team",
+        "name": "subtitle",
+        "type": "string",
+        "title": "Page Subtitle"
+      }
+    ],
+    "name": "teamPage",
+    "type": "document",
+    "title": "Team Page Settings"
+  },
+  {
+    "fields": [
+      {
+        "initialValue": "Join Our Team",
+        "name": "pageTitle",
+        "type": "string"
+      },
+      {
+        "rows": 2,
+        "initialValue": "Be part of something amazing. Help us empower the next generation of coders.",
+        "name": "pageSubtitle",
+        "type": "text"
+      },
+      {
+        "of": [
+          {
+            "fields": [
+              {
+                "validation": [
+                  {
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      },
+                      {
+                        "flag": "max",
+                        "constraint": 4
+                      }
+                    ],
+                    "level": "error"
+                  }
+                ],
+                "name": "icon",
+                "type": "string"
+              },
+              {
+                "validation": [
+                  {
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ],
+                    "level": "error"
+                  }
+                ],
+                "name": "title",
+                "type": "string"
+              },
+              {
+                "rows": 2,
+                "name": "description",
+                "type": "text"
+              }
+            ],
+            "type": "object"
+          }
+        ],
+        "name": "perks",
+        "type": "array"
+      },
+      {
+        "of": [
+          {
+            "fields": [
+              {
+                "validation": [
+                  {
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ],
+                    "level": "error"
+                  }
+                ],
+                "name": "date",
+                "type": "string",
+                "title": "Date/Week"
+              },
+              {
+                "validation": [
+                  {
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ],
+                    "level": "error"
+                  }
+                ],
+                "name": "title",
+                "type": "string"
+              },
+              {
+                "rows": 2,
+                "name": "description",
+                "type": "text"
+              }
+            ],
+            "type": "object"
+          }
+        ],
+        "name": "timeline",
+        "type": "array",
+        "title": "Recruitment Timeline"
+      },
+      {
+        "initialValue": "Ready to Make an Impact?",
+        "name": "ctaTitle",
+        "type": "string",
+        "title": "CTA Title"
+      },
+      {
+        "rows": 2,
+        "initialValue": "Applications are now open. Join us in building the future of tech education at Monash.",
+        "name": "ctaDescription",
+        "type": "text",
+        "title": "CTA Description"
+      },
+      {
+        "initialValue": "Apply Now",
+        "name": "ctaButtonText",
+        "type": "string",
+        "title": "CTA Button Text"
+      },
+      {
+        "initialValue": "#apply",
+        "name": "ctaButtonLink",
+        "type": "string",
+        "title": "CTA Button Link"
+      },
+      {
+        "initialValue": true,
+        "description": "Global toggle for whether applications are currently open",
+        "name": "applicationsOpen",
+        "type": "boolean"
+      }
+    ],
+    "name": "recruitmentPage",
+    "type": "document"
+  },
+  {
+    "fields": [
+      {
+        "initialValue": "Partner With Us",
+        "name": "pageTitle",
+        "type": "string"
+      },
+      {
+        "rows": 2,
+        "initialValue": "Join leading tech companies in supporting the next generation of developers. Your partnership helps us create impactful events and opportunities for students.",
+        "name": "pageSubtitle",
+        "type": "text"
+      },
+      {
+        "description": "Key statistics to showcase",
+        "of": [
+          {
+            "fields": [
+              {
+                "validation": [
+                  {
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ],
+                    "level": "error"
+                  }
+                ],
+                "description": "e.g., \"2,000+\", \"50+\", \"95%\"",
+                "name": "value",
+                "type": "string"
+              },
+              {
+                "validation": [
+                  {
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ],
+                    "level": "error"
+                  }
+                ],
+                "name": "label",
+                "type": "string"
+              }
+            ],
+            "type": "object"
+          }
+        ],
+        "name": "stats",
+        "type": "array"
+      },
+      {
+        "initialValue": "Sponsorship Tiers",
+        "name": "tiersTitle",
+        "type": "string",
+        "title": "Tiers Section Title"
+      },
+      {
+        "initialValue": "Choose a partnership level that aligns with your goals and budget",
+        "name": "tiersSubtitle",
+        "type": "string",
+        "title": "Tiers Section Subtitle"
+      },
+      {
+        "of": [
+          {
+            "fields": [
+              {
+                "validation": [
+                  {
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ],
+                    "level": "error"
+                  }
+                ],
+                "name": "name",
+                "type": "string",
+                "title": "Tier Name"
+              },
+              {
+                "validation": [
+                  {
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ],
+                    "level": "error"
+                  }
+                ],
+                "description": "e.g., \"$500\", \"$1,500\", \"Custom\"",
+                "name": "price",
+                "type": "string"
+              },
+              {
+                "initialValue": false,
+                "description": "Highlight this tier as \"Most Popular\"",
+                "name": "featured",
+                "type": "boolean"
+              },
+              {
+                "validation": [
+                  {
+                    "rules": [
+                      {
+                        "flag": "min",
+                        "constraint": 1
+                      }
+                    ],
+                    "level": "error"
+                  }
+                ],
+                "of": [
+                  {
+                    "type": "string"
+                  }
+                ],
+                "name": "features",
+                "type": "array"
+              }
+            ],
+            "type": "object"
+          }
+        ],
+        "name": "tiers",
+        "type": "array",
+        "title": "Sponsorship Tiers"
+      },
+      {
+        "initialValue": "Why Partner With MAC?",
+        "name": "benefitsTitle",
+        "type": "string",
+        "title": "Benefits Section Title"
+      },
+      {
+        "of": [
+          {
+            "fields": [
+              {
+                "validation": [
+                  {
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      },
+                      {
+                        "flag": "max",
+                        "constraint": 4
+                      }
+                    ],
+                    "level": "error"
+                  }
+                ],
+                "name": "icon",
+                "type": "string"
+              },
+              {
+                "validation": [
+                  {
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ],
+                    "level": "error"
+                  }
+                ],
+                "name": "title",
+                "type": "string"
+              },
+              {
+                "rows": 2,
+                "name": "description",
+                "type": "text"
+              }
+            ],
+            "type": "object"
+          }
+        ],
+        "name": "benefits",
+        "type": "array"
+      },
+      {
+        "initialValue": "Ready to Partner?",
+        "name": "ctaTitle",
+        "type": "string",
+        "title": "CTA Title"
+      },
+      {
+        "rows": 2,
+        "initialValue": "Let's discuss how we can create a partnership that benefits both your organization and our community.",
+        "name": "ctaDescription",
+        "type": "text",
+        "title": "CTA Description"
+      },
+      {
+        "initialValue": "Contact Us",
+        "name": "ctaButtonText",
+        "type": "string",
+        "title": "CTA Button Text"
+      },
+      {
+        "initialValue": "/contact",
+        "name": "ctaButtonLink",
+        "type": "string",
+        "title": "CTA Button Link"
+      }
+    ],
+    "name": "sponsorPage",
+    "type": "document"
+  },
+  {
+    "fields": [
+      {
+        "initialValue": "Get in Touch",
+        "name": "pageTitle",
+        "type": "string"
+      },
+      {
+        "rows": 2,
+        "initialValue": "Have a question or want to collaborate? We'd love to hear from you.",
+        "name": "pageSubtitle",
+        "type": "text"
+      },
+      {
+        "initialValue": "hello@monashcoding.com",
+        "name": "email",
+        "type": "string",
+        "title": "Email Address"
+      },
+      {
+        "initialValue": "https://discord.gg/monashcoding",
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "uri",
+                "constraint": {
+                  "options": {
+                    "scheme": [
+                      "/^http$/",
+                      "/^https$/"
+                    ],
+                    "allowRelative": false,
+                    "relativeOnly": false,
+                    "allowCredentials": false
+                  }
+                }
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "discordLink",
+        "type": "url"
+      },
+      {
+        "initialValue": "Join our community",
+        "name": "discordLabel",
+        "type": "string"
+      },
+      {
+        "initialValue": "Monash University, Clayton VIC",
+        "name": "location",
+        "type": "string"
+      },
+      {
+        "initialValue": "https://maps.google.com/?q=Monash+University+Clayton",
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "uri",
+                "constraint": {
+                  "options": {
+                    "scheme": [
+                      "/^http$/",
+                      "/^https$/"
+                    ],
+                    "allowRelative": false,
+                    "relativeOnly": false,
+                    "allowCredentials": false
+                  }
+                }
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "locationMapLink",
+        "type": "url"
+      },
+      {
+        "of": [
+          {
+            "fields": [
+              {
+                "options": {
+                  "list": [
+                    {
+                      "title": "Instagram",
+                      "value": "instagram"
+                    },
+                    {
+                      "title": "LinkedIn",
+                      "value": "linkedin"
+                    },
+                    {
+                      "title": "GitHub",
+                      "value": "github"
+                    },
+                    {
+                      "title": "Twitter/X",
+                      "value": "twitter"
+                    },
+                    {
+                      "title": "Facebook",
+                      "value": "facebook"
+                    },
+                    {
+                      "title": "YouTube",
+                      "value": "youtube"
+                    },
+                    {
+                      "title": "TikTok",
+                      "value": "tiktok"
+                    }
+                  ]
+                },
+                "validation": [
+                  {
+                    "rules": [
+                      {
+                        "flag": "valid",
+                        "constraint": [
+                          "instagram",
+                          "linkedin",
+                          "github",
+                          "twitter",
+                          "facebook",
+                          "youtube",
+                          "tiktok"
+                        ]
+                      },
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ],
+                    "level": "error"
+                  }
+                ],
+                "name": "platform",
+                "type": "string"
+              },
+              {
+                "validation": [
+                  {
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      },
+                      {
+                        "flag": "uri",
+                        "constraint": {
+                          "options": {
+                            "scheme": [
+                              "/^http$/",
+                              "/^https$/"
+                            ],
+                            "allowRelative": false,
+                            "relativeOnly": false,
+                            "allowCredentials": false
+                          }
+                        }
+                      }
+                    ],
+                    "level": "error"
+                  }
+                ],
+                "name": "url",
+                "type": "url",
+                "title": "URL"
+              }
+            ],
+            "type": "object"
+          }
+        ],
+        "name": "socialLinks",
+        "type": "array",
+        "title": "Social Media Links"
+      }
+    ],
+    "name": "contactPage",
+    "type": "document"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              },
+              {
+                "flag": "min",
+                "constraint": 1
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "Main navigation links",
+        "of": [
+          {
+            "fields": [
+              {
+                "validation": [
+                  {
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ],
+                    "level": "error"
+                  }
+                ],
+                "name": "label",
+                "type": "string"
+              },
+              {
+                "validation": [
+                  {
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ],
+                    "level": "error"
+                  }
+                ],
+                "name": "href",
+                "type": "string",
+                "title": "Link"
+              }
+            ],
+            "type": "object"
+          }
+        ],
+        "name": "navItems",
+        "type": "array",
+        "title": "Navigation Items"
+      },
+      {
+        "description": "Social media links shown in footer/menu",
+        "of": [
+          {
+            "fields": [
+              {
+                "validation": [
+                  {
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ],
+                    "level": "error"
+                  }
+                ],
+                "name": "label",
+                "type": "string"
+              },
+              {
+                "validation": [
+                  {
+                    "rules": [
+                      {
+                        "flag": "uri",
+                        "constraint": {
+                          "options": {
+                            "scheme": [
+                              "/^http$/",
+                              "/^https$/"
+                            ],
+                            "allowRelative": true,
+                            "relativeOnly": false,
+                            "allowCredentials": false
+                          }
+                        }
+                      }
+                    ],
+                    "level": "error"
+                  }
+                ],
+                "name": "href",
+                "type": "url",
+                "title": "URL"
+              }
+            ],
+            "type": "object"
+          }
+        ],
+        "name": "socialLinks",
+        "type": "array"
+      },
+      {
+        "initialValue": "MNSH*ASSOC*OF*CODING*",
+        "description": "Rotating text around the logo (use * as separator)",
+        "name": "circularText",
+        "type": "string"
+      }
+    ],
+    "name": "navigation",
+    "type": "document"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "role",
+        "type": "string"
+      },
+      {
+        "options": {
+          "list": [
+            {
+              "title": "Executive",
+              "value": "Executive"
+            },
+            {
+              "title": "Education",
+              "value": "Education"
+            },
+            {
+              "title": "Events",
+              "value": "Events"
+            },
+            {
+              "title": "Marketing",
+              "value": "Marketing"
+            },
+            {
+              "title": "Technology",
+              "value": "Technology"
+            }
+          ],
+          "layout": "radio"
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "valid",
+                "constraint": [
+                  "Executive",
+                  "Education",
+                  "Events",
+                  "Marketing",
+                  "Technology"
+                ]
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "team",
+        "type": "string"
+      },
+      {
+        "rows": 3,
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "max",
+                "constraint": 200
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "bio",
+        "type": "text"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "fields": [
+          {
+            "name": "alt",
+            "type": "string",
+            "title": "Alt Text"
+          }
+        ],
+        "name": "image",
+        "type": "image",
+        "title": "Photo"
+      },
+      {
+        "initialValue": 0,
+        "description": "Lower numbers appear first",
+        "name": "order",
+        "type": "number",
+        "title": "Display Order"
+      }
+    ],
+    "name": "teamMember",
+    "type": "document"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "name",
+        "type": "string",
+        "title": "Position Name"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              },
+              {
+                "flag": "max",
+                "constraint": 4
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "Emoji or icon character",
+        "name": "icon",
+        "type": "string"
+      },
+      {
+        "rows": 3,
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "description",
+        "type": "text"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "min",
+                "constraint": 1
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "requirements",
+        "type": "array"
+      },
+      {
+        "initialValue": true,
+        "description": "Is this position currently accepting applications?",
+        "name": "isOpen",
+        "type": "boolean",
+        "title": "Position Open"
+      },
+      {
+        "initialValue": 0,
+        "name": "order",
+        "type": "number",
+        "title": "Display Order"
+      }
+    ],
+    "name": "recruitmentPosition",
+    "type": "document"
+  }
+]

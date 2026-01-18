@@ -6,13 +6,22 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import CircularText from "./CircularText";
+import { NavigationData } from "@/lib/sanity/types";
 
 interface NavItem {
+  _key?: string;
   label: string;
   href: string;
 }
 
-const navItems: NavItem[] = [
+interface FooterLink {
+  _key?: string;
+  label: string;
+  href: string;
+}
+
+// Fallback data
+const defaultNavItems: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "Meet the Team", href: "/team" },
   { label: "Recruitment", href: "/recruitment" },
@@ -20,11 +29,17 @@ const navItems: NavItem[] = [
   { label: "Contact", href: "/contact" },
 ];
 
-const footerLinks = [
+const defaultFooterLinks: FooterLink[] = [
   { label: "Instagram", href: "https://instagram.com/monashcoding" },
   { label: "LinkedIn", href: "https://linkedin.com/company/monashcoding" },
-  { label: "Discord", href: "#" },
+  { label: "Discord", href: "https://discord.gg/monashcoding" },
 ];
+
+const defaultCircularText = "MNSH*ASSOC*OF*CODING*";
+
+interface NavigationProps {
+  data: NavigationData | null;
+}
 
 function NavLink({ item, onClick }: { item: NavItem; onClick: () => void }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -71,11 +86,16 @@ function NavLink({ item, onClick }: { item: NavItem; onClick: () => void }) {
   );
 }
 
-export default function Navigation() {
+export default function Navigation({ data }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isPastHero, setIsPastHero] = useState(false);
   const pathname = usePathname();
   const isHomePage = pathname === "/";
+
+  // Use Sanity data or fallbacks
+  const navItems: NavItem[] = data?.navItems || defaultNavItems;
+  const footerLinks: FooterLink[] = data?.socialLinks || defaultFooterLinks;
+  const circularText = data?.circularText || defaultCircularText;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -159,7 +179,7 @@ export default function Navigation() {
       {/* Circular Text - separate from header for z-index control */}
       <div className="fixed top-[calc(1rem+24px-45px)] left-[calc(1.5rem+24px-45px)] lg:top-[calc(1.5rem+24px-45px)] lg:left-[calc(3rem+24px-45px)] w-[90px] h-[90px] z-35 flex items-center justify-center pointer-events-none">
         <CircularText
-          text="MNSH*ASSOC*OF*CODING*"
+          text={circularText}
           onHover={undefined}
           spinDuration={20}
           className="absolute inset-0"
@@ -207,7 +227,7 @@ export default function Navigation() {
                 <div className="flex flex-col gap-2">
                   {navItems.map((item, index) => (
                     <motion.div
-                      key={item.label}
+                      key={(item as { _key?: string })._key || item.label}
                       initial={{ opacity: 0, y: 40 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{
@@ -231,7 +251,7 @@ export default function Navigation() {
               >
                 {footerLinks.map((link) => (
                   <a
-                    key={link.label}
+                    key={link._key || link.label}
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"

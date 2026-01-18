@@ -1,11 +1,25 @@
 import Navigation from "@/components/Navigation";
 import ClickSpark from "@/components/ClickSpark";
+import { client } from "@/sanity/lib/client";
+import { navigationQuery } from "@/sanity/lib/queries";
+import { NavigationData } from "@/lib/sanity/types";
 
-export default function SiteLayout({
+async function getNavigationData(): Promise<NavigationData | null> {
+  try {
+    return await client.fetch(navigationQuery);
+  } catch (error) {
+    console.error("Error fetching navigation:", error);
+    return null;
+  }
+}
+
+export default async function SiteLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const navigationData = await getNavigationData();
+
   return (
     <ClickSpark
       sparkColor="#1a1a1a"
@@ -16,7 +30,7 @@ export default function SiteLayout({
       easing="ease-out"
       extraScale={1.5}
     >
-      <Navigation />
+      <Navigation data={navigationData} />
       {children}
     </ClickSpark>
   );

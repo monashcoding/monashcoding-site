@@ -1,0 +1,17 @@
+import { groq } from 'next-sanity'
+
+export const navigationQuery = groq`
+  *[_type == "navigation"][0] {
+    navItems[] {
+      _key,
+      label,
+      href
+    },
+    socialLinks[] {
+      _key,
+      label,
+      href
+    },
+    circularText
+  }
+`

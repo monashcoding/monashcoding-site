@@ -1,1 +1,6 @@
 export * from './home'
+export * from './navigation'
+export * from './team'
+export * from './recruitment'
+export * from './sponsor'
+export * from './contact'
