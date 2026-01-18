@@ -176,6 +176,8 @@ function YearMenuItem({
 function EventsGrid({ events }: { events: TimelineEvent[] }) {
   const rootRef = useRef<HTMLDivElement>(null)
   const fadeRef = useRef<HTMLDivElement>(null)
+  const chromaRef = useRef<HTMLDivElement>(null)
+  const hasInteracted = useRef(false)
   const setX = useRef<((value: number) => void) | null>(null)
   const setY = useRef<((value: number) => void) | null>(null)
   const pos = useRef({ x: 0, y: 0 })
@@ -209,11 +211,20 @@ function EventsGrid({ events }: { events: TimelineEvent[] }) {
     const r = rootRef.current?.getBoundingClientRect()
     if (!r) return
     moveTo(e.clientX - r.left, e.clientY - r.top)
+
+    // Show chroma overlay on first interaction
+    if (!hasInteracted.current) {
+      hasInteracted.current = true
+      gsap.to(chromaRef.current, { opacity: 1, duration: 0.4, overwrite: true })
+    }
     gsap.to(fadeRef.current, { opacity: 0, duration: 0.25, overwrite: true })
   }
 
   const handleLeave = () => {
-    gsap.to(fadeRef.current, { opacity: 1, duration: 0.6, overwrite: true })
+    // Only show fade overlay if user has interacted
+    if (hasInteracted.current) {
+      gsap.to(fadeRef.current, { opacity: 1, duration: 0.6, overwrite: true })
+    }
   }
 
   const handleCardMove = (e: React.MouseEvent<HTMLElement>) => {
@@ -277,6 +288,7 @@ function EventsGrid({ events }: { events: TimelineEvent[] }) {
       ))}
       {/* Chroma overlay */}
       <div
+        ref={chromaRef}
         className="pointer-events-none absolute inset-0 z-20"
         style={{
           backdropFilter: 'grayscale(1) brightness(1.1)',
@@ -286,6 +298,7 @@ function EventsGrid({ events }: { events: TimelineEvent[] }) {
             'radial-gradient(circle var(--r) at var(--x) var(--y), transparent 0%, transparent 15%, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0.22) 45%, rgba(0, 0, 0, 0.35) 60%, rgba(0, 0, 0, 0.5) 75%, rgba(0, 0, 0, 0.68) 88%, white 100%)',
           WebkitMaskImage:
             'radial-gradient(circle var(--r) at var(--x) var(--y), transparent 0%, transparent 15%, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0.22) 45%, rgba(0, 0, 0, 0.35) 60%, rgba(0, 0, 0, 0.5) 75%, rgba(0, 0, 0, 0.68) 88%, white 100%)',
+          opacity: 0,
         }}
       />
       {/* Fade overlay */}
@@ -300,7 +313,7 @@ function EventsGrid({ events }: { events: TimelineEvent[] }) {
             'radial-gradient(circle var(--r) at var(--x) var(--y), white 0%, white 15%, rgba(255, 255, 255, 0.9) 30%, rgba(255, 255, 255, 0.78) 45%, rgba(255, 255, 255, 0.65) 60%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.32) 88%, transparent 100%)',
           WebkitMaskImage:
             'radial-gradient(circle var(--r) at var(--x) var(--y), white 0%, white 15%, rgba(255, 255, 255, 0.9) 30%, rgba(255, 255, 255, 0.78) 45%, rgba(255, 255, 255, 0.65) 60%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.32) 88%, transparent 100%)',
-          opacity: 1,
+          opacity: 0,
         }}
       />
     </div>
