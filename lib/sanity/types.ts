@@ -34,7 +34,6 @@ export interface HeroImage extends SanityImage {
 // Hero
 export interface HeroData {
   titleLines: string[]
-  subtitle: string
   description: PortableTextBlock[]
   heroImage: HeroImage
   scrollIndicatorText?: string
