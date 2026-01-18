@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import dynamic from 'next/dynamic'
+import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { HeroData, HeroMedia, HeroImageMedia, HeroVideoMedia, SanityImage } from '@/lib/sanity/types'
 import { HeroDescription } from '@/lib/sanity/portableText'
@@ -152,10 +153,13 @@ export function Hero({ data }: HeroProps) {
                 transition={{ duration: fadeDuration || 1, ease: 'easeInOut' }}
               >
                 {isImageMedia(media) ? (
-                  <img
+                  <Image
                     src={getImageUrl(media.image)}
                     alt={media.alt || 'MAC community'}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    priority={index === 0}
                   />
                 ) : isVideoMedia(media) ? (
                   <video
