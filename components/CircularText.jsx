@@ -19,7 +19,7 @@ const getTransition = (duration, from) => ({
   }
 });
 
-const CircularText = ({ text, spinDuration = 20, onHover = 'speedUp', className = '' }) => {
+const CircularText = ({ text, spinDuration = 20, onHover = 'speedUp', className = '', fontSize = '8px' }) => {
   const letters = Array.from(text);
   const controls = useAnimation();
   const rotation = useMotionValue(0);
@@ -98,8 +98,8 @@ const CircularText = ({ text, spinDuration = 20, onHover = 'speedUp', className 
         return (
           <span
             key={i}
-            className="absolute inset-0 text-[8px] transition-all duration-500 ease-[cubic-bezier(0,0,0,1)]"
-            style={{ transform, WebkitTransform: transform }}
+            className="absolute inset-0 transition-all duration-500 ease-[cubic-bezier(0,0,0,1)]"
+            style={{ transform, WebkitTransform: transform, fontSize }}
           >
             {letter}
           </span>
