@@ -2,7 +2,7 @@
 
 import { Suspense, useRef, useState, useEffect, useCallback } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useGLTF, Float } from "@react-three/drei";
+import { useGLTF, Float, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
 
 // Configuration constants
@@ -17,7 +17,7 @@ const FLOAT_INTENSITY = 0.5;
 const FLOAT_ROTATION_MOBILE = 0.3;
 const FLOAT_ROTATION_DESKTOP = 0.1;
 
-const GROUP_SCALE = 0.5;
+const GROUP_SCALE = 0.4;
 const MESH_SCALE = 0.25;
 const LOGO_COLOR = "#FFD200";
 
@@ -27,6 +27,10 @@ const GLTF_PATH = "/logo/mac_logo.glb";
 const AMBIENT_LIGHT_INTENSITY = 0.3;
 const FRONT_LIGHT_INTENSITY = 2;
 const SIDE_LIGHT_INTENSITY = 1;
+
+const SHADOW_OPACITY = 0.4;
+const SHADOW_BLUR = 7;
+const SHADOW_POSITION_Y = -1.6;
 
 interface ModelProps {
   mouse: { x: number; y: number };
@@ -185,6 +189,12 @@ export default function MacLogo3D({ className }: { className?: string }) {
           <directionalLight position={[0, 0, 5]} intensity={FRONT_LIGHT_INTENSITY} />
           <directionalLight position={[3, 3, 3]} intensity={SIDE_LIGHT_INTENSITY} />
           <MacLogoModel mouse={mouse} gyro={gyro} isMobile={isMobile} />
+          <ContactShadows
+            position={[0, SHADOW_POSITION_Y, 0]}
+            opacity={SHADOW_OPACITY}
+            blur={SHADOW_BLUR}
+            scale={5}
+          />
         </Suspense>
       </Canvas>
     </div>
