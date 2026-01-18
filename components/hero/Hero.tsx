@@ -139,8 +139,25 @@ export function Hero({ data }: HeroProps) {
       ref={heroRef}
       className="relative min-h-screen w-full flex overflow-hidden"
     >
+      {/* Ribbons Mouse Trail Effect - Full screen */}
+      <div className="absolute inset-0 w-full h-full z-10 pointer-events-none">
+        <Ribbons
+          colors={['#FFD700']}
+          baseSpring={0.03}
+          baseFriction={0.9}
+          baseThickness={40}
+          offsetFactor={0}
+          maxAge={500}
+          pointCount={50}
+          speedMultiplier={0.6}
+          enableFade={false}
+          enableShaderEffect={false}
+          effectAmplitude={2}
+        />
+      </div>
+
       {/* Left Side: Image with Logo overlay */}
-      <div className="relative w-full h-screen lg:w-1/2">
+      <div className="relative w-full h-screen lg:w-1/2 pointer-events-none">
         {/* Hero Media - Fading slideshow (images and videos) */}
         <div className="absolute inset-0">
           <AnimatePresence mode="sync">
@@ -213,23 +230,6 @@ export function Hero({ data }: HeroProps) {
 
       {/* Right Side: Content */}
       <div className="hidden lg:flex items-center justify-center w-1/2 h-screen bg-[radial-gradient(ellipse_at_top_left,#ffffff_0%,#deddda_50%)] relative">
-        {/* Ribbons Mouse Trail Effect */}
-        <div className="absolute inset-0 w-full h-full z-10 pointer-events-none">
-          <Ribbons
-            colors={['#FFD700']}
-            baseSpring={0.03}
-            baseFriction={0.9}
-            baseThickness={40}
-            offsetFactor={0}
-            maxAge={500}
-            pointCount={50}
-            speedMultiplier={0.6}
-            enableFade={false}
-            enableShaderEffect={false}
-            effectAmplitude={2}
-          />
-        </div>
-
         {/* Content */}
         <div className="relative z-30 flex flex-col justify-center px-8 max-w-xl xl:max-w-2xl pointer-events-none">
           {/* Title */}
