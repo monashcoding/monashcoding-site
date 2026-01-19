@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { motion, useAnimation, useMotionValue } from 'motion/react';
 
 
@@ -19,23 +19,13 @@ const getTransition = (duration, from) => ({
   }
 });
 
-const CircularText = ({ text, spinDuration = 20, onHover = 'speedUp', className = '' }) => {
+const CircularText = ({ text, spinDuration = 20, onHover = 'speedUp', className = '', fontSize = '8px', forceHover = false }) => {
   const letters = Array.from(text);
   const controls = useAnimation();
   const rotation = useMotionValue(0);
 
-  useEffect(() => {
+  const handleHoverStart = useCallback(() => {
     const start = rotation.get();
-    controls.start({
-      rotate: start + 360,
-      scale: 1,
-      transition: getTransition(spinDuration, start)
-    });
-  }, [spinDuration, text, onHover, controls, rotation]);
-
-  const handleHoverStart = () => {
-    const start = rotation.get();
-    console.log('CircularText mounted with text:', text);
     if (!onHover) return;
 
     let transitionConfig;
@@ -68,16 +58,34 @@ const CircularText = ({ text, spinDuration = 20, onHover = 'speedUp', className 
       scale: scaleVal,
       transition: transitionConfig
     });
-  };
+  }, [controls, onHover, rotation, spinDuration]);
 
-  const handleHoverEnd = () => {
+  const handleHoverEnd = useCallback(() => {
     const start = rotation.get();
     controls.start({
       rotate: start + 360,
       scale: 1,
       transition: getTransition(spinDuration, start)
     });
-  };
+  }, [controls, rotation, spinDuration]);
+
+  useEffect(() => {
+    const start = rotation.get();
+    controls.start({
+      rotate: start + 360,
+      scale: 1,
+      transition: getTransition(spinDuration, start)
+    });
+  }, [spinDuration, text, onHover, controls, rotation]);
+
+  // Handle forceHover prop changes (for when parent controls hover state)
+  useEffect(() => {
+    if (forceHover) {
+      handleHoverStart();
+    } else {
+      handleHoverEnd();
+    }
+  }, [forceHover, handleHoverStart, handleHoverEnd]);
 
   return (
     <motion.div
@@ -98,8 +106,8 @@ const CircularText = ({ text, spinDuration = 20, onHover = 'speedUp', className 
         return (
           <span
             key={i}
-            className="absolute inset-0 text-[8px] transition-all duration-500 ease-[cubic-bezier(0,0,0,1)]"
-            style={{ transform, WebkitTransform: transform }}
+            className="absolute inset-0 transition-all duration-500 ease-[cubic-bezier(0,0,0,1)]"
+            style={{ transform, WebkitTransform: transform, fontSize }}
           >
             {letter}
           </span>

@@ -6,7 +6,7 @@ import { PortableTextBlock } from '@portabletext/types'
 const heroDescriptionComponents: PortableTextComponents = {
   marks: {
     highlight: ({ children }) => (
-      <span className="bg-yellow-300 px-1 py-0.5">{children}</span>
+      <span className="bg-yellow-300 px-1 py-0.5 text-black lg:text-inherit">{children}</span>
     ),
     strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
     em: ({ children }) => <em>{children}</em>,
