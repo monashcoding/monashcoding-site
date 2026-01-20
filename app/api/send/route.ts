@@ -9,13 +9,16 @@ export async function POST(req: Request) {
     const { name, emailAddress, phone, subject, message } = await req.json();
 
     const { data, error } = await resend.emails.send({
-      from: emailAddress,
-      to: 'coding@monashclubs.org',
+      from: 'onboarding@resend.dev', // Use Resend's testing email for development
+      // to: 'coding@monashclubs.org',
+      to: 'projects@monashcoding.com',
+      replyTo: emailAddress, // User's email will be set as reply-to
       subject: subject || 'New Message from Monash Coding Site', 
       react: EmailTemplate({ name, emailAddress, phone, message }),
     });
 
     if (error) {
+      console.error('Resend API error:', error);
       return Response.json({ error }, { status: 500 });
     }
 
