@@ -1,7 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { ContactPageData, ContactSocialLink } from "@/lib/sanity/types";
+import { EmailTemplate } from "./EmailTemplate";
+
 
 // Platform icon components
 const SocialIcon = ({ platform }: { platform: ContactSocialLink["platform"] }) => {
@@ -65,6 +68,15 @@ interface ContactPageClientProps {
 }
 
 export default function ContactPageClient({ data }: ContactPageClientProps) {
+  // Form state
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: '',
+  });
+
   // Use Sanity data or fallbacks
   const pageTitle = data?.pageTitle || "Get in Touch";
   const pageSubtitle = data?.pageSubtitle || "Have a question or want to collaborate? We'd love to hear from you.";
@@ -74,6 +86,61 @@ export default function ContactPageClient({ data }: ContactPageClientProps) {
   const location = data?.location || "Monash University, Clayton VIC";
   const locationMapLink = data?.locationMapLink || "https://maps.google.com/?q=Monash+University+Clayton";
   const socialLinks = data?.socialLinks || defaultSocialLinks;
+
+  // Handle form input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Handler function to send email with form data to the /api/send endpoint
+  const handleSendMockEmail = async (e?: React.FormEvent) => {
+    if (e) {
+      e.preventDefault();
+    }
+
+    try {
+      // Send POST request to /api/send with form data
+      const response = await fetch('/api/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          emailAddress: formData.email,
+          phone: formData.phone,
+          subject: formData.subject,
+          message: formData.message,
+        }),
+      });
+      
+      // Show success/error alert based on response status
+      if (response.ok) {
+        alert('Email sent successfully!');
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: '',
+        });
+      } else {
+        console.log('Failed response:', response);
+        alert('Failed to send email');
+      }
+    } catch (error) {
+      // Handle network or request errors
+      console.error('Error sending email:', error);
+      alert('Error sending email');
+    }
+  };
+
+
 
   return (
     <main className="min-h-screen bg-linear-to-b from-background to-secondary pt-32 flex flex-col items-center justify-center">
@@ -94,6 +161,129 @@ export default function ContactPageClient({ data }: ContactPageClientProps) {
         >
           {pageSubtitle}
         </motion.p>
+
+        {/* Contact Form */}
+        <motion.form
+          onSubmit={handleSendMockEmail}
+          className="mb-12 p-8 bg-white/50 border border-black/10 rounded-2xl w-full max-w-2xl mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+        >
+          <div className="grid grid-cols-1 gap-4 mb-6">
+            {/* Name Input */}
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-black/70 mb-2">
+                Name *
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-2 border border-black/10 rounded-lg bg-white/80 text-foreground focus:outline-none focus:border-gold-700 focus:ring-2 focus:ring-gold-700/20 transition-all"
+                placeholder="Your name"
+              />
+            </div>
+
+            {/* Email Input */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-black/70 mb-2">
+                Email *
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-2 border border-black/10 rounded-lg bg-white/80 text-foreground focus:outline-none focus:border-gold-700 focus:ring-2 focus:ring-gold-700/20 transition-all"
+                placeholder="your@email.com"
+              />
+            </div>
+
+            {/* Phone Input */}
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-black/70 mb-2">
+                Phone
+              </label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-black/10 rounded-lg bg-white/80 text-foreground focus:outline-none focus:border-gold-700 focus:ring-2 focus:ring-gold-700/20 transition-all"
+                placeholder="Your phone number"
+              />
+            </div>
+
+            {/* Subject Input */}
+            <div>
+              <label htmlFor="subject" className="block text-sm font-medium text-black/70 mb-2">
+                Subject *
+              </label>
+              <input
+                type="text"
+                id="subject"
+                name="subject"
+                value={formData.subject}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-2 border border-black/10 rounded-lg bg-white/80 text-foreground focus:outline-none focus:border-gold-700 focus:ring-2 focus:ring-gold-700/20 transition-all"
+                placeholder="Subject of your message"
+              />
+            </div>
+
+            {/* Message Textarea */}
+            <div>
+              <label htmlFor="message" className="block text-sm font-medium text-black/70 mb-2">
+                Message *
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                value={formData.message}
+                onChange={handleInputChange}
+                required
+                rows={5}
+                className="w-full px-4 py-2 border border-black/10 rounded-lg bg-white/80 text-foreground focus:outline-none focus:border-gold-700 focus:ring-2 focus:ring-gold-700/20 transition-all resize-none"
+                placeholder="Your message here..."
+              />
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <motion.button
+            type="submit"
+            className="w-full py-3 px-6 bg-gold-700 text-white rounded-lg font-medium transition-all duration-300 hover:bg-gold-800 hover:shadow-lg active:scale-95"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            Send Message
+          </motion.button>
+        </motion.form>
+
+        {/* Test button to send mock email data to the /api/send endpoint */}
+        {/* This allows testing the email functionality with sample contact form data */}
+        <motion.button
+          onClick={handleSendMockEmail}
+          className="mb-12 py-3 px-6 bg-gold-700 text-white rounded-lg font-medium transition-all duration-300 hover:bg-gold-800 hover:shadow-lg active:scale-95"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          whileHover={{ scale: 1.05 }}
+        >
+          Send Test Email
+        </motion.button>
+
+        {/* Have the contact methods side by side */}
+        <div className="flex flex-row gap-6 mb-12">
+          
+        </div>
 
         <div className="flex flex-col gap-6">
           <motion.a
