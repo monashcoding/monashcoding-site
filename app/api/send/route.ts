@@ -6,15 +6,15 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function POST(req: Request) {
   try {
     // Get the form data from the request
-    const { name, emailAddress, phone, subject, message } = await req.json();
+    const { name, emailAddress, subject, message } = await req.json();
 
     const { data, error } = await resend.emails.send({
-      from: 'onboarding@resend.dev', // Use Resend's testing email for development
+      from: 'noreply@monashcoding.com', 
       // to: 'coding@monashclubs.org',
       to: 'projects@monashcoding.com',
       replyTo: emailAddress, // User's email will be set as reply-to
       subject: subject || 'New Message from Monash Coding Site', 
-      react: EmailTemplate({ name, emailAddress, phone, message }),
+      react: EmailTemplate({ name, emailAddress, subject, message }),
     });
 
     if (error) {
