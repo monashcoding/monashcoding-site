@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ContactPageData, ContactSocialLink } from "@/lib/sanity/types";
 import { EmailTemplate } from "./EmailTemplate";
+
 
 
 // Platform icon components
@@ -72,10 +73,13 @@ export default function ContactPageClient({ data }: ContactPageClientProps) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    phone: '',
     subject: '',
     message: '',
   });
+
+  // Error state
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
 
   // Use Sanity data or fallbacks
   const pageTitle = data?.pageTitle || "Get in Touch";
@@ -87,59 +91,74 @@ export default function ContactPageClient({ data }: ContactPageClientProps) {
   const locationMapLink = data?.locationMapLink || "https://maps.google.com/?q=Monash+University+Clayton";
   const socialLinks = data?.socialLinks || defaultSocialLinks;
 
-  // Handle form input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  // Handle form input changes. Clears errors on change.
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
   };
 
-  // Handler function to send email with form data to the /api/send endpoint
-  const handleSendMockEmail = async (e?: React.FormEvent) => {
-    if (e) {
-      e.preventDefault();
+
+  // Validate form fields
+const validate = () => {
+  const newErrors: Record<string, string> = {};
+
+  if (!formData.name.trim()) newErrors.name = "Name is required";
+  if (!formData.email.trim()) newErrors.email = "Email is required";
+  if (!formData.subject.trim()) newErrors.subject = "Subject is required";
+  if (!formData.message.trim()) newErrors.message = "Message is required";
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
+
+const handleSendEmail = async (
+  e: React.FormEvent<HTMLFormElement>
+) => {
+  e.preventDefault();
+  if (!validate()) return;
+
+  try {
+    const response = await fetch("/api/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: formData.name,
+        emailAddress: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to send email");
     }
 
-    try {
-      // Send POST request to /api/send with form data
-      const response = await fetch('/api/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          emailAddress: formData.email,
-          phone: formData.phone,
-          subject: formData.subject,
-          message: formData.message,
-        }),
-      });
-      
-      // Show success/error alert based on response status
-      if (response.ok) {
-        alert('Email sent successfully!');
-        // Reset form
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          subject: '',
-          message: '',
-        });
-      } else {
-        console.log('Failed response:', response);
-        alert('Failed to send email');
-      }
-    } catch (error) {
-      // Handle network or request errors
-      console.error('Error sending email:', error);
-      alert('Error sending email');
-    }
-  };
+    alert("Email sent successfully!");
 
+    setFormData({
+      name: "",
+      email: "",
+      subject: "",
+      message: "",
+    });
+  } catch (error) {
+    console.error("Error sending email:", error);
+    alert("Error sending email");
+  }
+};
 
 
   return (
@@ -162,94 +181,147 @@ export default function ContactPageClient({ data }: ContactPageClientProps) {
           {pageSubtitle}
         </motion.p>
 
-        {/* Contact Form */}
         <motion.form
-          onSubmit={handleSendMockEmail}
-          className="mb-12 p-8 bg-white/50 border border-black/10 rounded-2xl w-full max-w-2xl mx-auto"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.15 }}
-        >
-          <div className="grid grid-cols-1 gap-4 mb-6">
-            {/* Name Input */}
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-black/70 mb-2">
-                Name *
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                required
-                className="w-full px-4 py-2 border border-black/10 rounded-lg bg-white/80 text-foreground focus:outline-none focus:border-gold-700 focus:ring-2 focus:ring-gold-700/20 transition-all"
-                placeholder="Your name"
-              />
-            </div>
+      noValidate
+      onSubmit={handleSendEmail}
+      className="mb-12 p-8 bg-white/50 border border-black/10 rounded-2xl w-full max-w-2xl mx-auto"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.15 }}
+    >
+      <div className="grid grid-cols-1 gap-4 mb-6">
 
-            {/* Email Input */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-black/70 mb-2">
-                Email *
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-                className="w-full px-4 py-2 border border-black/10 rounded-lg bg-white/80 text-foreground focus:outline-none focus:border-gold-700 focus:ring-2 focus:ring-gold-700/20 transition-all"
-                placeholder="your@email.com"
-              />
-            </div>
-            
-            {/* Subject Input */}
-            <div>
-              <label htmlFor="subject" className="block text-sm font-medium text-black/70 mb-2">
-                Subject *
-              </label>
-              <input
-                type="text"
-                id="subject"
-                name="subject"
-                value={formData.subject}
-                onChange={handleInputChange}
-                required
-                className="w-full px-4 py-2 border border-black/10 rounded-lg bg-white/80 text-foreground focus:outline-none focus:border-gold-700 focus:ring-2 focus:ring-gold-700/20 transition-all"
-                placeholder="Subject of your message"
-              />
-            </div>
+        {/* NAME */}
+        <div>
+          <label className="block text-sm font-medium text-black/70 mb-2">
+            Name
+          </label>
+          <input
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
+            className={`w-full px-4 py-2 rounded-lg bg-white/80 transition-all
+              ${errors.name
+                ? "border border-red-500 focus:ring-2 focus:ring-red-500/30"
+                : "border border-black/10 focus:ring-2 focus:ring-gold-700/20"}
+            `}
+            placeholder="Your name"
+          />
+          <AnimatePresence>
+            {errors.name && (
+              <motion.p
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                className="mt-1 text-sm text-red-600"
+              >
+                {errors.name}
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </div>
 
-            {/* Message Textarea */}
-            <div>
-              <label htmlFor="message" className="block text-sm font-medium text-black/70 mb-2">
-                Message *
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                value={formData.message}
-                onChange={handleInputChange}
-                required
-                rows={5}
-                className="w-full px-4 py-2 border border-black/10 rounded-lg bg-white/80 text-foreground focus:outline-none focus:border-gold-700 focus:ring-2 focus:ring-gold-700/20 transition-all resize-none"
-                placeholder="Your message here..."
-              />
-            </div>
-          </div>
+        {/* EMAIL */}
+        <div>
+          <label className="block text-sm font-medium text-black/70 mb-2">
+            Email
+          </label>
+          <input
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            className={`w-full px-4 py-2 rounded-lg bg-white/80 transition-all
+              ${errors.email
+                ? "border border-red-500 focus:ring-2 focus:ring-red-500/30"
+                : "border border-black/10 focus:ring-2 focus:ring-gold-700/20"}
+            `}
+            placeholder="your@email.com"
+          />
+          <AnimatePresence>
+            {errors.email && (
+              <motion.p
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                className="mt-1 text-sm text-red-600"
+              >
+                {errors.email}
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </div>
 
-          {/* Submit Button */}
-          <motion.button
-            type="submit"
-            className="w-full py-3 px-6 bg-gold-700 text-white rounded-lg font-medium transition-all duration-300 hover:bg-gold-800 hover:shadow-lg active:scale-95"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            Send Message
-          </motion.button>
-        </motion.form>
+        {/* SUBJECT */}
+        <div>
+          <label className="block text-sm font-medium text-black/70 mb-2">
+            Subject
+          </label>
+          <input
+            name="subject"
+            value={formData.subject}
+            onChange={handleInputChange}
+            className={`w-full px-4 py-2 rounded-lg bg-white/80 transition-all
+              ${errors.subject
+                ? "border border-red-500 focus:ring-2 focus:ring-red-500/30"
+                : "border border-black/10 focus:ring-2 focus:ring-gold-700/20"}
+            `}
+            placeholder="Subject of your message"
+          />
+          <AnimatePresence>
+            {errors.subject && (
+              <motion.p
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                className="mt-1 text-sm text-red-600"
+              >
+                {errors.subject}
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* MESSAGE */}
+        <div>
+          <label className="block text-sm font-medium text-black/70 mb-2">
+            Message
+          </label>
+          <textarea
+            name="message"
+            rows={5}
+            value={formData.message}
+            onChange={handleInputChange}
+            className={`w-full px-4 py-2 rounded-lg bg-white/80 resize-none transition-all
+              ${errors.message
+                ? "border border-red-500 focus:ring-2 focus:ring-red-500/30"
+                : "border border-black/10 focus:ring-2 focus:ring-gold-700/20"}
+            `}
+            placeholder="Your message here..."
+          />
+          <AnimatePresence>
+            {errors.message && (
+              <motion.p
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                className="mt-1 text-sm text-red-600"
+              >
+                {errors.message}
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      <motion.button
+        type="submit"
+        className="w-full py-3 px-6 bg-gold-700 text-white rounded-lg font-medium hover:bg-gold-800 active:scale-95"
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+      >
+        Send Message
+      </motion.button>
+    </motion.form>
 
         {/* Have the contact methods side by side */}
         <div className="flex flex-row gap-6 mb-12">
