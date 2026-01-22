@@ -204,23 +204,7 @@ export default function ContactPageClient({ data }: ContactPageClientProps) {
                 placeholder="your@email.com"
               />
             </div>
-
-            {/* Phone Input */}
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-black/70 mb-2">
-                Phone
-              </label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-black/10 rounded-lg bg-white/80 text-foreground focus:outline-none focus:border-gold-700 focus:ring-2 focus:ring-gold-700/20 transition-all"
-                placeholder="Your phone number"
-              />
-            </div>
-
+            
             {/* Subject Input */}
             <div>
               <label htmlFor="subject" className="block text-sm font-medium text-black/70 mb-2">
@@ -266,19 +250,6 @@ export default function ContactPageClient({ data }: ContactPageClientProps) {
             Send Message
           </motion.button>
         </motion.form>
-
-        {/* Test button to send mock email data to the /api/send endpoint */}
-        {/* This allows testing the email functionality with sample contact form data */}
-        <motion.button
-          onClick={handleSendMockEmail}
-          className="mb-12 py-3 px-6 bg-gold-700 text-white rounded-lg font-medium transition-all duration-300 hover:bg-gold-800 hover:shadow-lg active:scale-95"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.15 }}
-          whileHover={{ scale: 1.05 }}
-        >
-          Send Test Email
-        </motion.button>
 
         {/* Have the contact methods side by side */}
         <div className="flex flex-row gap-6 mb-12">
