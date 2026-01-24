@@ -7,6 +7,8 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import CircularText from "./CircularText";
 import { NavigationData } from "@/lib/sanity/types";
+import NavPreviewCard from "./navigation/NavPreviewCard";
+import { getPreviewConfig } from "./navigation/navPreviewConfig";
 
 interface NavItem {
   _key?: string;
@@ -41,15 +43,31 @@ interface NavigationProps {
   data: NavigationData | null;
 }
 
-function NavLink({ item, onClick }: { item: NavItem; onClick: () => void }) {
+interface NavLinkProps {
+  item: NavItem;
+  onClick: () => void;
+  onHoverChange: (href: string | null) => void;
+}
+
+function NavLink({ item, onClick, onHoverChange }: NavLinkProps) {
   const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    onHoverChange(item.href);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    onHoverChange(null);
+  };
 
   return (
     <Link
       href={item.href}
       onClick={onClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       className="relative block no-underline py-1"
     >
       <div className="relative overflow-hidden h-[clamp(2.4rem,9.6vw,3.6rem)] lg:h-[clamp(3.6rem,7.2vw,6rem)]">
@@ -67,9 +85,9 @@ function NavLink({ item, onClick }: { item: NavItem; onClick: () => void }) {
           {item.label}
         </motion.span>
 
-        {/* New text that slides in from bottom */}
+        {/* New text that slides in from bottom - MAC Yellow */}
         <motion.span
-          className="absolute top-0 left-0 w-full block text-[clamp(2rem,8vw,3rem)] lg:text-[clamp(3rem,6vw,5rem)] font-semibold text-foreground leading-[1.2] transition-colors duration-300"
+          className="absolute top-0 left-0 w-full block text-[clamp(2rem,8vw,3rem)] lg:text-[clamp(3rem,6vw,5rem)] font-semibold text-accent leading-[1.2] transition-colors duration-300"
           initial={{ y: "100%" }}
           animate={{
             y: isHovered ? "0%" : "100%",
@@ -90,9 +108,13 @@ export default function Navigation({ data }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isPastHero, setIsPastHero] = useState(false);
   const [isPastDither, setIsPastDither] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const pathname = usePathname();
   const isHomePage = pathname === "/";
   const isTeamPage = pathname === "/team";
+
+  // Get preview config for hovered item
+  const previewConfig = hoveredItem ? getPreviewConfig(hoveredItem) : null;
 
   // Use Sanity data or fallbacks
   const navItems: NavItem[] = data?.navItems || defaultNavItems;
@@ -216,7 +238,7 @@ export default function Navigation({ data }: NavigationProps) {
                 ease: [0.76, 0, 0.24, 1],
               }}
             >
-              <div className="absolute inset-0 bg-linear-to-b from-card via-background to-secondary" />
+              <div className="absolute inset-0 bg-background" />
             </motion.div>
 
             {/* Navigation content */}
@@ -251,7 +273,11 @@ export default function Navigation({ data }: NavigationProps) {
                         ease: [0.76, 0, 0.24, 1],
                       }}
                     >
-                      <NavLink item={item} onClick={() => setIsOpen(false)} />
+                      <NavLink
+                        item={item}
+                        onClick={() => setIsOpen(false)}
+                        onHoverChange={setHoveredItem}
+                      />
                     </motion.div>
                   ))}
                 </div>
@@ -280,6 +306,13 @@ export default function Navigation({ data }: NavigationProps) {
           </>
         )}
       </AnimatePresence>
+
+      {/* Preview Card - outside AnimatePresence for prefetching */}
+      <NavPreviewCard
+        preview={previewConfig}
+        isVisible={isOpen && hoveredItem !== null}
+        isNavOpen={isOpen}
+      />
     </>
   );
 }
