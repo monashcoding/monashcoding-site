@@ -74,7 +74,7 @@ export function SponsorsSection({ data }: SponsorsSectionProps) {
 
   return (
     <RibbonAwareSection
-      backgroundClassName="bg-secondary"
+      backgroundClassName="bg-blue"
       className="overflow-hidden"
       contentClassName="min-h-[80vh] py-24 px-8"
     >

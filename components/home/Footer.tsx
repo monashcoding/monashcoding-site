@@ -50,7 +50,7 @@ export function Footer({ data }: FooterProps) {
   return (
     <RibbonAwareSection
       as="footer"
-      backgroundClassName="bg-secondary border-t border-white/10"
+      backgroundClassName="bg-background border-t border-white/10"
       contentClassName="py-24 px-8 pb-12"
     >
       <div className="max-w-[1200px] mx-auto">
