@@ -108,7 +108,7 @@ function YearMenuItem({
       {/* Year Menu Item */}
       <div
         ref={itemRef}
-        className="relative h-[80px] overflow-hidden border-t border-black/10 first:border-t-0"
+        className="relative h-20 overflow-hidden border-t border-black/10 first:border-t-0"
       >
         <button
           className="flex h-full w-full cursor-pointer items-center justify-center text-[clamp(1.5rem,5vw,2.5rem)] font-semibold text-foreground uppercase"
