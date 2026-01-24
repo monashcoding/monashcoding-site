@@ -69,16 +69,16 @@ function FallbackDescription({ className }: { className?: string }) {
   return (
     <p className={className}>
       At MAC, we aim to impart{' '}
-      <span className="bg-yellow-300 px-1 py-0.5">
+      <span className="bg-accent px-1 py-0.5">
         technical skills and industry-relevant experiences
       </span>{' '}
       to students to{' '}
-      <span className="bg-yellow-300 px-1 py-0.5">
+      <span className="bg-accent px-1 py-0.5">
         bridge the gap between the classroom
       </span>{' '}
       and industry. We want to make coding a fun experience for all—regardless of degree,
       year level, and experience—by providing{' '}
-      <span className="bg-yellow-300 px-1 py-0.5">collaborative learning opportunities</span>{' '}
+      <span className="bg-accent px-1 py-0.5">collaborative learning opportunities</span>{' '}
       for our members.
     </p>
   )
@@ -229,7 +229,7 @@ export function Hero({ data }: HeroProps) {
       </div>
 
       {/* Right Side: Content */}
-      <div className="hidden lg:flex items-center justify-center w-1/2 h-screen bg-[radial-gradient(ellipse_at_top_left,#3a3a3a_0%,#252525_50%)] relative">
+      <div className="hidden lg:flex items-center justify-center w-1/2 h-screen bg-[radial-gradient(ellipse_at_top_left,#252525_0%,#252525_50%)] relative">
         {/* Content */}
         <div className="relative z-30 flex flex-col justify-center px-8 max-w-xl xl:max-w-2xl pointer-events-none">
           {/* Title */}

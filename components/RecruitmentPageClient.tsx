@@ -209,8 +209,8 @@ export default function RecruitmentPageClient({ pageData, positions }: Recruitme
           {positionsList.map((position, index) => (
             <motion.button
               key={position._id}
-              className={`py-4 px-8 bg-white/5 border border-white/10 rounded-full text-foreground font-medium cursor-pointer transition-all duration-300 flex items-center gap-3 hover:bg-gold-700/10 hover:border-gold-700/30 hover:text-gold-800 hover:-translate-y-0.5 md:justify-center ${
-                selectedPosition === position._id ? "bg-gold-700/15 border-gold-700/40 text-gold-800" : ""
+              className={`py-4 px-8 bg-white/5 border border-white/10 rounded-full text-foreground font-medium cursor-pointer transition-all duration-300 flex items-center gap-3 hover:bg-accent/10 hover:border-accent/30 hover:text-accent hover:-translate-y-0.5 md:justify-center ${
+                selectedPosition === position._id ? "bg-accent/15 border-accent/40 text-accent" : ""
               }`}
               onClick={() => setSelectedPosition(selectedPosition === position._id ? null : position._id)}
               initial={{ opacity: 0, y: 20 }}
@@ -235,14 +235,14 @@ export default function RecruitmentPageClient({ pageData, positions }: Recruitme
               exit={{ opacity: 0, y: -20, height: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <h3 className="text-2xl font-bold text-gold-800 mb-4">{currentPosition.name}</h3>
+              <h3 className="text-2xl font-bold text-accent mb-4">{currentPosition.name}</h3>
               <p className="text-white/70 leading-relaxed mb-6">{currentPosition.description}</p>
               <h4 className="text-foreground font-semibold mb-4">Requirements</h4>
               <ul className="list-none p-0 m-0">
                 {currentPosition.requirements.map((req, index) => (
                   <motion.li
                     key={index}
-                    className="text-white/60 py-2 pl-6 relative before:content-['→'] before:absolute before:left-0 before:text-gold-700"
+                    className="text-white/60 py-2 pl-6 relative before:content-['→'] before:absolute before:left-0 before:text-accent"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
@@ -257,7 +257,7 @@ export default function RecruitmentPageClient({ pageData, positions }: Recruitme
       </section>
 
       {/* Perks Section */}
-      <section className="py-24 px-8 bg-gold-700/[0.03]">
+      <section className="py-24 px-8 bg-accent/[0.03]">
         <div className="max-w-[1200px] mx-auto">
           <motion.h2
             className="text-3xl font-bold text-foreground mb-8"
@@ -271,13 +271,13 @@ export default function RecruitmentPageClient({ pageData, positions }: Recruitme
             {perks.map((perk, index) => (
               <motion.div
                 key={perk._key}
-                className="p-8 bg-white/5 border border-white/10 rounded-3xl transition-all duration-300 hover:bg-white/10 hover:border-gold-700/20 hover:-translate-y-1"
+                className="p-8 bg-white/5 border border-white/10 rounded-3xl transition-all duration-300 hover:bg-white/10 hover:border-accent/20 hover:-translate-y-1"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
               >
-                <div className="w-[60px] h-[60px] bg-linear-to-br from-gold-700/15 to-gold-700/5 rounded-2xl flex items-center justify-center mb-6 text-2xl">
+                <div className="w-[60px] h-[60px] bg-linear-to-br from-accent/15 to-accent/5 rounded-2xl flex items-center justify-center mb-6 text-2xl">
                   {perk.icon}
                 </div>
                 <h3 className="text-xl font-semibold text-foreground mb-3">{perk.title}</h3>
@@ -298,17 +298,17 @@ export default function RecruitmentPageClient({ pageData, positions }: Recruitme
         >
           Recruitment Timeline
         </motion.h2>
-        <div className="relative pl-8 before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-0.5 before:bg-linear-to-b before:from-gold-700 before:to-gold-700/20">
+        <div className="relative pl-8 before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-0.5 before:bg-linear-to-b before:from-accent before:to-accent/20">
           {timeline.map((item, index) => (
             <motion.div
               key={item._key}
-              className="relative pb-12 pl-8 before:content-[''] before:absolute before:-left-8 before:top-2 before:w-3 before:h-3 before:bg-gold-700 before:rounded-full before:-translate-x-[5px]"
+              className="relative pb-12 pl-8 before:content-[''] before:absolute before:-left-8 before:top-2 before:w-3 before:h-3 before:bg-accent before:rounded-full before:-translate-x-[5px]"
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.15 }}
             >
-              <span className="text-sm text-gold-700 font-semibold mb-2 block">{item.date}</span>
+              <span className="text-sm text-accent font-semibold mb-2 block">{item.date}</span>
               <h3 className="text-xl font-semibold text-foreground mb-2">{item.title}</h3>
               <p className="text-white/60 leading-relaxed">{item.description}</p>
             </motion.div>
@@ -317,7 +317,7 @@ export default function RecruitmentPageClient({ pageData, positions }: Recruitme
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-8 text-center bg-linear-to-b from-transparent to-gold-700/5">
+      <section className="py-24 px-8 text-center bg-linear-to-b from-transparent to-accent/5">
         <motion.h2
           className="text-[clamp(2rem,4vw,3rem)] font-bold text-foreground mb-4"
           initial={{ opacity: 0, y: 30 }}
@@ -337,7 +337,7 @@ export default function RecruitmentPageClient({ pageData, positions }: Recruitme
         </motion.p>
         <motion.a
           href={ctaButtonLink}
-          className="inline-flex items-center gap-3 py-4 px-10 bg-linear-to-br from-gold-700 to-gold-600 text-white font-semibold text-lg rounded-full no-underline transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_40px_rgba(180,83,9,0.3)]"
+          className="inline-flex items-center gap-3 py-4 px-10 bg-linear-to-br from-accent to-accent text-white font-semibold text-lg rounded-full no-underline transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_40px_rgba(180,83,9,0.3)]"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}

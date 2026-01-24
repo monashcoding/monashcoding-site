@@ -101,8 +101,8 @@ export default function TeamMemberPopup({
                     sizes="192px"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-amber-100 to-amber-200">
-                    <span className="text-5xl font-bold text-amber-600/60">
+                  <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-accent/20 to-accent/10">
+                    <span className="text-5xl font-bold text-accent">
                       {getInitials(member.name)}
                     </span>
                   </div>
@@ -114,7 +114,7 @@ export default function TeamMemberPopup({
                 <h2 className="mb-1 text-2xl font-bold text-foreground">
                   {member.name}
                 </h2>
-                <p className="mb-2 text-lg text-amber-600">{member.role}</p>
+                <p className="mb-2 text-lg text-accent">{member.role}</p>
                 <span className="inline-block rounded-full bg-white/10 px-3 py-1 text-sm text-white/60">
                   {TEAM_LABELS[member.team] || member.team}
                 </span>
@@ -141,7 +141,7 @@ export default function TeamMemberPopup({
                     {member.email && (
                       <a
                         href={`mailto:${member.email}`}
-                        className="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-sm text-white/70 transition-colors hover:bg-amber-500 hover:text-white"
+                        className="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-sm text-white/70 transition-colors hover:bg-accent hover:text-white"
                       >
                         <Mail className="h-4 w-4" />
                         Email

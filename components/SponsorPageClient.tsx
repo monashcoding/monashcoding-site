@@ -147,7 +147,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
             >
-              <div className="text-5xl font-extrabold text-gold-700 mb-2">{stat.value}</div>
+              <div className="text-5xl font-extrabold text-accent mb-2">{stat.value}</div>
               <div className="text-white/60">{stat.label}</div>
             </motion.div>
           ))}
@@ -155,7 +155,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
       </section>
 
       {/* Tiers Section */}
-      <section className="py-24 px-8 bg-gold-700/[0.03]">
+      <section className="py-24 px-8 bg-accent/[0.03]">
         <div className="max-w-[1200px] mx-auto">
           <motion.h2
             className="text-4xl font-bold text-foreground mb-4 text-center"
@@ -179,8 +179,8 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
             {tiers.map((tier, index) => (
               <motion.div
                 key={tier._key}
-                className={`p-10 bg-white/5 border border-white/10 rounded-3xl transition-all duration-300 relative overflow-hidden hover:border-gold-700/30 hover:-translate-y-1 ${
-                  tier.featured ? "border-gold-700/40 bg-linear-to-br from-gold-700/[0.08] to-gold-700/[0.02]" : ""
+                className={`p-10 bg-white/5 border border-white/10 rounded-3xl transition-all duration-300 relative overflow-hidden hover:border-accent/30 hover:-translate-y-1 ${
+                  tier.featured ? "border-accent/40 bg-linear-to-br from-accent/[0.08] to-accent/[0.02]" : ""
                 }`}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -188,11 +188,11 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
                 transition={{ duration: 0.4, delay: index * 0.1 }}
               >
                 {tier.featured && (
-                  <span className="absolute top-4 right-4 py-1 px-3 bg-gold-700 text-white text-xs font-semibold rounded-full">
+                  <span className="absolute top-4 right-4 py-1 px-3 bg-accent text-white text-xs font-semibold rounded-full">
                     Most Popular
                   </span>
                 )}
-                <h3 className="text-2xl font-bold text-gold-800 mb-2">{tier.name}</h3>
+                <h3 className="text-2xl font-bold text-accent mb-2">{tier.name}</h3>
                 <div className="text-3xl font-extrabold text-foreground mb-6">
                   {tier.price}
                   {tier.price !== "Custom" && <span className="text-base font-normal text-white/50"> /year</span>}
@@ -200,14 +200,14 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
                 <ul className="list-none p-0 m-0 mb-8">
                   {tier.features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="py-3 text-white/70 flex items-center gap-3 border-b border-white/5 last:border-b-0">
-                      <span className="text-gold-700">✓</span>
+                      <span className="text-accent">✓</span>
                       {feature}
                     </li>
                   ))}
                 </ul>
                 <button
-                  className={`w-full py-4 px-8 bg-transparent border border-gold-700/30 rounded-full text-gold-800 font-semibold cursor-pointer transition-all duration-300 hover:bg-gold-700/10 hover:border-gold-700/50 ${
-                    tier.featured ? "bg-gold-700 border-gold-700 text-white hover:bg-gold-800 hover:border-gold-800" : ""
+                  className={`w-full py-4 px-8 bg-transparent border border-accent/30 rounded-full text-accent font-semibold cursor-pointer transition-all duration-300 hover:bg-accent/10 hover:border-accent/50 ${
+                    tier.featured ? "bg-accent border-accent text-white hover:bg-accent/80 hover:border-accent/80" : ""
                   }`}
                 >
                   Get Started
@@ -239,7 +239,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
             >
-              <div className="shrink-0 w-[50px] h-[50px] bg-gold-700/10 rounded-2xl flex items-center justify-center text-2xl md:mx-auto">
+              <div className="shrink-0 w-[50px] h-[50px] bg-accent/10 rounded-2xl flex items-center justify-center text-2xl md:mx-auto">
                 {benefit.icon}
               </div>
               <div>
@@ -252,7 +252,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-8 text-center bg-linear-to-b from-transparent to-gold-700/5">
+      <section className="py-24 px-8 text-center bg-linear-to-b from-transparent to-accent/5">
         <motion.h2
           className="text-[clamp(2rem,4vw,3rem)] font-bold text-foreground mb-4"
           initial={{ opacity: 0, y: 30 }}
@@ -272,7 +272,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
         </motion.p>
         <motion.a
           href={ctaButtonLink}
-          className="inline-flex items-center gap-3 py-4 px-10 bg-linear-to-br from-gold-700 to-gold-600 text-white font-semibold text-lg rounded-full no-underline transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_40px_rgba(180,83,9,0.3)]"
+          className="inline-flex items-center gap-3 py-4 px-10 bg-linear-to-br from-accent to-accent text-white font-semibold text-lg rounded-full no-underline transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_40px_rgba(180,83,9,0.3)]"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
