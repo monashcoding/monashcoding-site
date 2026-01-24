@@ -210,10 +210,7 @@ export function Hero({ data }: HeroProps) {
 
         {/* Dark overlay with slight yellow tint */}
         <div className="absolute inset-0 bg-black/70" />
-        <div className="absolute inset-0 bg-accent/10" />
-
-        {/* Bottom fade to background */}
-        <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-background via-background/80 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-b from-accent/10 via-accent/10 via-70% to-transparent" />
       </div>
 
       {/* Content Container */}
