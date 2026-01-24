@@ -3,6 +3,7 @@ import { heroQuery } from '@/sanity/lib/queries'
 import { HeroData } from '@/lib/sanity/types'
 import { Hero } from '@/components/hero/Hero'
 import { HomeContent } from '@/components/HomeContent'
+import { GlobalRibbons } from '@/components/GlobalRibbons'
 
 async function getHeroData(): Promise<HeroData | null> {
   try {
@@ -18,6 +19,7 @@ export default async function Home() {
 
   return (
     <main className="bg-background">
+      <GlobalRibbons />
       <Hero data={heroData} />
       {/* Temporary test section - remove later */}
       <section className="min-h-screen bg-black flex items-center justify-center">

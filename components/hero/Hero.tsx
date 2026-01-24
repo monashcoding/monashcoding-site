@@ -9,7 +9,6 @@ import { HeroDescription } from '@/lib/sanity/portableText'
 import { urlFor } from '@/sanity/lib/image'
 import CircularText from '@/components/CircularText'
 
-const Ribbons = dynamic(() => import('@/components/Ribbons'), { ssr: false })
 const MacLogo3D = dynamic(() => import('@/components/MacLogo3D'), { ssr: false })
 
 const letterVariants = {
@@ -140,66 +139,47 @@ export function Hero({ data }: HeroProps) {
       className="relative min-h-screen w-full overflow-hidden"
     >
       {/* Full-width Hero Media Background */}
-      <div className="absolute inset-0">
-        <AnimatePresence mode="sync">
-          {heroMedia?.map((media, index) => (
-            <motion.div
-              key={media._key || index}
-              className="absolute inset-0 grayscale"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: index === currentMediaIndex ? 1 : 0 }}
-              transition={{ duration: fadeDuration || 1, ease: 'easeInOut' }}
-            >
-              {isImageMedia(media) ? (
-                <Image
-                  src={getImageUrl(media.image)}
-                  alt={media.alt || 'MAC community'}
-                  fill
-                  className="object-cover"
-                  sizes="100vw"
-                  priority={index === 0}
-                />
-              ) : isVideoMedia(media) ? (
-                <video
-                  ref={(el) => {
-                    if (el) videoRefs.current.set(media._key, el)
-                  }}
-                  src={media.video?.asset?.url}
-                  poster={media.poster ? getImageUrl(media.poster) : undefined}
-                  className="w-full h-full object-cover"
-                  muted
-                  playsInline
-                  onEnded={handleVideoEnd}
-                />
-              ) : null}
-            </motion.div>
-          ))}
-        </AnimatePresence>
+      <div className="absolute inset-0 z-0">
+        {heroMedia?.map((media, index) => (
+          <motion.div
+            key={media._key || index}
+            className="absolute inset-0"
+            style={{ filter: 'grayscale(80%)' }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: index === currentMediaIndex ? 1 : 0 }}
+            transition={{ duration: fadeDuration || 1, ease: 'easeInOut' }}
+          >
+            {isImageMedia(media) ? (
+              <Image
+                src={getImageUrl(media.image)}
+                alt={media.alt || 'MAC community'}
+                fill
+                className="object-cover"
+                sizes="100vw"
+                priority={index === 0}
+              />
+            ) : isVideoMedia(media) ? (
+              <video
+                ref={(el) => {
+                  if (el) videoRefs.current.set(media._key, el)
+                }}
+                src={media.video?.asset?.url}
+                poster={media.poster ? getImageUrl(media.poster) : undefined}
+                className="w-full h-full object-cover"
+                muted
+                playsInline
+                onEnded={handleVideoEnd}
+              />
+            ) : null}
+          </motion.div>
+        ))}
 
-        {/* Dark overlay for contrast */}
-        <div
-          className="absolute inset-0 bg-black/60"
-        />
+        {/* Dark overlay with slight yellow tint */}
+        <div className="absolute inset-0 bg-black/70" />
+        <div className="absolute inset-0 bg-accent/10" />
 
         {/* Bottom fade to background */}
         <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-background via-background/80 to-transparent" />
-      </div>
-
-      {/* Ribbons Mouse Trail Effect - Full screen */}
-      <div className="absolute inset-0 w-full h-full z-10 pointer-events-none">
-        <Ribbons
-          colors={['#FFE330']}
-          baseSpring={0.03}
-          baseFriction={0.9}
-          baseThickness={40}
-          offsetFactor={0}
-          maxAge={500}
-          pointCount={50}
-          speedMultiplier={0.6}
-          enableFade={false}
-          enableShaderEffect={false}
-          effectAmplitude={2}
-        />
       </div>
 
       {/* Content Container */}
@@ -207,10 +187,10 @@ export function Hero({ data }: HeroProps) {
         {/* Logo Section */}
         <div className="flex-1 flex items-center justify-center py-20 lg:py-0">
           <motion.div
+            key="hero-logo"
             className="relative flex items-center justify-center"
-            initial={{ opacity: 0 }}
+            initial={false}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, ease: 'easeOut', delay: 0.3 }}
             onMouseEnter={() => setIsLogoHovered(true)}
             onMouseLeave={() => setIsLogoHovered(false)}
           >

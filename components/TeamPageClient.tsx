@@ -1,7 +1,7 @@
 'use client'
 
-import { motion, AnimatePresence } from 'framer-motion'
-import { useState, useMemo } from 'react'
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion'
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import { urlFor } from '@/sanity/lib/image'
@@ -42,6 +42,9 @@ const TEAM_ORDER: TeamSlug[] = [
 export default function TeamPageClient({ pageData, members }: TeamPageClientProps) {
   const [selectedTeam, setSelectedTeam] = useState<TeamSlug | 'all'>('all')
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null)
+  const sectionRef = useRef<HTMLElement>(null)
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
+  const [isHovering, setIsHovering] = useState(false)
 
   const title = pageData?.pageTitle || 'Meet the Team'
 
@@ -77,21 +80,49 @@ export default function TeamPageClient({ pageData, members }: TeamPageClientProp
   // Get teams that have members
   const activeTeams = TEAM_ORDER.filter((team) => teamGroups[team].length > 0)
 
+  // Mouse tracking for dither effect
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = section.getBoundingClientRect()
+      setMousePos({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+      })
+    }
+
+    const handleMouseEnter = () => setIsHovering(true)
+    const handleMouseLeave = () => setIsHovering(false)
+
+    section.addEventListener('mousemove', handleMouseMove)
+    section.addEventListener('mouseenter', handleMouseEnter)
+    section.addEventListener('mouseleave', handleMouseLeave)
+
+    return () => {
+      section.removeEventListener('mousemove', handleMouseMove)
+      section.removeEventListener('mouseenter', handleMouseEnter)
+      section.removeEventListener('mouseleave', handleMouseLeave)
+    }
+  }, [])
+
   return (
     <main className="relative min-h-screen bg-background">
-      {/* Hero Section with Dither Background - exactly 400px */}
+      {/* Hero Section with Team Photo Background */}
       <section className="relative h-[400px]">
         <div className="absolute inset-0">
-          <Dither
-            waveSpeed={0.03}
-            waveFrequency={3}
-            waveAmplitude={0.3}
-            waveColor={[0.97, 0.89, 0.36]}
-            colorNum={4}
-            pixelSize={2}
-            enableMouseInteraction={true}
-            mouseRadius={0.4}
+          <Image
+            src="/MAC_FULLCOMM-2.tif"
+            alt="MAC Team"
+            fill
+            className="object-cover"
+            priority
           />
+          {/* Yellow tint overlay */}
+          <div className="absolute inset-0 bg-[#FFE330]/40 mix-blend-multiply" />
+          {/* Dark gradient for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/40" />
         </div>
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
           <motion.h1
@@ -99,14 +130,14 @@ export default function TeamPageClient({ pageData, members }: TeamPageClientProp
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            style={{ textShadow: '0 2px 20px rgba(0,0,0,0.3)' }}
+            style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}
           >
             {title}
           </motion.h1>
         </div>
       </section>
 
-      {/* Timeline Section - positioned immediately below dither */}
+      {/* Timeline Section */}
       <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -116,10 +147,31 @@ export default function TeamPageClient({ pageData, members }: TeamPageClientProp
       </motion.section>
 
       {/* Team Filter and Grid Section */}
-      <section className="bg-secondary/30 px-4 py-16">
+      <section ref={sectionRef} className="relative bg-[#252525] px-4 py-16 overflow-hidden">
+        {/* Dither effect following cursor */}
+        <div
+          className="absolute inset-0 pointer-events-none transition-opacity duration-300"
+          style={{
+            opacity: isHovering ? 1 : 0,
+            maskImage: `radial-gradient(circle 300px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 70%)`,
+            WebkitMaskImage: `radial-gradient(circle 300px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 70%)`,
+          }}
+        >
+          <Dither
+            waveSpeed={0.03}
+            waveFrequency={3}
+            waveAmplitude={0.3}
+            waveColor={[0.97, 0.89, 0.36]}
+            colorNum={4}
+            pixelSize={2}
+            enableMouseInteraction={false}
+            mouseRadius={0.4}
+          />
+        </div>
+
         {/* Filter Tabs */}
-        <div className="mx-auto mb-12 max-w-7xl">
-          <div className="flex flex-wrap justify-center gap-2">
+        <div className="relative z-10 mx-auto mb-12 flex justify-center">
+          <div className="inline-flex flex-wrap justify-center gap-2 rounded-2xl bg-[#252525] p-3 shadow-lg">
             <button
               onClick={() => setSelectedTeam('all')}
               className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 ${
@@ -147,23 +199,22 @@ export default function TeamPageClient({ pageData, members }: TeamPageClientProp
         </div>
 
         {/* Team Member Grid */}
-        <div className="mx-auto max-w-7xl">
-          <motion.div
-            className="grid gap-6"
-            style={{
-              gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-            }}
-            layout
-          >
-            <AnimatePresence mode="popLayout">
-              {filteredMembers.map((member, index) => (
+        <div className="relative z-10 mx-auto max-w-7xl">
+          <LayoutGroup>
+            <motion.div
+              layout
+              className="grid gap-6"
+              style={{
+                gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+              }}
+            >
+              {filteredMembers.map((member) => (
                 <motion.div
                   key={member._id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.3, delay: index * 0.03 }}
+                  layoutId={member._id}
+                  initial={false}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.25, ease: 'easeOut' }}
                   onClick={() => setSelectedMember(member)}
                   className="group cursor-pointer overflow-hidden rounded-2xl bg-card border border-white/10 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
                 >
@@ -197,8 +248,8 @@ export default function TeamPageClient({ pageData, members }: TeamPageClientProp
                   </div>
                 </motion.div>
               ))}
-            </AnimatePresence>
-          </motion.div>
+            </motion.div>
+          </LayoutGroup>
 
           {filteredMembers.length === 0 && (
             <div className="py-16 text-center text-foreground/50">
@@ -212,7 +263,7 @@ export default function TeamPageClient({ pageData, members }: TeamPageClientProp
       <AnimatePresence>
         {selectedMember && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-end justify-center bg-white/50 backdrop-blur-sm sm:items-center"
+            className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm sm:items-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
