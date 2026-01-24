@@ -1,4 +1,7 @@
 import { Metadata } from 'next'
+
+// Static generation - revalidated via webhook on Sanity publish
+export const revalidate = false
 import { client } from '@/sanity/lib/client'
 import { teamPageQuery, teamMembersQuery } from '@/sanity/lib/queries'
 import { TeamMember, TeamPageData } from '@/lib/sanity/types'

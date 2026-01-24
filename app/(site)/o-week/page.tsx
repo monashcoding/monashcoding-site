@@ -1,4 +1,7 @@
 import { notFound } from "next/navigation";
+
+// Static generation - revalidated via webhook on Sanity publish
+export const revalidate = false;
 import { client } from "@/sanity/lib/client";
 import { oweekPageQuery } from "@/sanity/lib/queries";
 import { OWeekPageData } from "@/lib/sanity/types";

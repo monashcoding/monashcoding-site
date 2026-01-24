@@ -1,4 +1,7 @@
 import { client } from '@/sanity/lib/client'
+
+// Static generation - revalidated via webhook on Sanity publish
+export const revalidate = false
 import { heroQuery, homepageQuery } from '@/sanity/lib/queries'
 import { HeroData, HomepageData } from '@/lib/sanity/types'
 import { Hero } from '@/components/hero/Hero'

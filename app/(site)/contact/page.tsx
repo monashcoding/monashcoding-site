@@ -1,4 +1,7 @@
 import { client } from "@/sanity/lib/client";
+
+// Static generation - revalidated via webhook on Sanity publish
+export const revalidate = false;
 import { contactPageQuery } from "@/sanity/lib/queries";
 import { ContactPageData } from "@/lib/sanity/types";
 import ContactPageClient from "@/components/ContactPageClient";

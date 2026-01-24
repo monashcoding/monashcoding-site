@@ -1,4 +1,7 @@
 import { client } from "@/sanity/lib/client";
+
+// Static generation - revalidated via webhook on Sanity publish
+export const revalidate = false;
 import { sponsorPageQuery } from "@/sanity/lib/queries";
 import { SponsorPageData } from "@/lib/sanity/types";
 import SponsorPageClient from "@/components/SponsorPageClient";

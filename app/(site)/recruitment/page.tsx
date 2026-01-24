@@ -1,4 +1,7 @@
 import { client } from "@/sanity/lib/client";
+
+// Static generation - revalidated via webhook on Sanity publish
+export const revalidate = false;
 import { recruitmentPageQuery, recruitmentPositionsQuery } from "@/sanity/lib/queries";
 import { RecruitmentPageData, RecruitmentPosition } from "@/lib/sanity/types";
 import RecruitmentPageClient from "@/components/RecruitmentPageClient";
