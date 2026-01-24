@@ -131,7 +131,7 @@ export function HomeContent() {
   return (
     <>
       {/* Story Section */}
-      <section className="min-h-screen py-32 px-8 bg-gradient-to-b from-background to-secondary relative">
+      <section className="min-h-screen py-32 px-8 bg-secondary relative">
         <div className="max-w-[1200px] mx-auto">
           <motion.h2
             className="text-[clamp(2.5rem,5vw,4rem)] font-bold mb-16 text-foreground"
@@ -204,7 +204,7 @@ export function HomeContent() {
       </section>
 
       {/* Sponsors Section */}
-      <section className="min-h-[80vh] py-24 px-8 bg-gradient-to-b from-background to-secondary relative overflow-hidden">
+      <section className="min-h-[80vh] py-24 px-8 bg-secondary relative overflow-hidden">
         <div className="max-w-[1200px] mx-auto text-center">
           <motion.h2
             className="text-[clamp(2rem,4vw,3rem)] font-bold text-foreground"
