@@ -76,10 +76,16 @@ export interface SocialLink {
   href: string
 }
 
+export interface PageVisibility {
+  oWeek: boolean | null
+  firstYearRecruitment: boolean | null
+}
+
 export interface NavigationData {
   navItems: NavItem[]
   socialLinks: SocialLink[]
   circularText: string
+  pageVisibility?: PageVisibility
 }
 
 // Team types
@@ -306,4 +312,18 @@ export type HomepageSection =
 
 export interface HomepageData {
   sections: HomepageSection[]
+}
+
+// O Week Page
+export interface OWeekPageData {
+  shown: boolean
+  pageTitle: string
+  pageSubtitle: string
+}
+
+// First Year Recruitment Page
+export interface FirstYearRecruitmentPageData {
+  shown: boolean
+  pageTitle: string
+  pageSubtitle: string
 }
