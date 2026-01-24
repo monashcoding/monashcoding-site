@@ -153,6 +153,87 @@ export const hero = defineType({
       type: 'string',
       initialValue: 'Scroll',
     }),
+    defineField({
+      name: 'showAnnouncements',
+      title: 'Show Announcements',
+      type: 'boolean',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'announcementCycleDuration',
+      title: 'Announcement Cycle Duration (seconds)',
+      type: 'number',
+      initialValue: 5,
+      validation: (Rule) => Rule.min(3).max(30),
+    }),
+    defineField({
+      name: 'announcements',
+      title: 'Announcements',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          name: 'announcement',
+          fields: [
+            {
+              name: 'message',
+              title: 'Message',
+              type: 'array',
+              of: [
+                {
+                  type: 'block',
+                  styles: [{ title: 'Normal', value: 'normal' }],
+                  lists: [],
+                  marks: {
+                    decorators: [{ title: 'Strong', value: 'strong' }],
+                    annotations: [
+                      {
+                        name: 'link',
+                        type: 'object',
+                        title: 'Link',
+                        fields: [
+                          {
+                            name: 'href',
+                            title: 'URL',
+                            type: 'url',
+                            validation: (Rule) =>
+                              Rule.uri({
+                                allowRelative: true,
+                                scheme: ['http', 'https', 'mailto'],
+                              }),
+                          },
+                          {
+                            name: 'openInNewTab',
+                            title: 'Open in new tab',
+                            type: 'boolean',
+                            initialValue: true,
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
+          preview: {
+            select: {
+              message: 'message',
+            },
+            prepare({ message }) {
+              const text =
+                message?.[0]?.children
+                  ?.map((child: { text?: string }) => child.text)
+                  .join('') || 'Empty announcement'
+              return {
+                title: text.length > 50 ? text.slice(0, 50) + '...' : text,
+              }
+            },
+          },
+        },
+      ],
+      validation: (Rule) => Rule.max(5),
+    }),
   ],
   preview: {
     select: {

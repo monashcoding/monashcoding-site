@@ -27,7 +27,13 @@ export const heroQuery = groq`
     overlayOpacity,
     slideshowInterval,
     fadeDuration,
-    scrollIndicatorText
+    scrollIndicatorText,
+    showAnnouncements,
+    announcementCycleDuration,
+    announcements[] {
+      _key,
+      message
+    }
   }
 `
 
