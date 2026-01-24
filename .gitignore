@@ -43,5 +43,9 @@ next-env.d.ts
 # idea
 .idea
 
-#claude
+# claude
 /.claude
+
+# sanity.io
+/dist
+/.sanity

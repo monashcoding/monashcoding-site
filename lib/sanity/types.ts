@@ -27,16 +27,39 @@ export interface SanityImage {
   }
 }
 
-export interface HeroImage extends SanityImage {
+// Hero Media Types
+export interface HeroImageMedia {
+  _key: string
+  _type: 'heroImage'
+  image: SanityImage
   alt: string
 }
+
+export interface SanityFile {
+  asset: {
+    _id: string
+    url: string
+  }
+}
+
+export interface HeroVideoMedia {
+  _key: string
+  _type: 'heroVideo'
+  video: SanityFile
+  poster?: SanityImage
+  alt: string
+}
+
+export type HeroMedia = HeroImageMedia | HeroVideoMedia
 
 // Hero
 export interface HeroData {
   titleLines: string[]
-  subtitle: string
   description: PortableTextBlock[]
-  heroImage: HeroImage
+  heroMedia: HeroMedia[]
+  overlayOpacity: number
+  slideshowInterval: number
+  fadeDuration: number
   scrollIndicatorText?: string
 }
 

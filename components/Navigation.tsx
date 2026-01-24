@@ -116,6 +116,9 @@ export default function Navigation({ data }: NavigationProps) {
   // Show logo text on all pages except homepage (unless scrolled past hero)
   const showLogoText = !isHomePage || isPastHero;
 
+  // Hide navbar on homepage until scrolled past hero
+  const showNavbar = !isHomePage || isPastHero || isOpen;
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -130,23 +133,24 @@ export default function Navigation({ data }: NavigationProps) {
   return (
     <>
       {/* Fixed header bar */}
-      <motion.header
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 lg:px-12 lg:py-6 pointer-events-none"
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
-      >
-        {/* Logo */}
-        <Link href="/" className="relative z-50 no-underline flex items-center pointer-events-auto">
-          <Image
-            src="/logo/logo.jpg"
-            alt="MAC Logo"
-            width={48}
-            height={48}
-            className="w-12 h-12 rounded-full object-cover transition-transform duration-300 hover:scale-105"
-            priority
-          />
-        </Link>
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between pl-4 pr-6 py-4 lg:pl-10 lg:pr-12 lg:py-6 pointer-events-none">
+        {/* Logo - animates in/out */}
+        <motion.div
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: showNavbar ? 0 : -100, opacity: showNavbar ? 1 : 0 }}
+          transition={{ duration: 0.4, ease: [0.76, 0, 0.24, 1] }}
+        >
+          <Link href="/" className="relative z-50 no-underline flex items-center pointer-events-auto">
+            <Image
+              src="/logo/logo.jpg"
+              alt="MAC Logo"
+              width={48}
+              height={48}
+              className="w-12 h-12 rounded-full object-cover transition-transform duration-300 hover:scale-105"
+              priority
+            />
+          </Link>
+        </motion.div>
 
         {/* Menu Button */}
         <button
@@ -179,10 +183,15 @@ export default function Navigation({ data }: NavigationProps) {
             />
           </div>
         </button>
-      </motion.header>
+      </header>
 
       {/* Circular Text - separate from header for z-index control */}
-      <div className="fixed top-[calc(1rem+24px-45px)] left-[calc(1.5rem+24px-45px)] lg:top-[calc(1.5rem+24px-45px)] lg:left-[calc(3rem+24px-45px)] w-[90px] h-[90px] z-35 flex items-center justify-center pointer-events-none">
+      <motion.div
+        className="fixed top-[calc(1rem+24px-45px)] left-[calc(1rem+24px-45px)] lg:top-[calc(1.5rem+24px-45px)] lg:left-[calc(2.5rem+24px-45px)] w-22.5 h-22.5 z-35 flex items-center justify-center pointer-events-none"
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: showNavbar ? 0 : -100, opacity: showNavbar ? 1 : 0 }}
+        transition={{ duration: 0.4, ease: [0.76, 0, 0.24, 1] }}
+      >
         <CircularText
           text={circularText}
           onHover={undefined}
@@ -190,7 +199,7 @@ export default function Navigation({ data }: NavigationProps) {
           className="absolute inset-0"
           textColor={isTeamPage && !isPastDither ? "text-white" : "text-foreground"}
         />
-      </div>
+      </motion.div>
 
       {/* Full screen navigation overlay */}
       <AnimatePresence>
