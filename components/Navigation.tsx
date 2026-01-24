@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import CircularText from "./CircularText";
-import { NavigationData } from "@/lib/sanity/types";
+import { NavigationData, PageVisibility } from "@/lib/sanity/types";
 import NavPreviewCard from "./navigation/NavPreviewCard";
 import { getPreviewConfig } from "./navigation/navPreviewConfig";
 
@@ -29,7 +29,15 @@ const defaultNavItems: NavItem[] = [
   { label: "Recruitment", href: "/recruitment" },
   { label: "Sponsor Us", href: "/sponsor" },
   { label: "Contact", href: "/contact" },
+  { label: "O Week", href: "/o-week" },
+  { label: "First Year Recruitment", href: "/first-year-recruitment" },
 ];
+
+// Map paths to pageVisibility keys
+const visibilityMap: Record<string, keyof PageVisibility> = {
+  "/o-week": "oWeek",
+  "/first-year-recruitment": "firstYearRecruitment",
+};
 
 const defaultFooterLinks: FooterLink[] = [
   { label: "Instagram", href: "https://instagram.com/monashcoding" },
@@ -117,9 +125,23 @@ export default function Navigation({ data }: NavigationProps) {
   const previewConfig = hoveredItem ? getPreviewConfig(hoveredItem) : null;
 
   // Use Sanity data or fallbacks
-  const navItems: NavItem[] = data?.navItems || defaultNavItems;
+  const rawNavItems: NavItem[] = data?.navItems || defaultNavItems;
   const footerLinks: FooterLink[] = data?.socialLinks || defaultFooterLinks;
   const circularText = data?.circularText || defaultCircularText;
+
+  // Filter nav items based on page visibility
+  const navItems = useMemo(() => {
+    const pageVisibility = data?.pageVisibility;
+    if (!pageVisibility) return rawNavItems;
+
+    return rawNavItems.filter((item) => {
+      const visibilityKey = visibilityMap[item.href];
+      // If no visibility key for this path, always show
+      if (!visibilityKey) return true;
+      // Only show if the page is visible (shown === true)
+      return pageVisibility[visibilityKey] === true;
+    });
+  }, [rawNavItems, data?.pageVisibility]);
 
   useEffect(() => {
     const handleScroll = () => {

@@ -12,6 +12,10 @@ export const navigationQuery = groq`
       label,
       href
     },
-    circularText
+    circularText,
+    "pageVisibility": {
+      "oWeek": *[_type == "oweekPage"][0].shown,
+      "firstYearRecruitment": *[_type == "firstYearRecruitmentPage"][0].shown
+    }
   }
 `
