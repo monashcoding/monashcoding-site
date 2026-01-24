@@ -137,8 +137,54 @@ export function Hero({ data }: HeroProps) {
   return (
     <section
       ref={heroRef}
-      className="relative min-h-screen w-full flex overflow-hidden"
+      className="relative min-h-screen w-full overflow-hidden"
     >
+      {/* Full-width Hero Media Background */}
+      <div className="absolute inset-0">
+        <AnimatePresence mode="sync">
+          {heroMedia?.map((media, index) => (
+            <motion.div
+              key={media._key || index}
+              className="absolute inset-0 grayscale"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: index === currentMediaIndex ? 1 : 0 }}
+              transition={{ duration: fadeDuration || 1, ease: 'easeInOut' }}
+            >
+              {isImageMedia(media) ? (
+                <Image
+                  src={getImageUrl(media.image)}
+                  alt={media.alt || 'MAC community'}
+                  fill
+                  className="object-cover"
+                  sizes="100vw"
+                  priority={index === 0}
+                />
+              ) : isVideoMedia(media) ? (
+                <video
+                  ref={(el) => {
+                    if (el) videoRefs.current.set(media._key, el)
+                  }}
+                  src={media.video?.asset?.url}
+                  poster={media.poster ? getImageUrl(media.poster) : undefined}
+                  className="w-full h-full object-cover"
+                  muted
+                  playsInline
+                  onEnded={handleVideoEnd}
+                />
+              ) : null}
+            </motion.div>
+          ))}
+        </AnimatePresence>
+
+        {/* Dark overlay for contrast */}
+        <div
+          className="absolute inset-0 bg-black/60"
+        />
+
+        {/* Bottom fade to background */}
+        <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-background via-background/80 to-transparent" />
+      </div>
+
       {/* Ribbons Mouse Trail Effect - Full screen */}
       <div className="absolute inset-0 w-full h-full z-10 pointer-events-none">
         <Ribbons
@@ -156,53 +202,10 @@ export function Hero({ data }: HeroProps) {
         />
       </div>
 
-      {/* Left Side: Image with Logo overlay */}
-      <div className="relative w-full h-screen lg:w-1/2 pointer-events-none">
-        {/* Hero Media - Fading slideshow (images and videos) */}
-        <div className="absolute inset-0">
-          <AnimatePresence mode="sync">
-            {heroMedia?.map((media, index) => (
-              <motion.div
-                key={media._key || index}
-                className="absolute inset-0"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: index === currentMediaIndex ? 1 : 0 }}
-                transition={{ duration: fadeDuration || 1, ease: 'easeInOut' }}
-              >
-                {isImageMedia(media) ? (
-                  <Image
-                    src={getImageUrl(media.image)}
-                    alt={media.alt || 'MAC community'}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    priority={index === 0}
-                  />
-                ) : isVideoMedia(media) ? (
-                  <video
-                    ref={(el) => {
-                      if (el) videoRefs.current.set(media._key, el)
-                    }}
-                    src={media.video?.asset?.url}
-                    poster={media.poster ? getImageUrl(media.poster) : undefined}
-                    className="w-full h-full object-cover"
-                    muted
-                    playsInline
-                    onEnded={handleVideoEnd}
-                  />
-                ) : null}
-              </motion.div>
-            ))}
-          </AnimatePresence>
-          {/* Gradient overlay for better contrast */}
-          <div
-            className="absolute inset-0 bg-black"
-            style={{ opacity: (overlayOpacity ?? 40) / 100 }}
-          />
-        </div>
-
-        {/* Centered Logo with Spinning Text */}
-        <div className="absolute inset-0 flex items-center justify-center z-20">
+      {/* Content Container */}
+      <div className="relative z-20 min-h-screen flex flex-col lg:flex-row items-center justify-center">
+        {/* Logo Section */}
+        <div className="flex-1 flex items-center justify-center py-20 lg:py-0">
           <motion.div
             className="relative flex items-center justify-center"
             initial={{ opacity: 0 }}
@@ -226,110 +229,106 @@ export function Hero({ data }: HeroProps) {
             <MacLogo3D className="w-48 h-64 md:w-64 md:h-80 lg:w-72 lg:h-96 drop-shadow-2xl pointer-events-none" />
           </motion.div>
         </div>
+
+        {/* Text Content Section - Desktop */}
+        <div className="hidden lg:flex flex-1 items-center justify-center px-8">
+          <div className="max-w-xl xl:max-w-2xl">
+            {/* Title */}
+            <h1 className="text-[clamp(3rem,5vw,5rem)] font-extrabold tracking-tight leading-[1.1] text-white">
+              {titleLines.map((line, lineIndex) => {
+                const charOffset = titleLines.slice(0, lineIndex).join('').length
+                return (
+                  <span key={lineIndex} className="block">
+                    {line.split('').map((char, i) => (
+                      <motion.span
+                        key={`l${lineIndex}-${i}`}
+                        custom={charOffset + i}
+                        variants={letterVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="inline-block"
+                      >
+                        {char === ' ' ? '\u00A0' : char}
+                      </motion.span>
+                    ))}
+                  </span>
+                )
+              })}
+            </h1>
+
+            {/* Description */}
+            <motion.div
+              className="text-base text-white/70 leading-relaxed mt-8 xl:text-lg"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 0.6 }}
+            >
+              {hasDescription ? (
+                <HeroDescription value={description} />
+              ) : (
+                <FallbackDescription />
+              )}
+            </motion.div>
+          </div>
+        </div>
       </div>
 
-      {/* Right Side: Content */}
-      <div className="hidden lg:flex items-center justify-center w-1/2 h-screen bg-[radial-gradient(ellipse_at_top_left,#252525_0%,#252525_50%)] relative">
-        {/* Content */}
-        <div className="relative z-30 flex flex-col justify-center px-8 max-w-xl xl:max-w-2xl pointer-events-none">
-          {/* Title */}
-          <h1 className="text-[clamp(3rem,5vw,5rem)] font-extrabold tracking-tight leading-[1.1] text-foreground">
-            {titleLines.map((line, lineIndex) => {
-              const charOffset = titleLines.slice(0, lineIndex).join('').length
-              return (
-                <span key={lineIndex} className="block">
-                  {line.split('').map((char, i) => (
-                    <motion.span
-                      key={`l${lineIndex}-${i}`}
-                      custom={charOffset + i}
-                      variants={letterVariants}
-                      initial="hidden"
-                      animate="visible"
-                      className="inline-block"
-                    >
-                      {char === ' ' ? '\u00A0' : char}
-                    </motion.span>
-                  ))}
-                </span>
-              )
-            })}
-          </h1>
+      {/* Mobile Text Content */}
+      <div className="lg:hidden absolute bottom-0 left-0 right-0 z-30 p-6 bg-gradient-to-t from-background via-background/90 to-transparent">
+        {/* Title */}
+        <h1 className="text-[clamp(2rem,8vw,3rem)] font-extrabold tracking-tight leading-[1.1] text-white">
+          {titleLines.map((line, lineIndex) => {
+            const charOffset = titleLines.slice(0, lineIndex).join('').length
+            return (
+              <span key={lineIndex} className="block">
+                {line.split('').map((char, i) => (
+                  <motion.span
+                    key={`l${lineIndex}-${i}`}
+                    custom={charOffset + i}
+                    variants={letterVariants}
+                    initial="hidden"
+                    animate="visible"
+                    className="inline-block"
+                  >
+                    {char === ' ' ? '\u00A0' : char}
+                  </motion.span>
+                ))}
+              </span>
+            )
+          })}
+        </h1>
 
-          {/* Description */}
-          <motion.div
-            className="text-base text-white/70 leading-relaxed mt-8 max-w-lg xl:text-lg xl:max-w-xl"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.6 }}
-          >
-            {hasDescription ? (
-              <HeroDescription value={description} />
-            ) : (
-              <FallbackDescription />
-            )}
-          </motion.div>
-        </div>
-
-        {/* Scroll Indicator */}
+        {/* Description */}
         <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50 z-20 pointer-events-none"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 0.6 }}
+          className="text-sm text-white/80 leading-relaxed mt-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8, duration: 0.6 }}
         >
-          <span className="text-xs tracking-[0.2em] uppercase">
-            {scrollIndicatorText || 'Scroll'}
-          </span>
-          <motion.div
-            className="w-px h-15 bg-linear-to-b from-white/50 to-transparent"
-            animate={prefersReducedMotion ? {} : { scaleY: [1, 0.5, 1] }}
-            transition={prefersReducedMotion ? {} : { duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-          />
+          {hasDescription ? (
+            <HeroDescription value={description} />
+          ) : (
+            <FallbackDescription className="text-white/80" />
+          )}
         </motion.div>
       </div>
 
-      {/* Mobile Layout - Stacked */}
-      <div className="lg:hidden absolute inset-0 flex flex-col">
-        {/* Mobile content overlay on image */}
-        <div className="absolute bottom-0 left-0 right-0 z-30 p-6 bg-linear-to-t from-black/80 via-black/50 to-transparent">
-          {/* Title */}
-          <h1 className="text-[clamp(2rem,8vw,3rem)] font-extrabold tracking-tight leading-[1.1] text-white">
-            {titleLines.map((line, lineIndex) => {
-              const charOffset = titleLines.slice(0, lineIndex).join('').length
-              return (
-                <span key={lineIndex} className="block">
-                  {line.split('').map((char, i) => (
-                    <motion.span
-                      key={`l${lineIndex}-${i}`}
-                      custom={charOffset + i}
-                      variants={letterVariants}
-                      initial="hidden"
-                      animate="visible"
-                      className="inline-block"
-                    >
-                      {char === ' ' ? '\u00A0' : char}
-                    </motion.span>
-                  ))}
-                </span>
-              )
-            })}
-          </h1>
-
-          {/* Description */}
-          <motion.div
-            className="text-sm text-white/80 leading-relaxed mt-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.6 }}
-          >
-            {hasDescription ? (
-              <HeroDescription value={description} />
-            ) : (
-              <FallbackDescription className="text-white/80" />
-            )}
-          </motion.div>
-        </div>
-      </div>
+      {/* Scroll Indicator */}
+      <motion.div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50 z-30 pointer-events-none"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5, duration: 0.6 }}
+      >
+        <span className="text-xs tracking-[0.2em] uppercase">
+          {scrollIndicatorText || 'Scroll'}
+        </span>
+        <motion.div
+          className="w-px h-15 bg-gradient-to-b from-white/50 to-transparent"
+          animate={prefersReducedMotion ? {} : { scaleY: [1, 0.5, 1] }}
+          transition={prefersReducedMotion ? {} : { duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+        />
+      </motion.div>
     </section>
   )
 }
