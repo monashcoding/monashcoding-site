@@ -6,37 +6,42 @@
 @theme {
   --radius: 0.625rem;
 
-  /* Colors */
-  --color-background: #deddda;
-  --color-foreground: #1a1a1a;
-  --color-card: #e8e7e4;
-  --color-card-foreground: #1a1a1a;
-  --color-popover: #e8e7e4;
-  --color-popover-foreground: #1a1a1a;
-  --color-primary: #1a1a1a;
-  --color-primary-foreground: #deddda;
-  --color-secondary: #c9c8c5;
-  --color-secondary-foreground: #1a1a1a;
-  --color-muted: #c9c8c5;
-  --color-muted-foreground: #6b6b6b;
-  --color-accent: #FFD700;
-  --color-accent-foreground: #1a1a1a;
+  /* MAC Dark Theme Colors */
+  --color-background: #252525;
+  --color-foreground: #FFFFFF;
+  --color-card: #252525;
+  --color-card-foreground: #FFFFFF;
+  --color-popover: #252525;
+  --color-popover-foreground: #FFFFFF;
+  --color-primary: #FFFFFF;
+  --color-primary-foreground: #252525;
+  --color-secondary: #FFE330;
+  --color-secondary-foreground: #252525;
+  --color-muted: #252525;
+  --color-muted-foreground: #a0a0a0;
+  --color-accent: #FFE330;
+  --color-accent-foreground: #252525;
   --color-destructive: #dc2626;
-  --color-border: #b8b7b4;
-  --color-input: #c9c8c5;
-  --color-ring: #1a1a1a;
+  --color-border: #404040;
+  --color-input: #252525;
+  --color-ring: #FFE330;
 
-  /* Gold palette */
-  --color-gold-50: #fffbeb;
-  --color-gold-100: #fef3c7;
-  --color-gold-200: #fde68a;
-  --color-gold-300: #fcd34d;
-  --color-gold-400: #fbbf24;
-  --color-gold-500: #FFD700;
-  --color-gold-600: #d97706;
-  --color-gold-700: #b45309;
-  --color-gold-800: #92400e;
-  --color-gold-900: #78350f;
+  /* MAC Yellow palette - based on #FFE330 */
+  --color-gold-50: #fffef5;
+  --color-gold-100: #fffce6;
+  --color-gold-200: #fff8cc;
+  --color-gold-300: #fff299;
+  --color-gold-400: #ffeb66;
+  --color-gold-500: #FFE330;
+  --color-gold-600: #FFE330;
+  --color-gold-700: #FFE330;
+  --color-gold-800: #FFE330;
+  --color-gold-900: #FFE330;
+
+  /* MAC Blue */
+  --color-blue: #5757D3;
+  --color-blue-light: #7070e0;
+  --color-blue-dark: #4545a8;
 
   /* Font sizes */
   --font-size-nav-link: clamp(3rem, 6vw, 5rem);
@@ -64,6 +69,6 @@
 
 /* Selection color */
 ::selection {
-  background: #FFD700;
-  color: #1a1a1a;
+  background: #FFE330;
+  color: #252525;
 }

@@ -30,3 +30,57 @@ export const heroQuery = groq`
     scrollIndicatorText
   }
 `
+
+export const homepageQuery = groq`
+  *[_type == "homepage"][0] {
+    sections[] {
+      _key,
+      _type,
+      // Story section
+      _type == "storySection" => {
+        heading,
+        items[] {
+          _key,
+          year,
+          title,
+          content
+        }
+      },
+      // Instagram section
+      _type == "instagramSection" => {
+        heading,
+        handle,
+        url,
+        postCount
+      },
+      // Sponsors section
+      _type == "sponsorsSection" => {
+        heading,
+        description,
+        sponsors[] {
+          _key,
+          name,
+          x,
+          y
+        }
+      },
+      // Footer section
+      _type == "footerSection" => {
+        brandName,
+        tagline,
+        columns[] {
+          _key,
+          title,
+          links[] {
+            _key,
+            label,
+            url,
+            isExternal
+          }
+        },
+        instagramUrl,
+        linkedinUrl
+      }
+    }
+  }
+`

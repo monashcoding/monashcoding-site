@@ -108,7 +108,7 @@ function YearMenuItem({
       {/* Year Menu Item */}
       <div
         ref={itemRef}
-        className="relative h-20 overflow-hidden border-t border-black/10 first:border-t-0"
+        className="relative h-20 overflow-hidden border-t border-white/10 first:border-t-0"
       >
         <button
           className="flex h-full w-full cursor-pointer items-center justify-center text-[clamp(1.5rem,5vw,2.5rem)] font-semibold text-foreground uppercase"
@@ -130,7 +130,7 @@ function YearMenuItem({
         <div
           ref={marqueeRef}
           className="pointer-events-none absolute inset-0 overflow-hidden"
-          style={{ transform: 'translate3d(0, 101%, 0)', backgroundColor: '#f8e45c' }}
+          style={{ transform: 'translate3d(0, 101%, 0)', backgroundColor: '#FFE330' }}
         >
           <div className="flex h-full w-full items-center overflow-hidden">
             <div
@@ -141,10 +141,10 @@ function YearMenuItem({
               {[...Array(repetitions)].map((_, idx) => (
                 <div
                   key={idx}
-                  className="marquee__part flex shrink-0 items-center px-8 text-[clamp(1.5rem,5vw,2.5rem)] font-semibold text-black uppercase"
+                  className="marquee__part flex shrink-0 items-center px-8 text-[clamp(1.5rem,5vw,2.5rem)] font-semibold text-[#252525] uppercase"
                 >
                   <span>{year}</span>
-                  <span className="mx-4 text-black/60">•</span>
+                  <span className="mx-4 text-[#252525]/60">•</span>
                   <span className="text-[clamp(1rem,3vw,1.5rem)] font-normal normal-case">
                     {events.length} milestone{events.length !== 1 ? 's' : ''}
                   </span>
@@ -239,7 +239,7 @@ function EventsGrid({ events }: { events: TimelineEvent[] }) {
   return (
     <div
       ref={rootRef}
-      className="events-grid relative grid w-full gap-4 bg-secondary/50 p-6 md:p-8"
+      className="events-grid relative grid w-full gap-4 bg-[#252525] p-6 md:p-8"
       style={
         {
           '--x': '50%',
@@ -254,14 +254,14 @@ function EventsGrid({ events }: { events: TimelineEvent[] }) {
       {events.map((event, i) => (
         <motion.article
           key={event._key}
-          className="event-card relative flex flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm"
+          className="event-card relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-card shadow-sm"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: i * 0.1 }}
           onMouseMove={handleCardMove}
           style={
             {
-              '--card-border': '#f8e45c',
+              '--card-border': '#FFE330',
               '--mouse-x': '50%',
               '--mouse-y': '50%',
             } as React.CSSProperties
@@ -286,33 +286,33 @@ function EventsGrid({ events }: { events: TimelineEvent[] }) {
           </div>
         </motion.article>
       ))}
-      {/* Chroma overlay */}
+      {/* Chroma overlay - yellow tint around cursor */}
       <div
         ref={chromaRef}
         className="pointer-events-none absolute inset-0 z-20"
         style={{
-          backdropFilter: 'grayscale(1) brightness(1.1)',
-          WebkitBackdropFilter: 'grayscale(1) brightness(1.1)',
-          background: 'rgba(255, 255, 255, 0.001)',
+          backdropFilter: 'sepia(1) saturate(2) hue-rotate(10deg) brightness(1.1)',
+          WebkitBackdropFilter: 'sepia(1) saturate(2) hue-rotate(10deg) brightness(1.1)',
+          background: 'rgba(255, 227, 48, 0.001)',
           maskImage:
-            'radial-gradient(circle var(--r) at var(--x) var(--y), transparent 0%, transparent 15%, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0.22) 45%, rgba(0, 0, 0, 0.35) 60%, rgba(0, 0, 0, 0.5) 75%, rgba(0, 0, 0, 0.68) 88%, white 100%)',
+            'radial-gradient(circle var(--r) at var(--x) var(--y), white 0%, white 15%, rgba(255, 255, 255, 0.9) 30%, rgba(255, 255, 255, 0.78) 45%, rgba(255, 255, 255, 0.65) 60%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.32) 88%, transparent 100%)',
           WebkitMaskImage:
-            'radial-gradient(circle var(--r) at var(--x) var(--y), transparent 0%, transparent 15%, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0.22) 45%, rgba(0, 0, 0, 0.35) 60%, rgba(0, 0, 0, 0.5) 75%, rgba(0, 0, 0, 0.68) 88%, white 100%)',
+            'radial-gradient(circle var(--r) at var(--x) var(--y), white 0%, white 15%, rgba(255, 255, 255, 0.9) 30%, rgba(255, 255, 255, 0.78) 45%, rgba(255, 255, 255, 0.65) 60%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.32) 88%, transparent 100%)',
           opacity: 0,
         }}
       />
-      {/* Fade overlay */}
+      {/* Fade overlay - yellow tint fades when cursor leaves */}
       <div
         ref={fadeRef}
         className="pointer-events-none absolute inset-0 z-30"
         style={{
-          backdropFilter: 'grayscale(1) brightness(1.1)',
-          WebkitBackdropFilter: 'grayscale(1) brightness(1.1)',
-          background: 'rgba(255, 255, 255, 0.001)',
+          backdropFilter: 'sepia(1) saturate(2) hue-rotate(10deg) brightness(1.1)',
+          WebkitBackdropFilter: 'sepia(1) saturate(2) hue-rotate(10deg) brightness(1.1)',
+          background: 'rgba(255, 227, 48, 0.001)',
           maskImage:
-            'radial-gradient(circle var(--r) at var(--x) var(--y), white 0%, white 15%, rgba(255, 255, 255, 0.9) 30%, rgba(255, 255, 255, 0.78) 45%, rgba(255, 255, 255, 0.65) 60%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.32) 88%, transparent 100%)',
+            'radial-gradient(circle var(--r) at var(--x) var(--y), transparent 0%, transparent 15%, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0.22) 45%, rgba(0, 0, 0, 0.35) 60%, rgba(0, 0, 0, 0.5) 75%, rgba(0, 0, 0, 0.68) 88%, white 100%)',
           WebkitMaskImage:
-            'radial-gradient(circle var(--r) at var(--x) var(--y), white 0%, white 15%, rgba(255, 255, 255, 0.9) 30%, rgba(255, 255, 255, 0.78) 45%, rgba(255, 255, 255, 0.65) 60%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.32) 88%, transparent 100%)',
+            'radial-gradient(circle var(--r) at var(--x) var(--y), transparent 0%, transparent 15%, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0.22) 45%, rgba(0, 0, 0, 0.35) 60%, rgba(0, 0, 0, 0.5) 75%, rgba(0, 0, 0, 0.68) 88%, white 100%)',
           opacity: 0,
         }}
       />
@@ -411,7 +411,7 @@ function HeaderItem({ text }: { text: string }) {
       <div
         ref={marqueeRef}
         className="pointer-events-none absolute inset-0 overflow-hidden"
-        style={{ transform: 'translate3d(0, 101%, 0)', backgroundColor: '#f8e45c' }}
+        style={{ transform: 'translate3d(0, 101%, 0)', backgroundColor: '#FFE330' }}
       >
         <div className="flex h-full w-full items-center overflow-hidden">
           <div
@@ -422,10 +422,10 @@ function HeaderItem({ text }: { text: string }) {
             {[...Array(repetitions)].map((_, idx) => (
               <div
                 key={idx}
-                className="marquee__part flex shrink-0 items-center px-8 text-[clamp(1.5rem,5vw,2.5rem)] font-semibold text-black uppercase"
+                className="marquee__part flex shrink-0 items-center px-8 text-[clamp(1.5rem,5vw,2.5rem)] font-semibold text-[#252525] uppercase"
               >
                 <span>{text}</span>
-                <span className="mx-6 text-black/40">✦</span>
+                <span className="mx-6 text-[#252525]/40">✦</span>
               </div>
             ))}
           </div>
@@ -465,7 +465,7 @@ export default function Timeline({ events }: TimelineProps) {
   }
 
   return (
-    <div className="w-full overflow-hidden bg-white/80 backdrop-blur-sm border-y border-black/10">
+    <div className="w-full overflow-hidden bg-card/80 backdrop-blur-sm border-y border-white/10">
       <HeaderItem text="Our Journey" />
       {yearGroups.map((group) => (
         <YearMenuItem

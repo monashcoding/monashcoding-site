@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { SponsorPageData, Stat, SponsorTier, Benefit } from "@/lib/sanity/types";
+import { RibbonAwareSection } from "@/components/RibbonAwareSection";
 
 // Fallback data
 const defaultStats: Stat[] = [
@@ -114,9 +115,12 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
   const ctaButtonLink = data?.ctaButtonLink || "/contact";
 
   return (
-    <main className="min-h-screen bg-linear-to-b from-background to-secondary pt-32">
+    <main className="min-h-screen pt-32">
       {/* Hero Section */}
-      <section className="py-16 px-8 pb-24 text-center">
+      <RibbonAwareSection
+        backgroundClassName="bg-linear-to-b from-background to-secondary"
+        contentClassName="py-16 px-8 pb-24 text-center"
+      >
         <motion.h1
           className="text-[clamp(3rem,6vw,5rem)] font-extrabold text-foreground mb-4"
           initial={{ opacity: 0, y: 40 }}
@@ -126,36 +130,42 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
           {pageTitle}
         </motion.h1>
         <motion.p
-          className="text-xl text-black/60 max-w-[700px] mx-auto leading-relaxed"
+          className="text-xl text-white/60 max-w-[700px] mx-auto leading-relaxed"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
           {pageSubtitle}
         </motion.p>
-      </section>
+      </RibbonAwareSection>
 
       {/* Stats Section */}
-      <section className="py-16 px-8 max-w-[1200px] mx-auto">
+      <RibbonAwareSection
+        backgroundClassName="bg-secondary"
+        contentClassName="py-16 px-8 max-w-[1200px] mx-auto"
+      >
         <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-8">
           {stats.map((stat, index) => (
             <motion.div
               key={stat._key}
-              className="text-center p-8 bg-white/50 border border-black/10 rounded-3xl"
+              className="text-center p-8 bg-white/5 border border-white/10 rounded-3xl"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
             >
-              <div className="text-5xl font-extrabold text-gold-700 mb-2">{stat.value}</div>
-              <div className="text-black/60">{stat.label}</div>
+              <div className="text-5xl font-extrabold text-accent mb-2">{stat.value}</div>
+              <div className="text-white/60">{stat.label}</div>
             </motion.div>
           ))}
         </div>
-      </section>
+      </RibbonAwareSection>
 
       {/* Tiers Section */}
-      <section className="py-24 px-8 bg-gold-700/[0.03]">
+      <RibbonAwareSection
+        backgroundClassName="bg-accent/[0.03]"
+        contentClassName="py-24 px-8"
+      >
         <div className="max-w-[1200px] mx-auto">
           <motion.h2
             className="text-4xl font-bold text-foreground mb-4 text-center"
@@ -166,7 +176,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
             {tiersTitle}
           </motion.h2>
           <motion.p
-            className="text-black/60 text-center max-w-[600px] mx-auto mb-12"
+            className="text-white/60 text-center max-w-[600px] mx-auto mb-12"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -179,8 +189,8 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
             {tiers.map((tier, index) => (
               <motion.div
                 key={tier._key}
-                className={`p-10 bg-white/50 border border-black/10 rounded-3xl transition-all duration-300 relative overflow-hidden hover:border-gold-700/30 hover:-translate-y-1 ${
-                  tier.featured ? "border-gold-700/40 bg-linear-to-br from-gold-700/[0.08] to-gold-700/[0.02]" : ""
+                className={`p-10 bg-white/5 border border-white/10 rounded-3xl transition-all duration-300 relative overflow-hidden hover:border-accent/30 hover:-translate-y-1 ${
+                  tier.featured ? "border-accent/40 bg-linear-to-br from-accent/[0.08] to-accent/[0.02]" : ""
                 }`}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -188,26 +198,26 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
                 transition={{ duration: 0.4, delay: index * 0.1 }}
               >
                 {tier.featured && (
-                  <span className="absolute top-4 right-4 py-1 px-3 bg-gold-700 text-white text-xs font-semibold rounded-full">
+                  <span className="absolute top-4 right-4 py-1 px-3 bg-accent text-white text-xs font-semibold rounded-full">
                     Most Popular
                   </span>
                 )}
-                <h3 className="text-2xl font-bold text-gold-800 mb-2">{tier.name}</h3>
+                <h3 className="text-2xl font-bold text-accent mb-2">{tier.name}</h3>
                 <div className="text-3xl font-extrabold text-foreground mb-6">
                   {tier.price}
-                  {tier.price !== "Custom" && <span className="text-base font-normal text-black/50"> /year</span>}
+                  {tier.price !== "Custom" && <span className="text-base font-normal text-white/50"> /year</span>}
                 </div>
                 <ul className="list-none p-0 m-0 mb-8">
                   {tier.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="py-3 text-black/70 flex items-center gap-3 border-b border-black/5 last:border-b-0">
-                      <span className="text-gold-700">✓</span>
+                    <li key={featureIndex} className="py-3 text-white/70 flex items-center gap-3 border-b border-white/5 last:border-b-0">
+                      <span className="text-accent">✓</span>
                       {feature}
                     </li>
                   ))}
                 </ul>
                 <button
-                  className={`w-full py-4 px-8 bg-transparent border border-gold-700/30 rounded-full text-gold-800 font-semibold cursor-pointer transition-all duration-300 hover:bg-gold-700/10 hover:border-gold-700/50 ${
-                    tier.featured ? "bg-gold-700 border-gold-700 text-white hover:bg-gold-800 hover:border-gold-800" : ""
+                  className={`w-full py-4 px-8 bg-transparent border border-accent/30 rounded-full text-accent font-semibold cursor-pointer transition-all duration-300 hover:bg-accent/10 hover:border-accent/50 ${
+                    tier.featured ? "bg-accent border-accent text-white hover:bg-accent/80 hover:border-accent/80" : ""
                   }`}
                 >
                   Get Started
@@ -216,10 +226,13 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
             ))}
           </div>
         </div>
-      </section>
+      </RibbonAwareSection>
 
       {/* Benefits Section */}
-      <section className="py-24 px-8 max-w-[1000px] mx-auto">
+      <RibbonAwareSection
+        backgroundClassName="bg-secondary"
+        contentClassName="py-24 px-8 max-w-[1000px] mx-auto"
+      >
         <motion.h2
           className="text-4xl font-bold text-foreground mb-8 text-center"
           initial={{ opacity: 0, y: 20 }}
@@ -239,20 +252,23 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
             >
-              <div className="shrink-0 w-[50px] h-[50px] bg-gold-700/10 rounded-2xl flex items-center justify-center text-2xl md:mx-auto">
+              <div className="shrink-0 w-[50px] h-[50px] bg-accent/10 rounded-2xl flex items-center justify-center text-2xl md:mx-auto">
                 {benefit.icon}
               </div>
               <div>
                 <h3 className="text-xl font-semibold text-foreground mb-2">{benefit.title}</h3>
-                <p className="text-black/60 leading-relaxed">{benefit.description}</p>
+                <p className="text-white/60 leading-relaxed">{benefit.description}</p>
               </div>
             </motion.div>
           ))}
         </div>
-      </section>
+      </RibbonAwareSection>
 
       {/* CTA Section */}
-      <section className="py-24 px-8 text-center bg-linear-to-b from-transparent to-gold-700/5">
+      <RibbonAwareSection
+        backgroundClassName="bg-linear-to-b from-transparent to-accent/5"
+        contentClassName="py-24 px-8 text-center"
+      >
         <motion.h2
           className="text-[clamp(2rem,4vw,3rem)] font-bold text-foreground mb-4"
           initial={{ opacity: 0, y: 30 }}
@@ -262,7 +278,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
           {ctaTitle}
         </motion.h2>
         <motion.p
-          className="text-black/60 max-w-[500px] mx-auto mb-8"
+          className="text-white/60 max-w-[500px] mx-auto mb-8"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -272,7 +288,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
         </motion.p>
         <motion.a
           href={ctaButtonLink}
-          className="inline-flex items-center gap-3 py-4 px-10 bg-linear-to-br from-gold-700 to-gold-600 text-white font-semibold text-lg rounded-full no-underline transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_40px_rgba(180,83,9,0.3)]"
+          className="inline-flex items-center gap-3 py-4 px-10 bg-linear-to-br from-accent to-accent text-white font-semibold text-lg rounded-full no-underline transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_40px_rgba(180,83,9,0.3)]"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -285,7 +301,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
         </motion.a>
-      </section>
+      </RibbonAwareSection>
     </main>
   );
 }

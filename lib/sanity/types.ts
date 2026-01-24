@@ -235,3 +235,75 @@ export interface ContactPageData {
   locationMapLink: string
   socialLinks: ContactSocialLink[]
 }
+
+// Homepage Sections
+export interface StoryItem {
+  _key: string
+  year: string
+  title: string
+  content: string
+}
+
+export interface StorySectionData {
+  _key: string
+  _type: 'storySection'
+  heading: string
+  items: StoryItem[]
+}
+
+export interface InstagramSectionData {
+  _key: string
+  _type: 'instagramSection'
+  heading: string
+  handle: string
+  url: string
+  postCount: number
+}
+
+export interface Sponsor {
+  _key: string
+  name: string
+  x: number
+  y: number
+}
+
+export interface SponsorsSectionData {
+  _key: string
+  _type: 'sponsorsSection'
+  heading: string
+  description: string
+  sponsors: Sponsor[]
+}
+
+export interface FooterLink {
+  _key: string
+  label: string
+  url: string
+  isExternal: boolean
+}
+
+export interface FooterColumn {
+  _key: string
+  title: string
+  links: FooterLink[]
+}
+
+export interface FooterSectionData {
+  _key: string
+  _type: 'footerSection'
+  brandName: string
+  tagline: string
+  columns: FooterColumn[]
+  instagramUrl?: string
+  linkedinUrl?: string
+}
+
+export type HomepageSection =
+  | StorySectionData
+  | InstagramSectionData
+  | SponsorsSectionData
+  | FooterSectionData
+
+export interface HomepageData {
+  sections: HomepageSection[]
+}
