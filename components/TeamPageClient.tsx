@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic'
 import { urlFor } from '@/sanity/lib/image'
 import { TeamMember, TeamPageData, TeamSlug } from '@/lib/sanity/types'
 import Timeline from '@/components/team/Timeline'
+import { RibbonAwareSection } from '@/components/RibbonAwareSection'
 
 const Dither = dynamic(() => import('@/components/Dither'), { ssr: false })
 
@@ -110,8 +111,12 @@ export default function TeamPageClient({ pageData, members }: TeamPageClientProp
   return (
     <main className="relative min-h-screen bg-background">
       {/* Hero Section with Team Photo Background */}
-      <section className="relative h-[400px]">
-        <div className="absolute inset-0">
+      <RibbonAwareSection
+        className="h-[400px]"
+        backgroundClassName="bg-black"
+        contentClassName="h-full"
+      >
+        <div className="absolute inset-0 z-0">
           <Image
             src="/MAC_FULLCOMM-2.tif"
             alt="MAC Team"
@@ -135,129 +140,140 @@ export default function TeamPageClient({ pageData, members }: TeamPageClientProp
             {title}
           </motion.h1>
         </div>
-      </section>
+      </RibbonAwareSection>
 
       {/* Timeline Section */}
-      <motion.section
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.3 }}
+      <RibbonAwareSection
+        as="div"
+        backgroundClassName="bg-background"
       >
-        <Timeline events={pageData?.timeline || []} />
-      </motion.section>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          <Timeline events={pageData?.timeline || []} />
+        </motion.div>
+      </RibbonAwareSection>
 
       {/* Team Filter and Grid Section */}
-      <section ref={sectionRef} className="relative bg-[#252525] px-4 py-16 overflow-hidden">
-        {/* Dither effect following cursor */}
-        <div
-          className="absolute inset-0 pointer-events-none transition-opacity duration-300"
-          style={{
-            opacity: isHovering ? 1 : 0,
-            maskImage: `radial-gradient(circle 300px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 70%)`,
-            WebkitMaskImage: `radial-gradient(circle 300px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 70%)`,
-          }}
-        >
-          <Dither
-            waveSpeed={0.03}
-            waveFrequency={3}
-            waveAmplitude={0.3}
-            waveColor={[0.97, 0.89, 0.36]}
-            colorNum={4}
-            pixelSize={2}
-            enableMouseInteraction={false}
-            mouseRadius={0.4}
-          />
-        </div>
+      <RibbonAwareSection
+        className="overflow-hidden"
+        backgroundClassName="bg-[#252525]"
+        contentClassName="px-4 py-16"
+      >
+        <div ref={sectionRef} className="relative">
+          {/* Dither effect following cursor */}
+          <div
+            className="absolute inset-0 pointer-events-none transition-opacity duration-300 -z-10"
+            style={{
+              opacity: isHovering ? 1 : 0,
+              maskImage: `radial-gradient(circle 300px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 70%)`,
+              WebkitMaskImage: `radial-gradient(circle 300px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 70%)`,
+            }}
+          >
+            <Dither
+              waveSpeed={0.03}
+              waveFrequency={3}
+              waveAmplitude={0.3}
+              waveColor={[0.97, 0.89, 0.36]}
+              colorNum={4}
+              pixelSize={2}
+              enableMouseInteraction={false}
+              mouseRadius={0.4}
+            />
+          </div>
 
-        {/* Filter Tabs */}
-        <div className="relative z-10 mx-auto mb-12 flex justify-center">
-          <div className="inline-flex flex-wrap justify-center gap-2 rounded-2xl bg-[#252525] p-3 shadow-lg">
-            <button
-              onClick={() => setSelectedTeam('all')}
-              className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 ${
-                selectedTeam === 'all'
-                  ? 'bg-[#FFE330] text-black'
-                  : 'bg-white/10 text-foreground hover:bg-white/20'
-              }`}
-            >
-              All
-            </button>
-            {activeTeams.map((team) => (
+          {/* Filter Tabs */}
+          <div className="relative mx-auto mb-12 flex justify-center">
+            <div className="inline-flex flex-wrap justify-center gap-2 rounded-2xl bg-[#252525] p-3 shadow-lg">
               <button
-                key={team}
-                onClick={() => setSelectedTeam(team)}
+                onClick={() => setSelectedTeam('all')}
                 className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 ${
-                  selectedTeam === team
+                  selectedTeam === 'all'
                     ? 'bg-[#FFE330] text-black'
                     : 'bg-white/10 text-foreground hover:bg-white/20'
                 }`}
               >
-                {TEAM_LABELS[team]}
+                All
               </button>
-            ))}
+              {activeTeams.map((team) => (
+                <button
+                  key={team}
+                  onClick={() => setSelectedTeam(team)}
+                  className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 ${
+                    selectedTeam === team
+                      ? 'bg-[#FFE330] text-black'
+                      : 'bg-white/10 text-foreground hover:bg-white/20'
+                  }`}
+                >
+                  {TEAM_LABELS[team]}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Team Member Grid */}
+          <div className="relative mx-auto max-w-7xl">
+            <LayoutGroup>
+              <motion.div
+                layout
+                className="grid gap-6"
+                style={{
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                }}
+              >
+                {filteredMembers.map((member) => (
+                  <motion.div
+                    key={member._id}
+                    layoutId={member._id}
+                    initial={false}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.25, ease: 'easeOut' }}
+                    onClick={() => setSelectedMember(member)}
+                    className="group cursor-pointer overflow-hidden rounded-2xl bg-card border border-white/10 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                  >
+                    {/* Photo */}
+                    <div className="relative aspect-square overflow-hidden">
+                      {member.photo?.asset ? (
+                        <Image
+                          src={urlFor(member.photo).width(400).height(400).url()}
+                          alt={member.photo.alt || member.name}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#FFE330]/50 to-[#FFE330]/20">
+                          <span className="text-4xl font-bold text-white/40">
+                            {member.name
+                              .split(' ')
+                              .map((n) => n[0])
+                              .join('')}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    {/* Info */}
+                    <div className="p-4">
+                      <h3 className="text-lg font-semibold text-foreground">{member.name}</h3>
+                      <p className="text-sm text-[#d4a900]">{member.role}</p>
+                      <p className="mt-1 text-xs text-foreground/50">
+                        {TEAM_LABELS[member.team]}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </LayoutGroup>
+
+            {filteredMembers.length === 0 && (
+              <div className="py-16 text-center text-foreground/50">
+                No team members found for this team yet.
+              </div>
+            )}
           </div>
         </div>
-
-        {/* Team Member Grid */}
-        <div className="relative z-10 mx-auto max-w-7xl">
-          <LayoutGroup>
-            <motion.div
-              layout
-              className="grid gap-6"
-              style={{
-                gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-              }}
-            >
-              {filteredMembers.map((member) => (
-                <motion.div
-                  key={member._id}
-                  layoutId={member._id}
-                  initial={false}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.25, ease: 'easeOut' }}
-                  onClick={() => setSelectedMember(member)}
-                  className="group cursor-pointer overflow-hidden rounded-2xl bg-card border border-white/10 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
-                >
-                  {/* Photo */}
-                  <div className="relative aspect-square overflow-hidden">
-                    {member.photo?.asset ? (
-                      <Image
-                        src={urlFor(member.photo).width(400).height(400).url()}
-                        alt={member.photo.alt || member.name}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#FFE330]/50 to-[#FFE330]/20">
-                        <span className="text-4xl font-bold text-white/40">
-                          {member.name
-                            .split(' ')
-                            .map((n) => n[0])
-                            .join('')}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  {/* Info */}
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold text-foreground">{member.name}</h3>
-                    <p className="text-sm text-[#d4a900]">{member.role}</p>
-                    <p className="mt-1 text-xs text-foreground/50">
-                      {TEAM_LABELS[member.team]}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </LayoutGroup>
-
-          {filteredMembers.length === 0 && (
-            <div className="py-16 text-center text-foreground/50">
-              No team members found for this team yet.
-            </div>
-          )}
-        </div>
-      </section>
+      </RibbonAwareSection>
 
       {/* Member Popup */}
       <AnimatePresence>

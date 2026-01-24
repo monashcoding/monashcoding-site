@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { RecruitmentPageData, RecruitmentPosition, Perk, TimelineItem } from "@/lib/sanity/types";
+import { RibbonAwareSection } from "@/components/RibbonAwareSection";
 
 // Fallback data
 const defaultPositions: RecruitmentPosition[] = [
@@ -174,9 +175,12 @@ export default function RecruitmentPageClient({ pageData, positions }: Recruitme
   const currentPosition = positionsList.find((p) => p._id === selectedPosition);
 
   return (
-    <main className="min-h-screen bg-linear-to-b from-background to-secondary pt-32">
+    <main className="min-h-screen pt-32">
       {/* Hero Section */}
-      <section className="py-16 px-8 pb-24 text-center">
+      <RibbonAwareSection
+        backgroundClassName="bg-linear-to-b from-background to-secondary"
+        contentClassName="py-16 px-8 pb-24 text-center"
+      >
         <motion.h1
           className="text-[clamp(3rem,6vw,5rem)] font-extrabold text-foreground mb-4"
           initial={{ opacity: 0, y: 40 }}
@@ -193,10 +197,13 @@ export default function RecruitmentPageClient({ pageData, positions }: Recruitme
         >
           {pageSubtitle}
         </motion.p>
-      </section>
+      </RibbonAwareSection>
 
       {/* Positions Section */}
-      <section className="py-16 px-8 max-w-[1200px] mx-auto">
+      <RibbonAwareSection
+        backgroundClassName="bg-secondary"
+        contentClassName="py-16 px-8 max-w-[1200px] mx-auto"
+      >
         <motion.h2
           className="text-3xl font-bold text-foreground mb-8"
           initial={{ opacity: 0, y: 20 }}
@@ -254,10 +261,13 @@ export default function RecruitmentPageClient({ pageData, positions }: Recruitme
             </motion.div>
           )}
         </AnimatePresence>
-      </section>
+      </RibbonAwareSection>
 
       {/* Perks Section */}
-      <section className="py-24 px-8 bg-accent/[0.03]">
+      <RibbonAwareSection
+        backgroundClassName="bg-accent/[0.03]"
+        contentClassName="py-24 px-8"
+      >
         <div className="max-w-[1200px] mx-auto">
           <motion.h2
             className="text-3xl font-bold text-foreground mb-8"
@@ -286,10 +296,13 @@ export default function RecruitmentPageClient({ pageData, positions }: Recruitme
             ))}
           </div>
         </div>
-      </section>
+      </RibbonAwareSection>
 
       {/* Timeline Section */}
-      <section className="py-24 px-8 max-w-[800px] mx-auto">
+      <RibbonAwareSection
+        backgroundClassName="bg-secondary"
+        contentClassName="py-24 px-8 max-w-[800px] mx-auto"
+      >
         <motion.h2
           className="text-3xl font-bold text-foreground mb-8"
           initial={{ opacity: 0, y: 20 }}
@@ -314,10 +327,13 @@ export default function RecruitmentPageClient({ pageData, positions }: Recruitme
             </motion.div>
           ))}
         </div>
-      </section>
+      </RibbonAwareSection>
 
       {/* CTA Section */}
-      <section className="py-24 px-8 text-center bg-linear-to-b from-transparent to-accent/5">
+      <RibbonAwareSection
+        backgroundClassName="bg-linear-to-b from-transparent to-accent/5"
+        contentClassName="py-24 px-8 text-center"
+      >
         <motion.h2
           className="text-[clamp(2rem,4vw,3rem)] font-bold text-foreground mb-4"
           initial={{ opacity: 0, y: 30 }}
@@ -350,7 +366,7 @@ export default function RecruitmentPageClient({ pageData, positions }: Recruitme
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
         </motion.a>
-      </section>
+      </RibbonAwareSection>
     </main>
   );
 }

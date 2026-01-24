@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef, useState } from 'react'
+import { RibbonAwareSection } from '@/components/RibbonAwareSection'
 
 const storyItems = [
   {
@@ -131,7 +132,10 @@ export function HomeContent() {
   return (
     <>
       {/* Story Section */}
-      <section className="min-h-screen py-32 px-8 bg-secondary relative">
+      <RibbonAwareSection
+        backgroundClassName="bg-secondary"
+        contentClassName="min-h-screen py-32 px-8"
+      >
         <div className="max-w-[1200px] mx-auto">
           <motion.h2
             className="text-[clamp(2.5rem,5vw,4rem)] font-bold mb-16 text-foreground"
@@ -148,10 +152,13 @@ export function HomeContent() {
             ))}
           </div>
         </div>
-      </section>
+      </RibbonAwareSection>
 
       {/* Instagram Section */}
-      <section className="py-24 px-8 bg-background">
+      <RibbonAwareSection
+        backgroundClassName="bg-background"
+        contentClassName="py-24 px-8"
+      >
         <div className="max-w-[1200px] mx-auto mb-16 flex justify-between items-center flex-wrap gap-4">
           <motion.h2
             className="text-[clamp(2rem,4vw,3rem)] font-bold text-foreground"
@@ -201,10 +208,14 @@ export function HomeContent() {
             </motion.div>
           ))}
         </div>
-      </section>
+      </RibbonAwareSection>
 
       {/* Sponsors Section */}
-      <section className="min-h-[80vh] py-24 px-8 bg-secondary relative overflow-hidden">
+      <RibbonAwareSection
+        backgroundClassName="bg-secondary"
+        className="overflow-hidden"
+        contentClassName="min-h-[80vh] py-24 px-8"
+      >
         <div className="max-w-[1200px] mx-auto text-center">
           <motion.h2
             className="text-[clamp(2rem,4vw,3rem)] font-bold text-foreground"
@@ -242,10 +253,14 @@ export function HomeContent() {
             ))}
           </motion.div>
         </div>
-      </section>
+      </RibbonAwareSection>
 
       {/* Footer */}
-      <footer className="py-24 px-8 pb-12 bg-secondary border-t border-white/10">
+      <RibbonAwareSection
+        as="footer"
+        backgroundClassName="bg-secondary border-t border-white/10"
+        contentClassName="py-24 px-8 pb-12"
+      >
         <div className="max-w-[1200px] mx-auto">
           <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-12 mb-16">
             <div>
@@ -408,7 +423,7 @@ export function HomeContent() {
             </div>
           </div>
         </div>
-      </footer>
+      </RibbonAwareSection>
     </>
   )
 }

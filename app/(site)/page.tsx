@@ -4,6 +4,7 @@ import { HeroData } from '@/lib/sanity/types'
 import { Hero } from '@/components/hero/Hero'
 import { HomeContent } from '@/components/HomeContent'
 import { GlobalRibbons } from '@/components/GlobalRibbons'
+import { RibbonAwareSection } from '@/components/RibbonAwareSection'
 
 async function getHeroData(): Promise<HeroData | null> {
   try {
@@ -22,12 +23,18 @@ export default async function Home() {
       <GlobalRibbons />
       <Hero data={heroData} />
       {/* Temporary test section - remove later */}
-      <section className="min-h-screen bg-black flex items-center justify-center">
+      <RibbonAwareSection
+        backgroundClassName="bg-black"
+        contentClassName="min-h-screen flex items-center justify-center"
+      >
         <h2 className="text-white text-6xl font-bold">Test Section 1</h2>
-      </section>
-      <section className="min-h-screen bg-neutral-800 flex items-center justify-center">
+      </RibbonAwareSection>
+      <RibbonAwareSection
+        backgroundClassName="bg-neutral-800"
+        contentClassName="min-h-screen flex items-center justify-center"
+      >
         <h2 className="text-white text-6xl font-bold">Test Section 2</h2>
-      </section>
+      </RibbonAwareSection>
       <HomeContent />
     </main>
   )

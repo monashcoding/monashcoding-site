@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { SponsorPageData, Stat, SponsorTier, Benefit } from "@/lib/sanity/types";
+import { RibbonAwareSection } from "@/components/RibbonAwareSection";
 
 // Fallback data
 const defaultStats: Stat[] = [
@@ -114,9 +115,12 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
   const ctaButtonLink = data?.ctaButtonLink || "/contact";
 
   return (
-    <main className="min-h-screen bg-linear-to-b from-background to-secondary pt-32">
+    <main className="min-h-screen pt-32">
       {/* Hero Section */}
-      <section className="py-16 px-8 pb-24 text-center">
+      <RibbonAwareSection
+        backgroundClassName="bg-linear-to-b from-background to-secondary"
+        contentClassName="py-16 px-8 pb-24 text-center"
+      >
         <motion.h1
           className="text-[clamp(3rem,6vw,5rem)] font-extrabold text-foreground mb-4"
           initial={{ opacity: 0, y: 40 }}
@@ -133,10 +137,13 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
         >
           {pageSubtitle}
         </motion.p>
-      </section>
+      </RibbonAwareSection>
 
       {/* Stats Section */}
-      <section className="py-16 px-8 max-w-[1200px] mx-auto">
+      <RibbonAwareSection
+        backgroundClassName="bg-secondary"
+        contentClassName="py-16 px-8 max-w-[1200px] mx-auto"
+      >
         <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-8">
           {stats.map((stat, index) => (
             <motion.div
@@ -152,10 +159,13 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
             </motion.div>
           ))}
         </div>
-      </section>
+      </RibbonAwareSection>
 
       {/* Tiers Section */}
-      <section className="py-24 px-8 bg-accent/[0.03]">
+      <RibbonAwareSection
+        backgroundClassName="bg-accent/[0.03]"
+        contentClassName="py-24 px-8"
+      >
         <div className="max-w-[1200px] mx-auto">
           <motion.h2
             className="text-4xl font-bold text-foreground mb-4 text-center"
@@ -216,10 +226,13 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
             ))}
           </div>
         </div>
-      </section>
+      </RibbonAwareSection>
 
       {/* Benefits Section */}
-      <section className="py-24 px-8 max-w-[1000px] mx-auto">
+      <RibbonAwareSection
+        backgroundClassName="bg-secondary"
+        contentClassName="py-24 px-8 max-w-[1000px] mx-auto"
+      >
         <motion.h2
           className="text-4xl font-bold text-foreground mb-8 text-center"
           initial={{ opacity: 0, y: 20 }}
@@ -249,10 +262,13 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
             </motion.div>
           ))}
         </div>
-      </section>
+      </RibbonAwareSection>
 
       {/* CTA Section */}
-      <section className="py-24 px-8 text-center bg-linear-to-b from-transparent to-accent/5">
+      <RibbonAwareSection
+        backgroundClassName="bg-linear-to-b from-transparent to-accent/5"
+        contentClassName="py-24 px-8 text-center"
+      >
         <motion.h2
           className="text-[clamp(2rem,4vw,3rem)] font-bold text-foreground mb-4"
           initial={{ opacity: 0, y: 30 }}
@@ -285,7 +301,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
         </motion.a>
-      </section>
+      </RibbonAwareSection>
     </main>
   );
 }

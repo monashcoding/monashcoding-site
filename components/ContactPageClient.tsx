@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ContactPageData, ContactSocialLink } from "@/lib/sanity/types";
+import { RibbonAwareSection } from "@/components/RibbonAwareSection";
 
 // Platform icon components
 const SocialIcon = ({ platform }: { platform: ContactSocialLink["platform"] }) => {
@@ -76,7 +77,11 @@ export default function ContactPageClient({ data }: ContactPageClientProps) {
   const socialLinks = data?.socialLinks || defaultSocialLinks;
 
   return (
-    <main className="min-h-screen bg-linear-to-b from-background to-secondary pt-32 flex flex-col items-center justify-center">
+    <RibbonAwareSection
+      as="main"
+      backgroundClassName="bg-linear-to-b from-background to-secondary"
+      contentClassName="min-h-screen pt-32 flex flex-col items-center justify-center"
+    >
       <div className="max-w-[600px] w-full py-16 px-8 text-center">
         <motion.h1
           className="text-[clamp(2.5rem,5vw,4rem)] font-extrabold text-foreground mb-4"
@@ -183,6 +188,6 @@ export default function ContactPageClient({ data }: ContactPageClientProps) {
           </div>
         </motion.div>
       </div>
-    </main>
+    </RibbonAwareSection>
   );
 }
