@@ -36,9 +36,10 @@ interface ModelProps {
   mouse: { x: number; y: number };
   gyro: { beta: number; gamma: number };
   isMobile: boolean;
+  onLoaded?: () => void;
 }
 
-function MacLogoModel({ mouse, gyro, isMobile }: ModelProps) {
+function MacLogoModel({ mouse, gyro, isMobile, onLoaded }: ModelProps) {
   const groupRef = useRef<THREE.Group>(null);
   const { nodes } = useGLTF(GLTF_PATH);
   const targetRotation = useRef({ x: BASE_ROTATION, z: 0 });
@@ -52,6 +53,13 @@ function MacLogoModel({ mouse, gyro, isMobile }: ModelProps) {
     geo.center();
     return geo;
   }, [logoMesh?.geometry]);
+
+  // Signal when model is ready
+  useEffect(() => {
+    if (centeredGeometry && onLoaded) {
+      onLoaded();
+    }
+  }, [centeredGeometry, onLoaded]);
 
   useFrame(() => {
     if (!groupRef.current) return;
@@ -123,6 +131,7 @@ export default function MacLogo3D({ className }: { className?: string }) {
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
   const [gyro, setGyro] = useState({ beta: 45, gamma: 0 });
   const [isMobile, setIsMobile] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -188,7 +197,15 @@ export default function MacLogo3D({ className }: { className?: string }) {
   }, [isMobile]);
 
   return (
-    <div ref={containerRef} className={`${className} relative`} style={{ minHeight: '1px' }}>
+    <div
+      ref={containerRef}
+      className={`${className} relative`}
+      style={{
+        minHeight: '1px',
+        opacity: isLoaded ? 1 : 0,
+        transition: 'opacity 0.6s ease-in-out',
+      }}
+    >
       <Canvas
         camera={{ position: CAMERA_POSITION, fov: CAMERA_FOV }}
         gl={{ antialias: true, alpha: true, toneMapping: 0 }}
@@ -204,7 +221,7 @@ export default function MacLogo3D({ className }: { className?: string }) {
           <ambientLight intensity={AMBIENT_LIGHT_INTENSITY} />
           <directionalLight position={[0, 0, 5]} intensity={FRONT_LIGHT_INTENSITY} />
           <directionalLight position={[3, 3, 3]} intensity={SIDE_LIGHT_INTENSITY} />
-          <MacLogoModel mouse={mouse} gyro={gyro} isMobile={isMobile} />
+          <MacLogoModel mouse={mouse} gyro={gyro} isMobile={isMobile} onLoaded={() => setIsLoaded(true)} />
           <ContactShadows
             position={[0, SHADOW_POSITION_Y, 0]}
             opacity={SHADOW_OPACITY}
