@@ -1,4 +1,5 @@
 import { hero } from './hero'
+import { homepage } from './homepage'
 import { navigation } from './navigation'
 import { teamMember, teamPage } from './team'
 import { recruitmentPosition, recruitmentPage } from './recruitment'
@@ -8,6 +9,7 @@ import { contactPage } from './contact'
 export const schemaTypes = [
   // Pages
   hero,
+  homepage,
   teamPage,
   recruitmentPage,
   sponsorPage,

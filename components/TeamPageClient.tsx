@@ -43,7 +43,7 @@ const TEAM_ORDER: TeamSlug[] = [
 export default function TeamPageClient({ pageData, members }: TeamPageClientProps) {
   const [selectedTeam, setSelectedTeam] = useState<TeamSlug | 'all'>('all')
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null)
-  const sectionRef = useRef<HTMLElement>(null)
+  const sectionRef = useRef<HTMLDivElement>(null)
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [isHovering, setIsHovering] = useState(false)
 

@@ -10,7 +10,7 @@ interface RibbonAwareSectionProps {
   /** Additional classes for the content wrapper (above ribbon) */
   contentClassName?: string
   /** HTML element to render as (default: section) */
-  as?: 'section' | 'div' | 'article' | 'aside' | 'main'
+  as?: 'section' | 'div' | 'article' | 'aside' | 'main' | 'footer'
 }
 
 /**
