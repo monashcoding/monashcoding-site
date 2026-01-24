@@ -89,8 +89,10 @@ function NavLink({ item, onClick }: { item: NavItem; onClick: () => void }) {
 export default function Navigation({ data }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isPastHero, setIsPastHero] = useState(false);
+  const [isPastDither, setIsPastDither] = useState(false);
   const pathname = usePathname();
   const isHomePage = pathname === "/";
+  const isTeamPage = pathname === "/team";
 
   // Use Sanity data or fallbacks
   const navItems: NavItem[] = data?.navItems || defaultNavItems;
@@ -99,8 +101,11 @@ export default function Navigation({ data }: NavigationProps) {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Consider "past hero" when scrolled more than 20% of viewport height
-      setIsPastHero(window.scrollY > window.innerHeight * 0.2);
+      // Consider "past hero" when scrolled more than 80% of viewport height
+      setIsPastHero(window.scrollY > window.innerHeight * 0.8);
+      // Consider "past dither" when scrolled more than 300px (before timeline starts at 400px)
+      // This ensures the text turns black before reaching the dark timeline
+      setIsPastDither(window.scrollY > 300);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -192,6 +197,7 @@ export default function Navigation({ data }: NavigationProps) {
           onHover={undefined}
           spinDuration={20}
           className="absolute inset-0"
+          textColor={isTeamPage && !isPastDither ? "text-white" : "text-foreground"}
         />
       </motion.div>
 

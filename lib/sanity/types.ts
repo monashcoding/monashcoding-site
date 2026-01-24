@@ -82,19 +82,67 @@ export interface NavigationData {
   circularText: string
 }
 
-// Team
+// Team types
+export type TeamSlug =
+  | 'management'
+  | 'events'
+  | 'marketing'
+  | 'design'
+  | 'human-resources'
+  | 'sponsorship'
+  | 'media'
+  | 'projects'
+  | 'outreach'
+
+export interface TeamMemberImage {
+  asset: {
+    _id: string
+    url: string
+    metadata?: {
+      dimensions: {
+        width: number
+        height: number
+      }
+    }
+  }
+  alt?: string
+  hotspot?: {
+    x: number
+    y: number
+    height: number
+    width: number
+  }
+  crop?: {
+    top: number
+    bottom: number
+    left: number
+    right: number
+  }
+}
+
 export interface TeamMember {
   _id: string
   name: string
   role: string
-  team: 'Executive' | 'Education' | 'Events' | 'Marketing' | 'Technology'
+  team: TeamSlug
+  photo?: TeamMemberImage
   bio?: string
-  image?: SanityImage
+  linkedIn?: string
+  email?: string
+  order: number
+}
+
+export interface TimelineEvent {
+  _key: string
+  date: string
+  title: string
+  description?: string
 }
 
 export interface TeamPageData {
-  title: string
-  subtitle: string
+  pageTitle: string
+  pageSubtitle?: string
+  timeline?: TimelineEvent[]
 }
 
 // Recruitment

@@ -104,6 +104,7 @@ export default function ClickSpark({
       onClick={createSpark}
       style={{
         position: "relative",
+        width: "100%",
         minHeight: "100%",
       }}
     >
