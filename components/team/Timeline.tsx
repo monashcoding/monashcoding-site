@@ -400,7 +400,7 @@ function HeaderItem({ text }: { text: string }) {
   return (
     <div
       ref={itemRef}
-      className="relative h-[80px] overflow-hidden"
+      className="relative h-20 overflow-hidden"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
