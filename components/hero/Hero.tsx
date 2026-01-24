@@ -11,17 +11,51 @@ import CircularText from '@/components/CircularText'
 
 const MacLogo3D = dynamic(() => import('@/components/MacLogo3D'), { ssr: false })
 
-const letterVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.03,
-      duration: 0.5,
-      ease: [0.25, 0.46, 0.45, 0.94] as const,
-    },
-  }),
+// Text reveal animation with yellow block wipe
+function TextReveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+  return (
+    <span className="relative inline-block overflow-x-clip">
+      {/* Invisible text that always takes up space for proper sizing */}
+      <span className="invisible">{children}</span>
+
+      {/* The actual visible text - positioned on top, revealed via clip-path */}
+      <motion.span
+        className="absolute inset-0"
+        initial={{ clipPath: 'inset(-10% 100% -10% 0)' }}
+        animate={{
+          clipPath: [
+            'inset(-10% 100% -10% 0)',  // fully hidden
+            'inset(-10% 100% -10% 0)',  // still hidden while block enters
+            'inset(-10% 100% -10% 0)',  // still hidden while block pauses
+            'inset(-10% 0% -10% 0)',    // revealed as block exits
+          ],
+        }}
+        transition={{
+          duration: 1.3,
+          delay,
+          ease: 'easeInOut',
+          times: [0, 0.25, 0.6, 1],
+        }}
+      >
+        {children}
+      </motion.span>
+
+      {/* Yellow block: enters from left, pauses, exits right */}
+      <motion.span
+        className="absolute -inset-y-2 left-0 right-0 bg-[#FFE330]"
+        initial={{ x: '-105%' }}
+        animate={{
+          x: ['-105%', '0%', '0%', '200%'],
+        }}
+        transition={{
+          duration: 1.3,
+          delay,
+          ease: 'easeInOut',
+          times: [0, 0.25, 0.6, 1],
+        }}
+      />
+    </span>
+  )
 }
 
 interface HeroProps {
@@ -215,25 +249,11 @@ export function Hero({ data }: HeroProps) {
           <div className="max-w-xl xl:max-w-2xl">
             {/* Title */}
             <h1 className="text-[clamp(3rem,5vw,5rem)] font-extrabold tracking-tight leading-[1.1] text-white">
-              {titleLines.map((line, lineIndex) => {
-                const charOffset = titleLines.slice(0, lineIndex).join('').length
-                return (
-                  <span key={lineIndex} className="block">
-                    {line.split('').map((char, i) => (
-                      <motion.span
-                        key={`l${lineIndex}-${i}`}
-                        custom={charOffset + i}
-                        variants={letterVariants}
-                        initial="hidden"
-                        animate="visible"
-                        className="inline-block"
-                      >
-                        {char === ' ' ? '\u00A0' : char}
-                      </motion.span>
-                    ))}
-                  </span>
-                )
-              })}
+              {titleLines.map((line, lineIndex) => (
+                <span key={lineIndex} className="block">
+                  <TextReveal delay={lineIndex * 0.15}>{line}</TextReveal>
+                </span>
+              ))}
             </h1>
 
             {/* Description */}
@@ -257,25 +277,11 @@ export function Hero({ data }: HeroProps) {
       <div className="lg:hidden absolute bottom-0 left-0 right-0 z-30 p-6 bg-gradient-to-t from-background via-background/90 to-transparent">
         {/* Title */}
         <h1 className="text-[clamp(2rem,8vw,3rem)] font-extrabold tracking-tight leading-[1.1] text-white">
-          {titleLines.map((line, lineIndex) => {
-            const charOffset = titleLines.slice(0, lineIndex).join('').length
-            return (
-              <span key={lineIndex} className="block">
-                {line.split('').map((char, i) => (
-                  <motion.span
-                    key={`l${lineIndex}-${i}`}
-                    custom={charOffset + i}
-                    variants={letterVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className="inline-block"
-                  >
-                    {char === ' ' ? '\u00A0' : char}
-                  </motion.span>
-                ))}
-              </span>
-            )
-          })}
+          {titleLines.map((line, lineIndex) => (
+            <span key={lineIndex} className="block">
+              <TextReveal delay={lineIndex * 0.15}>{line}</TextReveal>
+            </span>
+          ))}
         </h1>
 
         {/* Description */}
