@@ -239,7 +239,7 @@ function EventsGrid({ events }: { events: TimelineEvent[] }) {
   return (
     <div
       ref={rootRef}
-      className="events-grid relative grid w-full gap-4 bg-secondary/50 p-6 md:p-8"
+      className="events-grid relative grid w-full gap-4 bg-[#252525] p-6 md:p-8"
       style={
         {
           '--x': '50%',
@@ -286,33 +286,33 @@ function EventsGrid({ events }: { events: TimelineEvent[] }) {
           </div>
         </motion.article>
       ))}
-      {/* Chroma overlay */}
+      {/* Chroma overlay - yellow tint around cursor */}
       <div
         ref={chromaRef}
         className="pointer-events-none absolute inset-0 z-20"
         style={{
-          backdropFilter: 'grayscale(1) brightness(1.1)',
-          WebkitBackdropFilter: 'grayscale(1) brightness(1.1)',
-          background: 'rgba(255, 255, 255, 0.001)',
+          backdropFilter: 'sepia(1) saturate(2) hue-rotate(10deg) brightness(1.1)',
+          WebkitBackdropFilter: 'sepia(1) saturate(2) hue-rotate(10deg) brightness(1.1)',
+          background: 'rgba(255, 227, 48, 0.001)',
           maskImage:
-            'radial-gradient(circle var(--r) at var(--x) var(--y), transparent 0%, transparent 15%, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0.22) 45%, rgba(0, 0, 0, 0.35) 60%, rgba(0, 0, 0, 0.5) 75%, rgba(0, 0, 0, 0.68) 88%, white 100%)',
+            'radial-gradient(circle var(--r) at var(--x) var(--y), white 0%, white 15%, rgba(255, 255, 255, 0.9) 30%, rgba(255, 255, 255, 0.78) 45%, rgba(255, 255, 255, 0.65) 60%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.32) 88%, transparent 100%)',
           WebkitMaskImage:
-            'radial-gradient(circle var(--r) at var(--x) var(--y), transparent 0%, transparent 15%, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0.22) 45%, rgba(0, 0, 0, 0.35) 60%, rgba(0, 0, 0, 0.5) 75%, rgba(0, 0, 0, 0.68) 88%, white 100%)',
+            'radial-gradient(circle var(--r) at var(--x) var(--y), white 0%, white 15%, rgba(255, 255, 255, 0.9) 30%, rgba(255, 255, 255, 0.78) 45%, rgba(255, 255, 255, 0.65) 60%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.32) 88%, transparent 100%)',
           opacity: 0,
         }}
       />
-      {/* Fade overlay */}
+      {/* Fade overlay - yellow tint fades when cursor leaves */}
       <div
         ref={fadeRef}
         className="pointer-events-none absolute inset-0 z-30"
         style={{
-          backdropFilter: 'grayscale(1) brightness(1.1)',
-          WebkitBackdropFilter: 'grayscale(1) brightness(1.1)',
-          background: 'rgba(255, 255, 255, 0.001)',
+          backdropFilter: 'sepia(1) saturate(2) hue-rotate(10deg) brightness(1.1)',
+          WebkitBackdropFilter: 'sepia(1) saturate(2) hue-rotate(10deg) brightness(1.1)',
+          background: 'rgba(255, 227, 48, 0.001)',
           maskImage:
-            'radial-gradient(circle var(--r) at var(--x) var(--y), white 0%, white 15%, rgba(255, 255, 255, 0.9) 30%, rgba(255, 255, 255, 0.78) 45%, rgba(255, 255, 255, 0.65) 60%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.32) 88%, transparent 100%)',
+            'radial-gradient(circle var(--r) at var(--x) var(--y), transparent 0%, transparent 15%, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0.22) 45%, rgba(0, 0, 0, 0.35) 60%, rgba(0, 0, 0, 0.5) 75%, rgba(0, 0, 0, 0.68) 88%, white 100%)',
           WebkitMaskImage:
-            'radial-gradient(circle var(--r) at var(--x) var(--y), white 0%, white 15%, rgba(255, 255, 255, 0.9) 30%, rgba(255, 255, 255, 0.78) 45%, rgba(255, 255, 255, 0.65) 60%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.32) 88%, transparent 100%)',
+            'radial-gradient(circle var(--r) at var(--x) var(--y), transparent 0%, transparent 15%, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0.22) 45%, rgba(0, 0, 0, 0.35) 60%, rgba(0, 0, 0, 0.5) 75%, rgba(0, 0, 0, 0.68) 88%, white 100%)',
           opacity: 0,
         }}
       />
