@@ -14,7 +14,9 @@ const Ribbons = ({
   enableFade = false,
   enableShaderEffect = false,
   effectAmplitude = 2,
-  backgroundColor = [0, 0, 0, 0]
+  backgroundColor = [0, 0, 0, 0],
+  onCanvasReady = null,  // Callback with canvas element
+  onPointsUpdate = null  // Callback with ribbon points for masking
 }) => {
   const containerRef = useRef(null);
 
@@ -36,6 +38,11 @@ const Ribbons = ({
     gl.canvas.style.width = '100%';
     gl.canvas.style.height = '100%';
     container.appendChild(gl.canvas);
+
+    // Share canvas reference with external components
+    if (onCanvasReady) {
+      onCanvasReady(gl.canvas);
+    }
 
     const scene = new Transform();
     const lines = [];
@@ -182,6 +189,9 @@ const Ribbons = ({
       const dt = currentTime - lastTime;
       lastTime = currentTime;
 
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+
       lines.forEach(line => {
         tmp.copy(mouse).add(line.mouseOffset).sub(line.points[0]).multiply(line.spring);
         line.mouseVelocity.add(tmp).multiply(line.friction);
@@ -203,6 +213,15 @@ const Ribbons = ({
       });
 
       renderer.render({ scene });
+
+      // Share ribbon points for external masking (throttled)
+      if (onPointsUpdate && lines.length > 0) {
+        const screenPoints = lines[0].points.map(p => ({
+          x: (p.x + 1) * 0.5 * width,
+          y: (1 - (p.y + 1) * 0.5) * height
+        }));
+        onPointsUpdate(screenPoints, baseThickness);
+      }
     }
     update();
 

@@ -1,8 +1,15 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { setRibbonCanvas, setRibbonPoints, RibbonPoint } from './RibbonContext'
 
 const Ribbons = dynamic(() => import('@/components/Ribbons'), { ssr: false })
+
+export { RibbonProvider } from './RibbonContext'
+
+function handlePointsUpdate(points: RibbonPoint[], thickness: number) {
+  setRibbonPoints(points, thickness)
+}
 
 export function GlobalRibbons() {
   return (
@@ -19,6 +26,8 @@ export function GlobalRibbons() {
         enableFade={false}
         enableShaderEffect={false}
         effectAmplitude={2}
+        onCanvasReady={setRibbonCanvas}
+        onPointsUpdate={handlePointsUpdate}
       />
     </div>
   )
