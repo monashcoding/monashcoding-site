@@ -126,7 +126,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
           {pageTitle}
         </motion.h1>
         <motion.p
-          className="text-xl text-black/60 max-w-[700px] mx-auto leading-relaxed"
+          className="text-xl text-white/60 max-w-[700px] mx-auto leading-relaxed"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
@@ -141,14 +141,14 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
           {stats.map((stat, index) => (
             <motion.div
               key={stat._key}
-              className="text-center p-8 bg-white/50 border border-black/10 rounded-3xl"
+              className="text-center p-8 bg-white/5 border border-white/10 rounded-3xl"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
             >
               <div className="text-5xl font-extrabold text-gold-700 mb-2">{stat.value}</div>
-              <div className="text-black/60">{stat.label}</div>
+              <div className="text-white/60">{stat.label}</div>
             </motion.div>
           ))}
         </div>
@@ -166,7 +166,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
             {tiersTitle}
           </motion.h2>
           <motion.p
-            className="text-black/60 text-center max-w-[600px] mx-auto mb-12"
+            className="text-white/60 text-center max-w-[600px] mx-auto mb-12"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -179,7 +179,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
             {tiers.map((tier, index) => (
               <motion.div
                 key={tier._key}
-                className={`p-10 bg-white/50 border border-black/10 rounded-3xl transition-all duration-300 relative overflow-hidden hover:border-gold-700/30 hover:-translate-y-1 ${
+                className={`p-10 bg-white/5 border border-white/10 rounded-3xl transition-all duration-300 relative overflow-hidden hover:border-gold-700/30 hover:-translate-y-1 ${
                   tier.featured ? "border-gold-700/40 bg-linear-to-br from-gold-700/[0.08] to-gold-700/[0.02]" : ""
                 }`}
                 initial={{ opacity: 0, y: 30 }}
@@ -195,11 +195,11 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
                 <h3 className="text-2xl font-bold text-gold-800 mb-2">{tier.name}</h3>
                 <div className="text-3xl font-extrabold text-foreground mb-6">
                   {tier.price}
-                  {tier.price !== "Custom" && <span className="text-base font-normal text-black/50"> /year</span>}
+                  {tier.price !== "Custom" && <span className="text-base font-normal text-white/50"> /year</span>}
                 </div>
                 <ul className="list-none p-0 m-0 mb-8">
                   {tier.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="py-3 text-black/70 flex items-center gap-3 border-b border-black/5 last:border-b-0">
+                    <li key={featureIndex} className="py-3 text-white/70 flex items-center gap-3 border-b border-white/5 last:border-b-0">
                       <span className="text-gold-700">✓</span>
                       {feature}
                     </li>
@@ -244,7 +244,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
               </div>
               <div>
                 <h3 className="text-xl font-semibold text-foreground mb-2">{benefit.title}</h3>
-                <p className="text-black/60 leading-relaxed">{benefit.description}</p>
+                <p className="text-white/60 leading-relaxed">{benefit.description}</p>
               </div>
             </motion.div>
           ))}
@@ -262,7 +262,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
           {ctaTitle}
         </motion.h2>
         <motion.p
-          className="text-black/60 max-w-[500px] mx-auto mb-8"
+          className="text-white/60 max-w-[500px] mx-auto mb-8"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}

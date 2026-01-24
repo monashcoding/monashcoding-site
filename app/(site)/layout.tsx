@@ -22,7 +22,7 @@ export default async function SiteLayout({
 
   return (
     <ClickSpark
-      sparkColor="#1a1a1a"
+      sparkColor="#FFE330"
       sparkSize={10}
       sparkRadius={30}
       sparkCount={8}

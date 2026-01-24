@@ -157,7 +157,7 @@ export default function Navigation({ data }: NavigationProps) {
           onClick={() => setIsOpen(!isOpen)}
           className={`relative z-50 flex items-center gap-3 py-3 px-5 rounded-full border cursor-pointer transition-all duration-300 backdrop-blur-[12px] pointer-events-auto ${
             isOpen
-              ? "bg-accent border-accent text-foreground hover:bg-[#e6c200]"
+              ? "bg-accent border-accent text-accent-foreground hover:bg-[#e6c800]"
               : "bg-black/85 border-accent/30 text-accent hover:bg-black/95 hover:border-accent/50"
           }`}
         >
@@ -229,7 +229,7 @@ export default function Navigation({ data }: NavigationProps) {
             >
               {/* Top label */}
               <motion.span
-                className="text-xs font-semibold tracking-[0.15em] uppercase text-black/50"
+                className="text-xs font-semibold tracking-[0.15em] uppercase text-white/50"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.3 }}
@@ -270,7 +270,7 @@ export default function Navigation({ data }: NavigationProps) {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-black/50 no-underline transition-colors duration-300 hover:text-black/80"
+                    className="text-sm text-white/50 no-underline transition-colors duration-300 hover:text-white/80"
                   >
                     {link.label}
                   </a>

@@ -124,8 +124,8 @@ export default function TeamPageClient({ pageData, members }: TeamPageClientProp
               onClick={() => setSelectedTeam('all')}
               className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 ${
                 selectedTeam === 'all'
-                  ? 'bg-[#f8e45c] text-black'
-                  : 'bg-black/10 text-foreground hover:bg-black/20'
+                  ? 'bg-[#FFE330] text-black'
+                  : 'bg-white/10 text-foreground hover:bg-white/20'
               }`}
             >
               All
@@ -136,8 +136,8 @@ export default function TeamPageClient({ pageData, members }: TeamPageClientProp
                 onClick={() => setSelectedTeam(team)}
                 className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 ${
                   selectedTeam === team
-                    ? 'bg-[#f8e45c] text-black'
-                    : 'bg-black/10 text-foreground hover:bg-black/20'
+                    ? 'bg-[#FFE330] text-black'
+                    : 'bg-white/10 text-foreground hover:bg-white/20'
                 }`}
               >
                 {TEAM_LABELS[team]}
@@ -165,7 +165,7 @@ export default function TeamPageClient({ pageData, members }: TeamPageClientProp
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.3, delay: index * 0.03 }}
                   onClick={() => setSelectedMember(member)}
-                  className="group cursor-pointer overflow-hidden rounded-2xl bg-white border border-black/10 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                  className="group cursor-pointer overflow-hidden rounded-2xl bg-card border border-white/10 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
                 >
                   {/* Photo */}
                   <div className="relative aspect-square overflow-hidden">
@@ -177,8 +177,8 @@ export default function TeamPageClient({ pageData, members }: TeamPageClientProp
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#f8e45c]/50 to-[#f8e45c]/20">
-                        <span className="text-4xl font-bold text-black/40">
+                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#FFE330]/50 to-[#FFE330]/20">
+                        <span className="text-4xl font-bold text-white/40">
                           {member.name
                             .split(' ')
                             .map((n) => n[0])
@@ -212,14 +212,14 @@ export default function TeamPageClient({ pageData, members }: TeamPageClientProp
       <AnimatePresence>
         {selectedMember && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm sm:items-center"
+            className="fixed inset-0 z-50 flex items-end justify-center bg-white/50 backdrop-blur-sm sm:items-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedMember(null)}
           >
             <motion.div
-              className="relative w-full max-w-lg rounded-t-3xl bg-white p-8 shadow-2xl sm:rounded-3xl"
+              className="relative w-full max-w-lg rounded-t-3xl bg-card p-8 shadow-2xl sm:rounded-3xl"
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
@@ -229,7 +229,7 @@ export default function TeamPageClient({ pageData, members }: TeamPageClientProp
               {/* Close Button */}
               <button
                 onClick={() => setSelectedMember(null)}
-                className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-black/5 text-foreground transition-colors hover:bg-black/10"
+                className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-foreground transition-colors hover:bg-white/10"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M18 6L6 18M6 6l12 12" />
@@ -238,7 +238,7 @@ export default function TeamPageClient({ pageData, members }: TeamPageClientProp
 
               <div className="flex flex-col items-center text-center">
                 {/* Photo */}
-                <div className="mb-6 h-32 w-32 overflow-hidden rounded-full border-4 border-[#f8e45c]/30">
+                <div className="mb-6 h-32 w-32 overflow-hidden rounded-full border-4 border-[#FFE330]/30">
                   {selectedMember.photo?.asset ? (
                     <Image
                       src={urlFor(selectedMember.photo).width(256).height(256).url()}
@@ -248,8 +248,8 @@ export default function TeamPageClient({ pageData, members }: TeamPageClientProp
                       className="h-full w-full object-cover"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#f8e45c]/50 to-[#f8e45c]/20">
-                      <span className="text-4xl font-bold text-black/40">
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#FFE330]/50 to-[#FFE330]/20">
+                      <span className="text-4xl font-bold text-white/40">
                         {selectedMember.name
                           .split(' ')
                           .map((n) => n[0])
@@ -275,7 +275,7 @@ export default function TeamPageClient({ pageData, members }: TeamPageClientProp
                       href={selectedMember.linkedIn}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex h-10 w-10 items-center justify-center rounded-full bg-black/5 text-foreground transition-colors hover:bg-[#0077b5] hover:text-white"
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-foreground transition-colors hover:bg-[#0077b5] hover:text-white"
                     >
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
@@ -285,7 +285,7 @@ export default function TeamPageClient({ pageData, members }: TeamPageClientProp
                   {selectedMember.email && (
                     <a
                       href={`mailto:${selectedMember.email}`}
-                      className="flex h-10 w-10 items-center justify-center rounded-full bg-black/5 text-foreground transition-colors hover:bg-[#f8e45c] hover:text-black"
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-foreground transition-colors hover:bg-[#FFE330] hover:text-black"
                     >
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />

@@ -186,7 +186,7 @@ export default function RecruitmentPageClient({ pageData, positions }: Recruitme
           {pageTitle}
         </motion.h1>
         <motion.p
-          className="text-xl text-black/60 max-w-[600px] mx-auto"
+          className="text-xl text-white/60 max-w-[600px] mx-auto"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
@@ -209,7 +209,7 @@ export default function RecruitmentPageClient({ pageData, positions }: Recruitme
           {positionsList.map((position, index) => (
             <motion.button
               key={position._id}
-              className={`py-4 px-8 bg-white/50 border border-black/10 rounded-full text-foreground font-medium cursor-pointer transition-all duration-300 flex items-center gap-3 hover:bg-gold-700/10 hover:border-gold-700/30 hover:text-gold-800 hover:-translate-y-0.5 md:justify-center ${
+              className={`py-4 px-8 bg-white/5 border border-white/10 rounded-full text-foreground font-medium cursor-pointer transition-all duration-300 flex items-center gap-3 hover:bg-gold-700/10 hover:border-gold-700/30 hover:text-gold-800 hover:-translate-y-0.5 md:justify-center ${
                 selectedPosition === position._id ? "bg-gold-700/15 border-gold-700/40 text-gold-800" : ""
               }`}
               onClick={() => setSelectedPosition(selectedPosition === position._id ? null : position._id)}
@@ -229,20 +229,20 @@ export default function RecruitmentPageClient({ pageData, positions }: Recruitme
         <AnimatePresence mode="wait">
           {currentPosition && (
             <motion.div
-              className="mt-12 p-8 bg-white/50 border border-black/10 rounded-3xl"
+              className="mt-12 p-8 bg-white/5 border border-white/10 rounded-3xl"
               initial={{ opacity: 0, y: 20, height: 0 }}
               animate={{ opacity: 1, y: 0, height: "auto" }}
               exit={{ opacity: 0, y: -20, height: 0 }}
               transition={{ duration: 0.3 }}
             >
               <h3 className="text-2xl font-bold text-gold-800 mb-4">{currentPosition.name}</h3>
-              <p className="text-black/70 leading-relaxed mb-6">{currentPosition.description}</p>
+              <p className="text-white/70 leading-relaxed mb-6">{currentPosition.description}</p>
               <h4 className="text-foreground font-semibold mb-4">Requirements</h4>
               <ul className="list-none p-0 m-0">
                 {currentPosition.requirements.map((req, index) => (
                   <motion.li
                     key={index}
-                    className="text-black/60 py-2 pl-6 relative before:content-['→'] before:absolute before:left-0 before:text-gold-700"
+                    className="text-white/60 py-2 pl-6 relative before:content-['→'] before:absolute before:left-0 before:text-gold-700"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
@@ -271,7 +271,7 @@ export default function RecruitmentPageClient({ pageData, positions }: Recruitme
             {perks.map((perk, index) => (
               <motion.div
                 key={perk._key}
-                className="p-8 bg-white/50 border border-black/10 rounded-3xl transition-all duration-300 hover:bg-white/80 hover:border-gold-700/20 hover:-translate-y-1"
+                className="p-8 bg-white/5 border border-white/10 rounded-3xl transition-all duration-300 hover:bg-white/10 hover:border-gold-700/20 hover:-translate-y-1"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -281,7 +281,7 @@ export default function RecruitmentPageClient({ pageData, positions }: Recruitme
                   {perk.icon}
                 </div>
                 <h3 className="text-xl font-semibold text-foreground mb-3">{perk.title}</h3>
-                <p className="text-black/60 leading-relaxed">{perk.description}</p>
+                <p className="text-white/60 leading-relaxed">{perk.description}</p>
               </motion.div>
             ))}
           </div>
@@ -310,7 +310,7 @@ export default function RecruitmentPageClient({ pageData, positions }: Recruitme
             >
               <span className="text-sm text-gold-700 font-semibold mb-2 block">{item.date}</span>
               <h3 className="text-xl font-semibold text-foreground mb-2">{item.title}</h3>
-              <p className="text-black/60 leading-relaxed">{item.description}</p>
+              <p className="text-white/60 leading-relaxed">{item.description}</p>
             </motion.div>
           ))}
         </div>
@@ -327,7 +327,7 @@ export default function RecruitmentPageClient({ pageData, positions }: Recruitme
           {ctaTitle}
         </motion.h2>
         <motion.p
-          className="text-black/60 max-w-[500px] mx-auto mb-8"
+          className="text-white/60 max-w-[500px] mx-auto mb-8"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}

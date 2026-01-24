@@ -32,7 +32,7 @@ export default function TeamMemberCard({
   return (
     <motion.button
       onClick={onClick}
-      className="group relative w-full overflow-hidden rounded-xl border border-black/10 bg-white/60 p-1 text-left shadow-sm backdrop-blur-sm transition-all hover:border-amber-500/30 hover:shadow-md"
+      className="group relative w-full overflow-hidden rounded-xl border border-white/10 bg-card/60 p-1 text-left shadow-sm backdrop-blur-sm transition-all hover:border-amber-500/30 hover:shadow-md"
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.05 }}
@@ -40,7 +40,7 @@ export default function TeamMemberCard({
       whileTap={{ scale: 0.98 }}
     >
       {/* Photo Container */}
-      <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-gradient-to-br from-gray-100 to-gray-200">
+      <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-gradient-to-br from-white/10 to-white/5">
         {imageUrl ? (
           <Image
             src={imageUrl}

@@ -142,7 +142,7 @@ export function Hero({ data }: HeroProps) {
       {/* Ribbons Mouse Trail Effect - Full screen */}
       <div className="absolute inset-0 w-full h-full z-10 pointer-events-none">
         <Ribbons
-          colors={['#FFD700']}
+          colors={['#FFE330']}
           baseSpring={0.03}
           baseFriction={0.9}
           baseThickness={40}
@@ -229,7 +229,7 @@ export function Hero({ data }: HeroProps) {
       </div>
 
       {/* Right Side: Content */}
-      <div className="hidden lg:flex items-center justify-center w-1/2 h-screen bg-[radial-gradient(ellipse_at_top_left,#ffffff_0%,#deddda_50%)] relative">
+      <div className="hidden lg:flex items-center justify-center w-1/2 h-screen bg-[radial-gradient(ellipse_at_top_left,#3a3a3a_0%,#252525_50%)] relative">
         {/* Content */}
         <div className="relative z-30 flex flex-col justify-center px-8 max-w-xl xl:max-w-2xl pointer-events-none">
           {/* Title */}
@@ -257,7 +257,7 @@ export function Hero({ data }: HeroProps) {
 
           {/* Description */}
           <motion.div
-            className="text-base text-black/70 leading-relaxed mt-8 max-w-lg xl:text-lg xl:max-w-xl"
+            className="text-base text-white/70 leading-relaxed mt-8 max-w-lg xl:text-lg xl:max-w-xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.6 }}
@@ -272,7 +272,7 @@ export function Hero({ data }: HeroProps) {
 
         {/* Scroll Indicator */}
         <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-black/50 z-20 pointer-events-none"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50 z-20 pointer-events-none"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5, duration: 0.6 }}
@@ -281,7 +281,7 @@ export function Hero({ data }: HeroProps) {
             {scrollIndicatorText || 'Scroll'}
           </span>
           <motion.div
-            className="w-px h-15 bg-linear-to-b from-black/50 to-transparent"
+            className="w-px h-15 bg-linear-to-b from-white/50 to-transparent"
             animate={prefersReducedMotion ? {} : { scaleY: [1, 0.5, 1] }}
             transition={prefersReducedMotion ? {} : { duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
           />

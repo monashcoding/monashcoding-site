@@ -108,7 +108,7 @@ function YearMenuItem({
       {/* Year Menu Item */}
       <div
         ref={itemRef}
-        className="relative h-20 overflow-hidden border-t border-black/10 first:border-t-0"
+        className="relative h-20 overflow-hidden border-t border-white/10 first:border-t-0"
       >
         <button
           className="flex h-full w-full cursor-pointer items-center justify-center text-[clamp(1.5rem,5vw,2.5rem)] font-semibold text-foreground uppercase"
@@ -130,7 +130,7 @@ function YearMenuItem({
         <div
           ref={marqueeRef}
           className="pointer-events-none absolute inset-0 overflow-hidden"
-          style={{ transform: 'translate3d(0, 101%, 0)', backgroundColor: '#f8e45c' }}
+          style={{ transform: 'translate3d(0, 101%, 0)', backgroundColor: '#FFE330' }}
         >
           <div className="flex h-full w-full items-center overflow-hidden">
             <div
@@ -141,10 +141,10 @@ function YearMenuItem({
               {[...Array(repetitions)].map((_, idx) => (
                 <div
                   key={idx}
-                  className="marquee__part flex shrink-0 items-center px-8 text-[clamp(1.5rem,5vw,2.5rem)] font-semibold text-black uppercase"
+                  className="marquee__part flex shrink-0 items-center px-8 text-[clamp(1.5rem,5vw,2.5rem)] font-semibold text-[#252525] uppercase"
                 >
                   <span>{year}</span>
-                  <span className="mx-4 text-black/60">•</span>
+                  <span className="mx-4 text-[#252525]/60">•</span>
                   <span className="text-[clamp(1rem,3vw,1.5rem)] font-normal normal-case">
                     {events.length} milestone{events.length !== 1 ? 's' : ''}
                   </span>
@@ -254,14 +254,14 @@ function EventsGrid({ events }: { events: TimelineEvent[] }) {
       {events.map((event, i) => (
         <motion.article
           key={event._key}
-          className="event-card relative flex flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm"
+          className="event-card relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-card shadow-sm"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: i * 0.1 }}
           onMouseMove={handleCardMove}
           style={
             {
-              '--card-border': '#f8e45c',
+              '--card-border': '#FFE330',
               '--mouse-x': '50%',
               '--mouse-y': '50%',
             } as React.CSSProperties
@@ -411,7 +411,7 @@ function HeaderItem({ text }: { text: string }) {
       <div
         ref={marqueeRef}
         className="pointer-events-none absolute inset-0 overflow-hidden"
-        style={{ transform: 'translate3d(0, 101%, 0)', backgroundColor: '#f8e45c' }}
+        style={{ transform: 'translate3d(0, 101%, 0)', backgroundColor: '#FFE330' }}
       >
         <div className="flex h-full w-full items-center overflow-hidden">
           <div
@@ -422,10 +422,10 @@ function HeaderItem({ text }: { text: string }) {
             {[...Array(repetitions)].map((_, idx) => (
               <div
                 key={idx}
-                className="marquee__part flex shrink-0 items-center px-8 text-[clamp(1.5rem,5vw,2.5rem)] font-semibold text-black uppercase"
+                className="marquee__part flex shrink-0 items-center px-8 text-[clamp(1.5rem,5vw,2.5rem)] font-semibold text-[#252525] uppercase"
               >
                 <span>{text}</span>
-                <span className="mx-6 text-black/40">✦</span>
+                <span className="mx-6 text-[#252525]/40">✦</span>
               </div>
             ))}
           </div>
@@ -465,7 +465,7 @@ export default function Timeline({ events }: TimelineProps) {
   }
 
   return (
-    <div className="w-full overflow-hidden bg-white/80 backdrop-blur-sm border-y border-black/10">
+    <div className="w-full overflow-hidden bg-card/80 backdrop-blur-sm border-y border-white/10">
       <HeaderItem text="Our Journey" />
       {yearGroups.map((group) => (
         <YearMenuItem
