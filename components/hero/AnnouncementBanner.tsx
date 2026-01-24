@@ -127,9 +127,9 @@ export function AnnouncementBanner({ announcements, cycleDuration = 5 }: Announc
           {/* Gradient overlay for readability */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#151515]/80 via-transparent to-[#151515]/80" />
 
-          <div className="relative px-5 py-4 flex items-center justify-center">
+          <div className="relative px-5 py-4">
             {/* Message container */}
-            <div className="flex-1 flex items-center justify-center text-center text-sm md:text-base text-white">
+            <div className="flex items-center justify-center text-center text-sm md:text-base text-white pr-8">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentIndex}
@@ -137,33 +137,32 @@ export function AnnouncementBanner({ announcements, cycleDuration = 5 }: Announc
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.3 }}
-                  className="flex items-center gap-3"
                 >
                   <PortableText
                     value={currentAnnouncement.message}
                     components={announcementComponents}
                   />
-
-                  {/* Dot indicators for multiple announcements */}
-                  {hasMultiple && (
-                    <div className="flex items-center gap-1.5 ml-3">
-                      {announcements.map((_, index) => (
-                        <button
-                          key={index}
-                          onClick={() => handleDotClick(index)}
-                          className={`w-1.5 h-1.5 rounded-full transition-all ${
-                            index === currentIndex
-                              ? 'bg-[#FFE330] scale-125'
-                              : 'bg-white/40 hover:bg-white/60'
-                          }`}
-                          aria-label={`Go to announcement ${index + 1}`}
-                        />
-                      ))}
-                    </div>
-                  )}
                 </motion.div>
               </AnimatePresence>
             </div>
+
+            {/* Dot indicators for multiple announcements */}
+            {hasMultiple && (
+              <div className="flex items-center justify-center gap-2 mt-2">
+                {announcements.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleDotClick(index)}
+                    className={`w-1.5 h-1.5 rounded-full transition-all ${
+                      index === currentIndex
+                        ? 'bg-[#FFE330] scale-125'
+                        : 'bg-white/40 hover:bg-white/60'
+                    }`}
+                    aria-label={`Go to announcement ${index + 1}`}
+                  />
+                ))}
+              </div>
+            )}
 
             {/* Close button */}
             <button
