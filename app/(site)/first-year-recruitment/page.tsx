@@ -9,7 +9,7 @@ import FirstYearRecruitmentPageClient from "@/components/FirstYearRecruitmentPag
 
 async function getFirstYearRecruitmentPageData(): Promise<FirstYearRecruitmentPageData | null> {
   try {
-    return await client.fetch(firstYearRecruitmentPageQuery);
+    return await client.fetch(firstYearRecruitmentPageQuery, {}, { next: { tags: ['firstYearRecruitmentPage'] } });
   } catch (error) {
     console.error("Error fetching First Year Recruitment page data:", error);
     return null;

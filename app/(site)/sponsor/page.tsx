@@ -8,7 +8,7 @@ import SponsorPageClient from "@/components/SponsorPageClient";
 
 async function getSponsorPageData(): Promise<SponsorPageData | null> {
   try {
-    return await client.fetch(sponsorPageQuery);
+    return await client.fetch(sponsorPageQuery, {}, { next: { tags: ['sponsorPage'] } });
   } catch (error) {
     console.error("Error fetching sponsor page data:", error);
     return null;

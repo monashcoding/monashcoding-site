@@ -9,7 +9,7 @@ import OWeekPageClient from "@/components/OWeekPageClient";
 
 async function getOWeekPageData(): Promise<OWeekPageData | null> {
   try {
-    return await client.fetch(oweekPageQuery);
+    return await client.fetch(oweekPageQuery, {}, { next: { tags: ['oWeekPage'] } });
   } catch (error) {
     console.error("Error fetching O Week page data:", error);
     return null;

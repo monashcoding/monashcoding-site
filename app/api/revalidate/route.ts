@@ -1,22 +1,5 @@
-import { revalidatePath } from 'next/cache'
+import { revalidateTag } from 'next/cache'
 import { NextRequest } from 'next/server'
-
-// Map Sanity document types to their corresponding paths
-const documentTypeToPath: Record<string, string[]> = {
-  // Pages
-  hero: ['/'],
-  homepage: ['/'],
-  teamPage: ['/team'],
-  teamMember: ['/team'],
-  contactPage: ['/contact'],
-  sponsorPage: ['/sponsor'],
-  recruitmentPage: ['/recruitment'],
-  recruitmentPosition: ['/recruitment'],
-  oWeekPage: ['/o-week'],
-  firstYearRecruitmentPage: ['/first-year-recruitment'],
-  // Navigation affects all pages
-  navigation: ['/', '/team', '/contact', '/sponsor', '/recruitment', '/o-week', '/first-year-recruitment'],
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,26 +22,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const pathsToRevalidate = documentTypeToPath[_type]
-
-    if (!pathsToRevalidate) {
-      // Unknown document type, revalidate home page as fallback
-      revalidatePath('/')
-      return Response.json({
-        revalidated: true,
-        paths: ['/'],
-        message: `Unknown type "${_type}", revalidated home page`,
-      })
-    }
-
-    // Revalidate all paths associated with this document type
-    for (const path of pathsToRevalidate) {
-      revalidatePath(path)
-    }
+    // Revalidate the tag matching the Sanity document type
+    revalidateTag(_type, { expire: 0 })
 
     return Response.json({
       revalidated: true,
-      paths: pathsToRevalidate,
+      tag: _type,
     })
   } catch (error) {
     console.error('Revalidation error:', error)
