@@ -165,7 +165,7 @@ const handleSendEmail = async (
       backgroundClassName=""
       contentClassName="min-h-screen pt-32 flex flex-col items-center justify-center"
     >
-      <div className="max-w-150 w-full py-16 px-8 text-center">
+      <div className="max-w-[600px] w-full py-16 px-8 text-center">
         <motion.h1
           className="text-[clamp(2.5rem,5vw,4rem)] font-extrabold text-foreground mb-4"
           initial={{ opacity: 0, y: 40 }}
