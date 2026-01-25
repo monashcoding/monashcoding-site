@@ -404,7 +404,7 @@ const handleSendEmail = async (
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-12.5 h-12.5 bg-white/50 border border-black/10 rounded-2xl flex items-center justify-center text-background/50 transition-all duration-300 hover:bg-gold-700/10 hover:border-gold-700/30 hover:text-gold-700"
+                className="w-[50px] h-[50px] bg-white/50 border border-black/10 rounded-2xl flex items-center justify-center text-background/50 transition-all duration-300 hover:bg-gold-700/10 hover:border-gold-700/30 hover:text-gold-700"
                 aria-label={link.platform}
               >
                 <SocialIcon platform={link.platform} />

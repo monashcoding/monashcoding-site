@@ -1,7 +1,15 @@
 import { EmailTemplate } from '../../../components/EmailTemplate';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Validate RESEND_API_KEY is configured
+const apiKey = process.env.RESEND_API_KEY;
+if (!apiKey || apiKey.trim().length === 0) {
+  throw new Error(
+    'RESEND_API_KEY is not configured. Please set the RESEND_API_KEY environment variable.'
+  );
+}
+
+const resend = new Resend(apiKey);
 
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
