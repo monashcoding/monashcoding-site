@@ -1,5 +1,6 @@
 import Navigation from "@/components/Navigation";
 import ClickSpark from "@/components/ClickSpark";
+import { RibbonProvider } from "@/components/GlobalRibbons";
 import { client } from "@/sanity/lib/client";
 import { navigationQuery } from "@/sanity/lib/queries";
 import { NavigationData } from "@/lib/sanity/types";
@@ -21,17 +22,19 @@ export default async function SiteLayout({
   const navigationData = await getNavigationData();
 
   return (
-    <ClickSpark
-      sparkColor="#1a1a1a"
-      sparkSize={10}
-      sparkRadius={30}
-      sparkCount={8}
-      duration={400}
-      easing="ease-out"
-      extraScale={1.5}
-    >
-      <Navigation data={navigationData} />
-      {children}
-    </ClickSpark>
+    <RibbonProvider>
+      <ClickSpark
+        sparkColor="#FFE330"
+        sparkSize={10}
+        sparkRadius={30}
+        sparkCount={8}
+        duration={400}
+        easing="ease-out"
+        extraScale={1.5}
+      >
+        <Navigation data={navigationData} />
+        {children}
+      </ClickSpark>
+    </RibbonProvider>
   );
 }

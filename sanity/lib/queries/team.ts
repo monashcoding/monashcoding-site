@@ -2,8 +2,14 @@ import { groq } from 'next-sanity'
 
 export const teamPageQuery = groq`
   *[_type == "teamPage"][0] {
-    title,
-    subtitle
+    pageTitle,
+    pageSubtitle,
+    timeline[] {
+      _key,
+      date,
+      title,
+      description
+    }
   }
 `
 
@@ -14,7 +20,10 @@ export const teamMembersQuery = groq`
     role,
     team,
     bio,
-    image {
+    linkedIn,
+    email,
+    order,
+    photo {
       asset->,
       alt,
       hotspot,
@@ -30,7 +39,10 @@ export const teamMembersByTeamQuery = groq`
     role,
     team,
     bio,
-    image {
+    linkedIn,
+    email,
+    order,
+    photo {
       asset->,
       alt,
       hotspot,

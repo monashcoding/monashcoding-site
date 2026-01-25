@@ -14,7 +14,9 @@ const Ribbons = ({
   enableFade = false,
   enableShaderEffect = false,
   effectAmplitude = 2,
-  backgroundColor = [0, 0, 0, 0]
+  backgroundColor = [0, 0, 0, 0],
+  onCanvasReady = null,  // Callback with canvas element
+  onPointsUpdate = null  // Callback with ribbon points for masking
 }) => {
   const containerRef = useRef(null);
 
@@ -36,6 +38,11 @@ const Ribbons = ({
     gl.canvas.style.width = '100%';
     gl.canvas.style.height = '100%';
     container.appendChild(gl.canvas);
+
+    // Share canvas reference with external components
+    if (onCanvasReady) {
+      onCanvasReady(gl.canvas);
+    }
 
     const scene = new Transform();
     const lines = [];
@@ -168,9 +175,10 @@ const Ribbons = ({
       const height = container.clientHeight;
       mouse.set((x / width) * 2 - 1, (y / height) * -2 + 1, 0);
     }
-    container.addEventListener('mousemove', updateMouse);
-    container.addEventListener('touchstart', updateMouse, { passive: true });
-    container.addEventListener('touchmove', updateMouse, { passive: true });
+    // Listen on window so we capture mouse events even when other elements are above
+    window.addEventListener('mousemove', updateMouse);
+    window.addEventListener('touchstart', updateMouse, { passive: true });
+    window.addEventListener('touchmove', updateMouse, { passive: true });
 
     const tmp = new Vec3();
     let frameId;
@@ -180,6 +188,9 @@ const Ribbons = ({
       const currentTime = performance.now();
       const dt = currentTime - lastTime;
       lastTime = currentTime;
+
+      const width = container.clientWidth;
+      const height = container.clientHeight;
 
       lines.forEach(line => {
         tmp.copy(mouse).add(line.mouseOffset).sub(line.points[0]).multiply(line.spring);
@@ -202,14 +213,23 @@ const Ribbons = ({
       });
 
       renderer.render({ scene });
+
+      // Share ribbon points for external masking (throttled)
+      if (onPointsUpdate && lines.length > 0) {
+        const screenPoints = lines[0].points.map(p => ({
+          x: (p.x + 1) * 0.5 * width,
+          y: (1 - (p.y + 1) * 0.5) * height
+        }));
+        onPointsUpdate(screenPoints, baseThickness);
+      }
     }
     update();
 
     return () => {
       window.removeEventListener('resize', resize);
-      container.removeEventListener('mousemove', updateMouse);
-      container.removeEventListener('touchstart', updateMouse);
-      container.removeEventListener('touchmove', updateMouse);
+      window.removeEventListener('mousemove', updateMouse);
+      window.removeEventListener('touchstart', updateMouse);
+      window.removeEventListener('touchmove', updateMouse);
       cancelAnimationFrame(frameId);
       if (gl.canvas && gl.canvas.parentNode === container) {
         container.removeChild(gl.canvas);
@@ -230,7 +250,7 @@ const Ribbons = ({
     backgroundColor
   ]);
 
-  return <div ref={containerRef} className="w-full h-full relative pointer-events-auto" />;
+  return <div ref={containerRef} className="w-full h-full relative pointer-events-none" />;
 };
 
 export default Ribbons;

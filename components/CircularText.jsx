@@ -19,7 +19,7 @@ const getTransition = (duration, from) => ({
   }
 });
 
-const CircularText = ({ text, spinDuration = 20, onHover = 'speedUp', className = '', fontSize = '8px', forceHover = false }) => {
+const CircularText = ({ text, spinDuration = 20, onHover = 'speedUp', className = '', fontSize = '8px', forceHover = false, textColor = 'text-foreground' }) => {
   const letters = Array.from(text);
   const controls = useAnimation();
   const rotation = useMotionValue(0);
@@ -89,7 +89,7 @@ const CircularText = ({ text, spinDuration = 20, onHover = 'speedUp', className 
 
   return (
     <motion.div
-      className={`mx-auto rounded-full w-[90px] h-[90px] relative font-black text-foreground text-center cursor-pointer origin-center ${className}`}
+      className={`mx-auto rounded-full w-[90px] h-[90px] relative font-black ${textColor} text-center cursor-pointer origin-center transition-colors duration-300 ${className}`}
       style={{ rotate: rotation }}
       initial={{ rotate: 0 }}
       animate={controls}
@@ -106,7 +106,7 @@ const CircularText = ({ text, spinDuration = 20, onHover = 'speedUp', className 
         return (
           <span
             key={i}
-            className="absolute inset-0 transition-all duration-500 ease-[cubic-bezier(0,0,0,1)]"
+            className="absolute inset-0 text-inherit transition-all duration-500 ease-[cubic-bezier(0,0,0,1)]"
             style={{ transform, WebkitTransform: transform, fontSize }}
           >
             {letter}

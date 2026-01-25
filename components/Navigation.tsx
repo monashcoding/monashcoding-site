@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import CircularText from "./CircularText";
-import { NavigationData } from "@/lib/sanity/types";
+import { NavigationData, PageVisibility } from "@/lib/sanity/types";
+import NavPreviewCard from "./navigation/NavPreviewCard";
+import { getPreviewConfig } from "./navigation/navPreviewConfig";
 
 interface NavItem {
   _key?: string;
@@ -27,7 +29,15 @@ const defaultNavItems: NavItem[] = [
   { label: "Recruitment", href: "/recruitment" },
   { label: "Sponsor Us", href: "/sponsor" },
   { label: "Contact", href: "/contact" },
+  { label: "O Week", href: "/o-week" },
+  { label: "First Year Recruitment", href: "/first-year-recruitment" },
 ];
+
+// Map paths to pageVisibility keys
+const visibilityMap: Record<string, keyof PageVisibility> = {
+  "/o-week": "oWeek",
+  "/first-year-recruitment": "firstYearRecruitment",
+};
 
 const defaultFooterLinks: FooterLink[] = [
   { label: "Instagram", href: "https://instagram.com/monashcoding" },
@@ -41,15 +51,31 @@ interface NavigationProps {
   data: NavigationData | null;
 }
 
-function NavLink({ item, onClick }: { item: NavItem; onClick: () => void }) {
+interface NavLinkProps {
+  item: NavItem;
+  onClick: () => void;
+  onHoverChange: (href: string | null) => void;
+}
+
+function NavLink({ item, onClick, onHoverChange }: NavLinkProps) {
   const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    onHoverChange(item.href);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    onHoverChange(null);
+  };
 
   return (
     <Link
       href={item.href}
       onClick={onClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       className="relative block no-underline py-1"
     >
       <div className="relative overflow-hidden h-[clamp(2.4rem,9.6vw,3.6rem)] lg:h-[clamp(3.6rem,7.2vw,6rem)]">
@@ -67,9 +93,9 @@ function NavLink({ item, onClick }: { item: NavItem; onClick: () => void }) {
           {item.label}
         </motion.span>
 
-        {/* New text that slides in from bottom */}
+        {/* New text that slides in from bottom - MAC Yellow */}
         <motion.span
-          className="absolute top-0 left-0 w-full block text-[clamp(2rem,8vw,3rem)] lg:text-[clamp(3rem,6vw,5rem)] font-semibold text-foreground leading-[1.2] transition-colors duration-300"
+          className="absolute top-0 left-0 w-full block text-[clamp(2rem,8vw,3rem)] lg:text-[clamp(3rem,6vw,5rem)] font-semibold text-accent leading-[1.2] transition-colors duration-300"
           initial={{ y: "100%" }}
           animate={{
             y: isHovered ? "0%" : "100%",
@@ -89,18 +115,41 @@ function NavLink({ item, onClick }: { item: NavItem; onClick: () => void }) {
 export default function Navigation({ data }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isPastHero, setIsPastHero] = useState(false);
+  const [isPastDither, setIsPastDither] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const pathname = usePathname();
   const isHomePage = pathname === "/";
+  const isTeamPage = pathname === "/team";
+
+  // Get preview config for hovered item
+  const previewConfig = hoveredItem ? getPreviewConfig(hoveredItem) : null;
 
   // Use Sanity data or fallbacks
-  const navItems: NavItem[] = data?.navItems || defaultNavItems;
+  const rawNavItems: NavItem[] = data?.navItems || defaultNavItems;
   const footerLinks: FooterLink[] = data?.socialLinks || defaultFooterLinks;
   const circularText = data?.circularText || defaultCircularText;
 
+  // Filter nav items based on page visibility
+  const navItems = useMemo(() => {
+    const pageVisibility = data?.pageVisibility;
+    if (!pageVisibility) return rawNavItems;
+
+    return rawNavItems.filter((item) => {
+      const visibilityKey = visibilityMap[item.href];
+      // If no visibility key for this path, always show
+      if (!visibilityKey) return true;
+      // Only show if the page is visible (shown === true)
+      return pageVisibility[visibilityKey] === true;
+    });
+  }, [rawNavItems, data?.pageVisibility]);
+
   useEffect(() => {
     const handleScroll = () => {
-      // Consider "past hero" when scrolled more than 20% of viewport height
-      setIsPastHero(window.scrollY > window.innerHeight * 0.2);
+      // Consider "past hero" when scrolled more than 80% of viewport height
+      setIsPastHero(window.scrollY > window.innerHeight * 0.8);
+      // Consider "past dither" when scrolled more than 300px (before timeline starts at 400px)
+      // This ensures the text turns black before reaching the dark timeline
+      setIsPastDither(window.scrollY > 300);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -152,7 +201,7 @@ export default function Navigation({ data }: NavigationProps) {
           onClick={() => setIsOpen(!isOpen)}
           className={`relative z-50 flex items-center gap-3 py-3 px-5 rounded-full border cursor-pointer transition-all duration-300 backdrop-blur-[12px] pointer-events-auto ${
             isOpen
-              ? "bg-accent border-accent text-foreground hover:bg-[#e6c200]"
+              ? "bg-accent border-accent text-accent-foreground hover:bg-[#e6c800]"
               : "bg-black/85 border-accent/30 text-accent hover:bg-black/95 hover:border-accent/50"
           }`}
         >
@@ -192,6 +241,7 @@ export default function Navigation({ data }: NavigationProps) {
           onHover={undefined}
           spinDuration={20}
           className="absolute inset-0"
+          textColor={isTeamPage && !isPastDither ? "text-white" : "text-foreground"}
         />
       </motion.div>
 
@@ -210,7 +260,7 @@ export default function Navigation({ data }: NavigationProps) {
                 ease: [0.76, 0, 0.24, 1],
               }}
             >
-              <div className="absolute inset-0 bg-linear-to-b from-card via-background to-secondary" />
+              <div className="absolute inset-0 bg-background" />
             </motion.div>
 
             {/* Navigation content */}
@@ -223,7 +273,7 @@ export default function Navigation({ data }: NavigationProps) {
             >
               {/* Top label */}
               <motion.span
-                className="text-xs font-semibold tracking-[0.15em] uppercase text-black/50"
+                className="text-xs font-semibold tracking-[0.15em] uppercase text-white/50"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.3 }}
@@ -245,7 +295,11 @@ export default function Navigation({ data }: NavigationProps) {
                         ease: [0.76, 0, 0.24, 1],
                       }}
                     >
-                      <NavLink item={item} onClick={() => setIsOpen(false)} />
+                      <NavLink
+                        item={item}
+                        onClick={() => setIsOpen(false)}
+                        onHoverChange={setHoveredItem}
+                      />
                     </motion.div>
                   ))}
                 </div>
@@ -264,7 +318,7 @@ export default function Navigation({ data }: NavigationProps) {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-black/50 no-underline transition-colors duration-300 hover:text-black/80"
+                    className="text-sm text-white/50 no-underline transition-colors duration-300 hover:text-white/80"
                   >
                     {link.label}
                   </a>
@@ -274,6 +328,13 @@ export default function Navigation({ data }: NavigationProps) {
           </>
         )}
       </AnimatePresence>
+
+      {/* Preview Card - outside AnimatePresence for prefetching */}
+      <NavPreviewCard
+        preview={previewConfig}
+        isVisible={isOpen && hoveredItem !== null}
+        isNavOpen={isOpen}
+      />
     </>
   );
 }

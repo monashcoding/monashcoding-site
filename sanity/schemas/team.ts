@@ -25,25 +25,22 @@ export const teamMember = defineType({
       type: 'string',
       options: {
         list: [
-          { title: 'Executive', value: 'Executive' },
-          { title: 'Education', value: 'Education' },
-          { title: 'Events', value: 'Events' },
-          { title: 'Marketing', value: 'Marketing' },
-          { title: 'Technology', value: 'Technology' },
+          { title: 'Management', value: 'management' },
+          { title: 'Events', value: 'events' },
+          { title: 'Marketing', value: 'marketing' },
+          { title: 'Design', value: 'design' },
+          { title: 'Human Resources', value: 'human-resources' },
+          { title: 'Sponsorship', value: 'sponsorship' },
+          { title: 'Media', value: 'media' },
+          { title: 'Projects', value: 'projects' },
+          { title: 'Outreach', value: 'outreach' },
         ],
         layout: 'radio',
       },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'bio',
-      title: 'Bio',
-      type: 'text',
-      rows: 3,
-      validation: (Rule) => Rule.max(200),
-    }),
-    defineField({
-      name: 'image',
+      name: 'photo',
       title: 'Photo',
       type: 'image',
       options: {
@@ -56,6 +53,23 @@ export const teamMember = defineType({
           type: 'string',
         }),
       ],
+    }),
+    defineField({
+      name: 'bio',
+      title: 'Bio',
+      type: 'text',
+      rows: 3,
+      validation: (Rule) => Rule.max(300),
+    }),
+    defineField({
+      name: 'linkedIn',
+      title: 'LinkedIn URL',
+      type: 'url',
+    }),
+    defineField({
+      name: 'email',
+      title: 'Email',
+      type: 'string',
     }),
     defineField({
       name: 'order',
@@ -80,7 +94,7 @@ export const teamMember = defineType({
       title: 'name',
       subtitle: 'role',
       team: 'team',
-      media: 'image',
+      media: 'photo',
     },
     prepare({ title, subtitle, team, media }) {
       return {
@@ -99,16 +113,48 @@ export const teamPage = defineType({
   icon: UsersIcon,
   fields: [
     defineField({
-      name: 'title',
+      name: 'pageTitle',
       title: 'Page Title',
       type: 'string',
       initialValue: 'Meet the Team',
     }),
     defineField({
-      name: 'subtitle',
+      name: 'pageSubtitle',
       title: 'Page Subtitle',
       type: 'string',
-      initialValue: 'Click on a branch to explore each team',
+    }),
+    defineField({
+      name: 'timeline',
+      title: 'Timeline Events',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          name: 'timelineEvent',
+          title: 'Timeline Event',
+          fields: [
+            defineField({
+              name: 'date',
+              title: 'Date',
+              type: 'string',
+              description: 'e.g. "July 2019"',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'title',
+              title: 'Title',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'description',
+              title: 'Description',
+              type: 'text',
+              rows: 2,
+            }),
+          ],
+        },
+      ],
     }),
   ],
   preview: {

@@ -21,7 +21,7 @@ interface Spark {
 }
 
 export default function ClickSpark({
-  sparkColor = "#FFD700",
+  sparkColor = "#FFE330",
   sparkSize = 10,
   sparkRadius = 15,
   sparkCount = 8,
@@ -104,6 +104,7 @@ export default function ClickSpark({
       onClick={createSpark}
       style={{
         position: "relative",
+        width: "100%",
         minHeight: "100%",
       }}
     >

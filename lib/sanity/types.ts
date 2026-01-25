@@ -52,6 +52,12 @@ export interface HeroVideoMedia {
 
 export type HeroMedia = HeroImageMedia | HeroVideoMedia
 
+// Announcement
+export interface Announcement {
+  _key: string
+  message: PortableTextBlock[]
+}
+
 // Hero
 export interface HeroData {
   titleLines: string[]
@@ -61,6 +67,9 @@ export interface HeroData {
   slideshowInterval: number
   fadeDuration: number
   scrollIndicatorText?: string
+  showAnnouncements?: boolean
+  announcementCycleDuration?: number
+  announcements?: Announcement[]
 }
 
 // Navigation
@@ -76,25 +85,79 @@ export interface SocialLink {
   href: string
 }
 
+export interface PageVisibility {
+  oWeek: boolean | null
+  firstYearRecruitment: boolean | null
+}
+
 export interface NavigationData {
   navItems: NavItem[]
   socialLinks: SocialLink[]
   circularText: string
+  pageVisibility?: PageVisibility
 }
 
-// Team
+// Team types
+export type TeamSlug =
+  | 'management'
+  | 'events'
+  | 'marketing'
+  | 'design'
+  | 'human-resources'
+  | 'sponsorship'
+  | 'media'
+  | 'projects'
+  | 'outreach'
+
+export interface TeamMemberImage {
+  asset: {
+    _id: string
+    url: string
+    metadata?: {
+      dimensions: {
+        width: number
+        height: number
+      }
+    }
+  }
+  alt?: string
+  hotspot?: {
+    x: number
+    y: number
+    height: number
+    width: number
+  }
+  crop?: {
+    top: number
+    bottom: number
+    left: number
+    right: number
+  }
+}
+
 export interface TeamMember {
   _id: string
   name: string
   role: string
-  team: 'Executive' | 'Education' | 'Events' | 'Marketing' | 'Technology'
+  team: TeamSlug
+  photo?: TeamMemberImage
   bio?: string
-  image?: SanityImage
+  linkedIn?: string
+  email?: string
+  order: number
+}
+
+export interface TimelineEvent {
+  _key: string
+  date: string
+  title: string
+  description?: string
 }
 
 export interface TeamPageData {
-  title: string
-  subtitle: string
+  pageTitle: string
+  pageSubtitle?: string
+  timeline?: TimelineEvent[]
 }
 
 // Recruitment
@@ -186,4 +249,90 @@ export interface ContactPageData {
   location: string
   locationMapLink: string
   socialLinks: ContactSocialLink[]
+}
+
+// Homepage Sections
+export interface StoryItem {
+  _key: string
+  year: string
+  title: string
+  content: string
+}
+
+export interface StorySectionData {
+  _key: string
+  _type: 'storySection'
+  heading: string
+  items: StoryItem[]
+}
+
+export interface InstagramSectionData {
+  _key: string
+  _type: 'instagramSection'
+  heading: string
+  handle: string
+  url: string
+  postCount: number
+}
+
+export interface Sponsor {
+  _key: string
+  name: string
+  x: number
+  y: number
+}
+
+export interface SponsorsSectionData {
+  _key: string
+  _type: 'sponsorsSection'
+  heading: string
+  description: string
+  sponsors: Sponsor[]
+}
+
+export interface FooterLink {
+  _key: string
+  label: string
+  url: string
+  isExternal: boolean
+}
+
+export interface FooterColumn {
+  _key: string
+  title: string
+  links: FooterLink[]
+}
+
+export interface FooterSectionData {
+  _key: string
+  _type: 'footerSection'
+  brandName: string
+  tagline: string
+  columns: FooterColumn[]
+  instagramUrl?: string
+  linkedinUrl?: string
+}
+
+export type HomepageSection =
+  | StorySectionData
+  | InstagramSectionData
+  | SponsorsSectionData
+  | FooterSectionData
+
+export interface HomepageData {
+  sections: HomepageSection[]
+}
+
+// O Week Page
+export interface OWeekPageData {
+  shown: boolean
+  pageTitle: string
+  pageSubtitle: string
+}
+
+// First Year Recruitment Page
+export interface FirstYearRecruitmentPageData {
+  shown: boolean
+  pageTitle: string
+  pageSubtitle: string
 }

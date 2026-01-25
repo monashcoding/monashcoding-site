@@ -3,9 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ContactPageData, ContactSocialLink } from "@/lib/sanity/types";
-import { EmailTemplate } from "./EmailTemplate";
-
-
+import { RibbonAwareSection } from "@/components/RibbonAwareSection";
 
 // Platform icon components
 const SocialIcon = ({ platform }: { platform: ContactSocialLink["platform"] }) => {
@@ -162,8 +160,12 @@ const handleSendEmail = async (
 
 
   return (
-    <main className="min-h-screen bg-linear-to-b from-background to-secondary pt-32 flex flex-col items-center justify-center">
-      <div className="max-w-150 w-full py-16 px-8 text-center">
+    <RibbonAwareSection
+      as="main"
+      backgroundClassName="bg-linear-to-b from-background to-secondary"
+      contentClassName="min-h-screen pt-32 flex flex-col items-center justify-center"
+    >
+      <div className="max-w-[600px] w-full py-16 px-8 text-center">
         <motion.h1
           className="text-[clamp(2.5rem,5vw,4rem)] font-extrabold text-foreground mb-4"
           initial={{ opacity: 0, y: 40 }}
@@ -173,7 +175,7 @@ const handleSendEmail = async (
           {pageTitle}
         </motion.h1>
         <motion.p
-          className="text-lg text-black/60 mb-12 leading-relaxed"
+          className="text-lg text-white/60 mb-12 leading-relaxed"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
@@ -331,7 +333,7 @@ const handleSendEmail = async (
         <div className="flex flex-col gap-6">
           <motion.a
             href={`mailto:${email}`}
-            className="py-6 px-8 bg-white/50 border border-black/10 rounded-2xl flex items-center gap-6 no-underline transition-all duration-300 hover:bg-white/80 hover:border-gold-700/30 hover:-translate-y-0.5 sm:flex-col sm:text-center"
+            className="py-6 px-8 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-6 no-underline transition-all duration-300 hover:bg-white/10 hover:border-accent/30 hover:-translate-y-0.5 sm:flex-col sm:text-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.2 }}
@@ -344,7 +346,7 @@ const handleSendEmail = async (
               </svg>
             </div>
             <div className="text-left sm:text-center">
-              <div className="text-sm text-black/50 mb-1">Email</div>
+              <div className="text-sm text-white/50 mb-1">Email</div>
               <div className="text-lg text-foreground font-medium">{email}</div>
             </div>
           </motion.a>
@@ -353,7 +355,7 @@ const handleSendEmail = async (
             href={discordLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="py-6 px-8 bg-white/50 border border-black/10 rounded-2xl flex items-center gap-6 no-underline transition-all duration-300 hover:bg-white/80 hover:border-gold-700/30 hover:-translate-y-0.5 sm:flex-col sm:text-center"
+            className="py-6 px-8 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-6 no-underline transition-all duration-300 hover:bg-white/10 hover:border-accent/30 hover:-translate-y-0.5 sm:flex-col sm:text-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.3 }}
@@ -365,7 +367,7 @@ const handleSendEmail = async (
               </svg>
             </div>
             <div className="text-left sm:text-center">
-              <div className="text-sm text-black/50 mb-1">Discord</div>
+              <div className="text-sm text-white/50 mb-1">Discord</div>
               <div className="text-lg text-foreground font-medium">{discordLabel}</div>
             </div>
           </motion.a>
@@ -374,7 +376,7 @@ const handleSendEmail = async (
             href={locationMapLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="py-6 px-8 bg-white/50 border border-black/10 rounded-2xl flex items-center gap-6 no-underline transition-all duration-300 hover:bg-white/80 hover:border-gold-700/30 hover:-translate-y-0.5 sm:flex-col sm:text-center"
+            className="py-6 px-8 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-6 no-underline transition-all duration-300 hover:bg-white/10 hover:border-accent/30 hover:-translate-y-0.5 sm:flex-col sm:text-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.4 }}
@@ -387,19 +389,19 @@ const handleSendEmail = async (
               </svg>
             </div>
             <div className="text-left sm:text-center">
-              <div className="text-sm text-black/50 mb-1">Location</div>
+              <div className="text-sm text-white/50 mb-1">Location</div>
               <div className="text-lg text-foreground font-medium">{location}</div>
             </div>
           </motion.a>
         </div>
 
         <motion.div
-          className="mt-12 pt-12 border-t border-black/10"
+          className="mt-12 pt-12 border-t border-white/10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.5 }}
         >
-          <div className="text-base text-black/50 mb-6">Follow us on social media</div>
+          <div className="text-base text-white/50 mb-6">Follow us on social media</div>
           <div className="flex justify-center gap-4">
             {socialLinks.map((link) => (
               <a
@@ -416,6 +418,6 @@ const handleSendEmail = async (
           </div>
         </motion.div>
       </div>
-    </main>
+    </RibbonAwareSection>
   );
 }
