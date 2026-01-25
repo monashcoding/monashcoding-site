@@ -325,11 +325,6 @@ const handleSendEmail = async (
       </motion.button>
     </motion.form>
 
-        {/* Have the contact methods side by side */}
-        <div className="flex flex-row gap-6 mb-12">
-          
-        </div>
-
         <div className="flex flex-col gap-6">
           <motion.a
             href={`mailto:${email}`}
