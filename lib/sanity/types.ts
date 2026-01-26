@@ -52,6 +52,12 @@ export interface HeroVideoMedia {
 
 export type HeroMedia = HeroImageMedia | HeroVideoMedia
 
+// Announcement
+export interface Announcement {
+  _key: string
+  message: PortableTextBlock[]
+}
+
 // Hero
 export interface HeroData {
   titleLines: string[]
@@ -61,6 +67,9 @@ export interface HeroData {
   slideshowInterval: number
   fadeDuration: number
   scrollIndicatorText?: string
+  showAnnouncements?: boolean
+  announcementCycleDuration?: number
+  announcements?: Announcement[]
 }
 
 // Navigation

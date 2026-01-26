@@ -9,6 +9,7 @@ import { HeroDescription } from '@/lib/sanity/portableText'
 import { urlFor } from '@/sanity/lib/image'
 import CircularText from '@/components/CircularText'
 import { getRibbonPoints, getRibbonThickness, RibbonPoint } from '@/components/RibbonContext'
+import { AnnouncementBanner } from './AnnouncementBanner'
 
 const MacLogo3D = dynamic(() => import('@/components/MacLogo3D'), { ssr: false })
 
@@ -268,7 +269,18 @@ export function Hero({ data }: HeroProps) {
   const [isLogoHovered, setIsLogoHovered] = useState(false)
   const prefersReducedMotion = useReducedMotion()
 
-  const { titleLines, description, heroMedia, overlayOpacity, slideshowInterval, fadeDuration, scrollIndicatorText } = heroData
+  const {
+    titleLines,
+    description,
+    heroMedia,
+    overlayOpacity,
+    slideshowInterval,
+    fadeDuration,
+    scrollIndicatorText,
+    showAnnouncements,
+    announcementCycleDuration,
+    announcements,
+  } = heroData
 
   const currentMedia = heroMedia?.[currentMediaIndex]
   const isCurrentVideo = currentMedia && isVideoMedia(currentMedia)
@@ -308,12 +320,20 @@ export function Hero({ data }: HeroProps) {
   }, [currentMediaIndex, currentMedia])
 
   const hasDescription = description && description.length > 0
+  const hasAnnouncements = showAnnouncements && announcements && announcements.length > 0
 
   return (
-    <section
-      ref={heroRef}
-      className="relative min-h-screen w-full overflow-hidden"
-    >
+    <>
+      {hasAnnouncements && (
+        <AnnouncementBanner
+          announcements={announcements}
+          cycleDuration={announcementCycleDuration}
+        />
+      )}
+      <section
+        ref={heroRef}
+        className="relative min-h-screen w-full overflow-hidden"
+      >
       {/* Full-width Hero Media Background */}
       <div className="absolute inset-0 z-0">
         {heroMedia?.map((media, index) => (
@@ -459,5 +479,6 @@ export function Hero({ data }: HeroProps) {
         />
       </motion.div>
     </section>
+    </>
   )
 }
