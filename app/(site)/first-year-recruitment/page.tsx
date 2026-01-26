@@ -1,4 +1,7 @@
 import { notFound } from "next/navigation";
+
+// Static generation - revalidated via webhook on Sanity publish
+export const revalidate = false;
 import { client } from "@/sanity/lib/client";
 import { firstYearRecruitmentPageQuery } from "@/sanity/lib/queries";
 import { FirstYearRecruitmentPageData } from "@/lib/sanity/types";
@@ -6,7 +9,7 @@ import FirstYearRecruitmentPageClient from "@/components/FirstYearRecruitmentPag
 
 async function getFirstYearRecruitmentPageData(): Promise<FirstYearRecruitmentPageData | null> {
   try {
-    return await client.fetch(firstYearRecruitmentPageQuery);
+    return await client.fetch(firstYearRecruitmentPageQuery, {}, { next: { tags: ['firstYearRecruitmentPage'] } });
   } catch (error) {
     console.error("Error fetching First Year Recruitment page data:", error);
     return null;

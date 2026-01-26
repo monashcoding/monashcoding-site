@@ -7,7 +7,7 @@ import { NavigationData } from "@/lib/sanity/types";
 
 async function getNavigationData(): Promise<NavigationData | null> {
   try {
-    return await client.fetch(navigationQuery);
+    return await client.fetch(navigationQuery, {}, { next: { tags: ['navigation'] } });
   } catch (error) {
     console.error("Error fetching navigation:", error);
     return null;
