@@ -32,15 +32,11 @@ export default function ClickSpark({
 }: ClickSparkProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const sparkIdRef = useRef(0);
-  const activeSparkCount = useRef(0);
-  const MAX_CONCURRENT_SPARKS = 24;
 
   const createSpark = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       const container = containerRef.current;
       if (!container) return;
-
-      if (activeSparkCount.current >= MAX_CONCURRENT_SPARKS) return;
 
       const rect = container.getBoundingClientRect();
       const x = e.clientX - rect.left;
@@ -67,7 +63,6 @@ export default function ClickSpark({
         `;
 
         container.appendChild(spark);
-        activeSparkCount.current++;
 
         // Animate spark
         const radian = (angle * Math.PI) / 180;
@@ -97,7 +92,6 @@ export default function ClickSpark({
           }
         ).onfinish = () => {
           spark.remove();
-          activeSparkCount.current--;
         };
       }
     },

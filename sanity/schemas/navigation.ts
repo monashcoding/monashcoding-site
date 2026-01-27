@@ -74,6 +74,13 @@ export const navigation = defineType({
         }),
       ],
     }),
+    defineField({
+      name: 'circularText',
+      title: 'Circular Text',
+      description: 'Rotating text around the logo (use * as separator)',
+      type: 'string',
+      initialValue: 'MNSH*ASSOC*OF*CODING*',
+    }),
   ],
   preview: {
     prepare() {

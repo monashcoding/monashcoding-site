@@ -93,6 +93,7 @@ export interface PageVisibility {
 export interface NavigationData {
   navItems: NavItem[]
   socialLinks: SocialLink[]
+  circularText: string
   pageVisibility?: PageVisibility
 }
 

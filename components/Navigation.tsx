@@ -5,9 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import CircularText from "./CircularText";
 import { NavigationData, PageVisibility } from "@/lib/sanity/types";
 import NavPreviewCard from "./navigation/NavPreviewCard";
-import { getPreviewConfig, DEFAULT_PREVIEW_HREF } from "./navigation/navPreviewConfig";
+import { getPreviewConfig } from "./navigation/navPreviewConfig";
 
 interface NavItem {
   _key?: string;
@@ -43,6 +44,8 @@ const defaultFooterLinks: FooterLink[] = [
   { label: "LinkedIn", href: "https://linkedin.com/company/monashcoding" },
   { label: "Discord", href: "https://discord.gg/monashcoding" },
 ];
+
+const defaultCircularText = "MNSH*ASSOC*OF*CODING*";
 
 interface NavigationProps {
   data: NavigationData | null;
@@ -112,19 +115,19 @@ function NavLink({ item, onClick, onHoverChange }: NavLinkProps) {
 export default function Navigation({ data }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isPastHero, setIsPastHero] = useState(false);
+  const [isPastDither, setIsPastDither] = useState(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const pathname = usePathname();
   const isHomePage = pathname === "/";
+  const isTeamPage = pathname === "/team";
 
-  // Get preview config for hovered item (falls back to default when nothing hovered
-  // or when no preview exists for the hovered path)
-  const previewConfig =
-    getPreviewConfig(hoveredItem ?? DEFAULT_PREVIEW_HREF) ??
-    getPreviewConfig(DEFAULT_PREVIEW_HREF);
+  // Get preview config for hovered item
+  const previewConfig = hoveredItem ? getPreviewConfig(hoveredItem) : null;
 
   // Use Sanity data or fallbacks
   const rawNavItems: NavItem[] = data?.navItems || defaultNavItems;
   const footerLinks: FooterLink[] = data?.socialLinks || defaultFooterLinks;
+  const circularText = data?.circularText || defaultCircularText;
 
   // Filter nav items based on page visibility
   const navItems = useMemo(() => {
@@ -144,6 +147,9 @@ export default function Navigation({ data }: NavigationProps) {
     const handleScroll = () => {
       // Consider "past hero" when scrolled more than 80% of viewport height
       setIsPastHero(window.scrollY > window.innerHeight * 0.8);
+      // Consider "past dither" when scrolled more than 300px (before timeline starts at 400px)
+      // This ensures the text turns black before reaching the dark timeline
+      setIsPastDither(window.scrollY > 300);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -223,6 +229,22 @@ export default function Navigation({ data }: NavigationProps) {
         </button>
       </header>
 
+      {/* Circular Text - separate from header for z-index control */}
+      <motion.div
+        className="fixed top-[calc(1rem+24px-45px)] left-[calc(1rem+24px-45px)] lg:top-[calc(1.5rem+24px-45px)] lg:left-[calc(2.5rem+24px-45px)] w-22.5 h-22.5 z-35 flex items-center justify-center pointer-events-none"
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: showNavbar ? 0 : -100, opacity: showNavbar ? 1 : 0 }}
+        transition={{ duration: 0.4, ease: [0.76, 0, 0.24, 1] }}
+      >
+        <CircularText
+          text={circularText}
+          onHover={undefined}
+          spinDuration={20}
+          className="absolute inset-0"
+          textColor={isTeamPage && !isPastDither ? "text-white" : "text-foreground"}
+        />
+      </motion.div>
+
       {/* Full screen navigation overlay */}
       <AnimatePresence>
         {isOpen && (
@@ -231,7 +253,7 @@ export default function Navigation({ data }: NavigationProps) {
             <motion.div
               className="fixed inset-0 z-40"
               initial={{ clipPath: "circle(0% at calc(100% - 80px) 48px)" }}
-              animate={{ clipPath: "circle(200% at calc(100% - 80px) 48px)" }}
+              animate={{ clipPath: "circle(150% at calc(100% - 80px) 48px)" }}
               exit={{ clipPath: "circle(0% at calc(100% - 80px) 48px)" }}
               transition={{
                 duration: 0.8,
@@ -310,7 +332,8 @@ export default function Navigation({ data }: NavigationProps) {
       {/* Preview Card - outside AnimatePresence for prefetching */}
       <NavPreviewCard
         preview={previewConfig}
-        isVisible={isOpen}
+        isVisible={isOpen && hoveredItem !== null}
+        isNavOpen={isOpen}
       />
     </>
   );

@@ -32,8 +32,6 @@ export const NAV_PREVIEWS: Record<string, NavPreviewConfig> = {
   },
 };
 
-export const DEFAULT_PREVIEW_HREF = "/";
-
 export function getPreviewConfig(href: string): NavPreviewConfig | null {
   return NAV_PREVIEWS[href] || null;
 }
