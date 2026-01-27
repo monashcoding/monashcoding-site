@@ -116,8 +116,11 @@ export default function Navigation({ data }: NavigationProps) {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
 
-  // Get preview config for hovered item (falls back to default when nothing hovered)
-  const previewConfig = getPreviewConfig(hoveredItem ?? DEFAULT_PREVIEW_HREF);
+  // Get preview config for hovered item (falls back to default when nothing hovered
+  // or when no preview exists for the hovered path)
+  const previewConfig =
+    getPreviewConfig(hoveredItem ?? DEFAULT_PREVIEW_HREF) ??
+    getPreviewConfig(DEFAULT_PREVIEW_HREF);
 
   // Use Sanity data or fallbacks
   const rawNavItems: NavItem[] = data?.navItems || defaultNavItems;
