@@ -68,7 +68,7 @@ const visibilityMap: Record<string, keyof PageVisibility> = {
 const defaultFooterLinks: FooterLink[] = [
   { label: "Instagram", href: "https://instagram.com/monashcoding" },
   { label: "LinkedIn", href: "https://linkedin.com/company/monashcoding" },
-  { label: "Discord", href: "https://discord.gg/monashcoding" },
+  { label: "Discord", href: "https://discord.gg/2zB6ydCkA5" },
 ];
 
 interface NavigationProps {
