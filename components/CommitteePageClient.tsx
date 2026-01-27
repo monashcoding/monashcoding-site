@@ -5,15 +5,15 @@ import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import { urlFor } from '@/sanity/lib/image'
-import { TeamMember, TeamPageData, TeamSlug } from '@/lib/sanity/types'
+import { CommitteeMember, CommitteePageData, TeamSlug } from '@/lib/sanity/types'
 import Timeline from '@/components/team/Timeline'
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
 
 const Dither = dynamic(() => import('@/components/Dither'), { ssr: false })
 
-interface TeamPageClientProps {
-  pageData: TeamPageData | null
-  members: TeamMember[]
+interface CommitteePageClientProps {
+  pageData: CommitteePageData | null
+  members: CommitteeMember[]
 }
 
 const TEAM_LABELS: Record<TeamSlug, string> = {
@@ -40,18 +40,18 @@ const TEAM_ORDER: TeamSlug[] = [
   'outreach',
 ]
 
-export default function TeamPageClient({ pageData, members }: TeamPageClientProps) {
+export default function CommitteePageClient({ pageData, members }: CommitteePageClientProps) {
   const [selectedTeam, setSelectedTeam] = useState<TeamSlug | 'all'>('all')
-  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null)
+  const [selectedMember, setSelectedMember] = useState<CommitteeMember | null>(null)
   const sectionRef = useRef<HTMLDivElement>(null)
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [isHovering, setIsHovering] = useState(false)
 
-  const title = pageData?.pageTitle || 'Meet the Team'
+  const title = pageData?.pageTitle || 'Meet the Committee'
 
   // Group members by team
   const teamGroups = useMemo(() => {
-    const groups: Record<TeamSlug, TeamMember[]> = {
+    const groups: Record<TeamSlug, CommitteeMember[]> = {
       management: [],
       events: [],
       marketing: [],
@@ -213,7 +213,7 @@ export default function TeamPageClient({ pageData, members }: TeamPageClientProp
             </div>
           </div>
 
-          {/* Team Member Grid */}
+          {/* Committee Member Grid */}
           <div className="relative mx-auto max-w-7xl">
             <LayoutGroup>
               <motion.div
@@ -268,7 +268,7 @@ export default function TeamPageClient({ pageData, members }: TeamPageClientProp
 
             {filteredMembers.length === 0 && (
               <div className="py-16 text-center text-foreground/50">
-                No team members found for this team yet.
+                No committee members found for this team yet.
               </div>
             )}
           </div>

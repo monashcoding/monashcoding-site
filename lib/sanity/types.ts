@@ -108,7 +108,7 @@ export type TeamSlug =
   | 'projects'
   | 'outreach'
 
-export interface TeamMemberImage {
+export interface CommitteeMemberImage {
   asset: {
     _id: string
     url: string
@@ -134,12 +134,12 @@ export interface TeamMemberImage {
   }
 }
 
-export interface TeamMember {
+export interface CommitteeMember {
   _id: string
   name: string
   role: string
   team: TeamSlug
-  photo?: TeamMemberImage
+  photo?: CommitteeMemberImage
   bio?: string
   linkedIn?: string
   email?: string
@@ -153,7 +153,7 @@ export interface TimelineEvent {
   description?: string
 }
 
-export interface TeamPageData {
+export interface CommitteePageData {
   pageTitle: string
   pageSubtitle?: string
   timeline?: TimelineEvent[]

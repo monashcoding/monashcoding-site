@@ -4,11 +4,11 @@ import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import { X, Linkedin, Mail } from 'lucide-react'
-import { TeamMember, TeamSlug } from '@/lib/sanity/types'
+import { CommitteeMember, TeamSlug } from '@/lib/sanity/types'
 import { urlFor } from '@/sanity/lib/image'
 
-interface TeamMemberPopupProps {
-  member: TeamMember | null
+interface CommitteeMemberPopupProps {
+  member: CommitteeMember | null
   onClose: () => void
 }
 
@@ -33,10 +33,10 @@ function getInitials(name: string): string {
     .slice(0, 2)
 }
 
-export default function TeamMemberPopup({
+export default function CommitteeMemberPopup({
   member,
   onClose,
-}: TeamMemberPopupProps) {
+}: CommitteeMemberPopupProps) {
   useEffect(() => {
     if (member) {
       document.body.style.overflow = 'hidden'

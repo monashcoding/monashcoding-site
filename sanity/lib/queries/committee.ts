@@ -1,7 +1,7 @@
 import { groq } from 'next-sanity'
 
-export const teamPageQuery = groq`
-  *[_type == "teamPage"][0] {
+export const committeePageQuery = groq`
+  *[_type == "committeePage"][0] {
     pageTitle,
     pageSubtitle,
     timeline[] {
@@ -13,8 +13,8 @@ export const teamPageQuery = groq`
   }
 `
 
-export const teamMembersQuery = groq`
-  *[_type == "teamMember"] | order(team asc, order asc) {
+export const committeeMembersQuery = groq`
+  *[_type == "committeeMember"] | order(team asc, order asc) {
     _id,
     name,
     role,
@@ -32,8 +32,8 @@ export const teamMembersQuery = groq`
   }
 `
 
-export const teamMembersByTeamQuery = groq`
-  *[_type == "teamMember" && team == $team] | order(order asc) {
+export const committeeMembersByTeamQuery = groq`
+  *[_type == "committeeMember" && team == $team] | order(order asc) {
     _id,
     name,
     role,
