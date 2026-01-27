@@ -14,7 +14,7 @@ export const committeePageQuery = groq`
 `
 
 export const committeeMembersQuery = groq`
-  *[_type == "committeeMember"] | order(team asc, order asc) {
+  *[_type == "committeeMember"] | order(team asc, name asc) {
     _id,
     name,
     role,
@@ -22,7 +22,6 @@ export const committeeMembersQuery = groq`
     bio,
     linkedIn,
     email,
-    order,
     photo {
       asset->,
       alt,
@@ -33,7 +32,7 @@ export const committeeMembersQuery = groq`
 `
 
 export const committeeMembersByTeamQuery = groq`
-  *[_type == "committeeMember" && team == $team] | order(order asc) {
+  *[_type == "committeeMember" && team == $team] | order(name asc) {
     _id,
     name,
     role,
@@ -41,7 +40,6 @@ export const committeeMembersByTeamQuery = groq`
     bio,
     linkedIn,
     email,
-    order,
     photo {
       asset->,
       alt,
