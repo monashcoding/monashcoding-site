@@ -43,9 +43,14 @@ export function AnnouncementBanner({ announcements, cycleDuration = 5 }: Announc
   const [progress, setProgress] = useState(0)
   const [isClient, setIsClient] = useState(false)
 
-  // Check dismissal state on client mount
+  // Check dismissal state on client mount and detect iframe context
   useEffect(() => {
     setIsClient(true)
+    // Hide announcements when rendered inside an iframe (e.g. nav preview card)
+    if (window.self !== window.top) {
+      setIsDismissed(true)
+      return
+    }
     const dismissed = sessionStorage.getItem(STORAGE_KEY) === 'true'
     setIsDismissed(dismissed)
   }, [])
