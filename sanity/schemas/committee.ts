@@ -1,9 +1,9 @@
 import { defineType, defineField } from 'sanity'
 import { UsersIcon, UserIcon } from '@sanity/icons'
 
-export const teamMember = defineType({
-  name: 'teamMember',
-  title: 'Team Member',
+export const committeeMember = defineType({
+  name: 'committeeMember',
+  title: 'Committee Member',
   type: 'document',
   icon: UserIcon,
   fields: [
@@ -106,9 +106,9 @@ export const teamMember = defineType({
   },
 })
 
-export const teamPage = defineType({
-  name: 'teamPage',
-  title: 'Team Page Settings',
+export const committeePage = defineType({
+  name: 'committeePage',
+  title: 'Committee Page Settings',
   type: 'document',
   icon: UsersIcon,
   fields: [
@@ -116,7 +116,7 @@ export const teamPage = defineType({
       name: 'pageTitle',
       title: 'Page Title',
       type: 'string',
-      initialValue: 'Meet the Team',
+      initialValue: 'Meet the Committee',
     }),
     defineField({
       name: 'pageSubtitle',
@@ -160,7 +160,7 @@ export const teamPage = defineType({
   preview: {
     prepare() {
       return {
-        title: 'Team Page Settings',
+        title: 'Committee Page Settings',
       }
     },
   },

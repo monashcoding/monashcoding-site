@@ -2,12 +2,12 @@
 
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { TeamMember, TeamSlug } from '@/lib/sanity/types'
-import TeamMemberCard from './TeamMemberCard'
-import TeamMemberPopup from './TeamMemberPopup'
+import { CommitteeMember, TeamSlug } from '@/lib/sanity/types'
+import CommitteeMemberCard from './CommitteeMemberCard'
+import CommitteeMemberPopup from './CommitteeMemberPopup'
 
-interface TeamGridProps {
-  members: TeamMember[]
+interface CommitteeGridProps {
+  members: CommitteeMember[]
 }
 
 type FilterOption = 'all' | TeamSlug
@@ -25,9 +25,9 @@ const FILTER_OPTIONS: { value: FilterOption; label: string }[] = [
   { value: 'outreach', label: 'Outreach' },
 ]
 
-export default function TeamGrid({ members }: TeamGridProps) {
+export default function CommitteeGrid({ members }: CommitteeGridProps) {
   const [activeFilter, setActiveFilter] = useState<FilterOption>('all')
-  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null)
+  const [selectedMember, setSelectedMember] = useState<CommitteeMember | null>(null)
 
   const filteredMembers = useMemo(() => {
     if (activeFilter === 'all') return members
@@ -74,7 +74,7 @@ export default function TeamGrid({ members }: TeamGridProps) {
         >
           {filteredMembers.length > 0 ? (
             filteredMembers.map((member, index) => (
-              <TeamMemberCard
+              <CommitteeMemberCard
                 key={member._id}
                 member={member}
                 onClick={() => setSelectedMember(member)}
@@ -87,14 +87,14 @@ export default function TeamGrid({ members }: TeamGridProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
-              No team members found
+              No committee members found
             </motion.div>
           )}
         </motion.div>
       </AnimatePresence>
 
       {/* Popup */}
-      <TeamMemberPopup
+      <CommitteeMemberPopup
         member={selectedMember}
         onClose={() => setSelectedMember(null)}
       />

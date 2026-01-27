@@ -1,7 +1,7 @@
 import { hero } from './hero'
 import { homepage } from './homepage'
 import { navigation } from './navigation'
-import { teamMember, teamPage } from './team'
+import { committeeMember, committeePage } from './committee'
 import { recruitmentPosition, recruitmentPage } from './recruitment'
 import { sponsorPage } from './sponsor'
 import { contactPage } from './contact'
@@ -13,7 +13,7 @@ export const schemaTypes = [
   // Pages
   hero,
   homepage,
-  teamPage,
+  committeePage,
   recruitmentPage,
   sponsorPage,
   contactPage,
@@ -22,6 +22,6 @@ export const schemaTypes = [
   navigation,
   socialLinks,
   // Individual items
-  teamMember,
+  committeeMember,
   recruitmentPosition,
 ]

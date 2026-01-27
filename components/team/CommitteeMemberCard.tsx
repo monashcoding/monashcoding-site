@@ -2,11 +2,11 @@
 
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { TeamMember } from '@/lib/sanity/types'
+import { CommitteeMember } from '@/lib/sanity/types'
 import { urlFor } from '@/sanity/lib/image'
 
-interface TeamMemberCardProps {
-  member: TeamMember
+interface CommitteeMemberCardProps {
+  member: CommitteeMember
   onClick: () => void
   index: number
 }
@@ -20,11 +20,11 @@ function getInitials(name: string): string {
     .slice(0, 2)
 }
 
-export default function TeamMemberCard({
+export default function CommitteeMemberCard({
   member,
   onClick,
   index,
-}: TeamMemberCardProps) {
+}: CommitteeMemberCardProps) {
   const imageUrl = member.photo?.asset
     ? urlFor(member.photo).width(400).height(400).fit('crop').url()
     : null
