@@ -140,10 +140,17 @@ export interface CommitteeMember {
   role: string
   team: TeamSlug
   photo?: CommitteeMemberImage
+  pastRoles?: string[]
   bio?: string
   linkedIn?: string
   email?: string
-  order: number
+  discordHandle?: string
+  bentoMe?: string
+  birthday?: string
+  gender?: string
+  isAlumni?: boolean
+  mbti?: string
+  firstDay?: string
 }
 
 export interface TimelineEvent {
