@@ -28,6 +28,11 @@ const TEAM_LABELS: Record<TeamSlug, string> = {
   outreach: 'Outreach',
 }
 
+const TEAM_LABELS_WITH_PC: Record<string, string> = {
+  ...TEAM_LABELS,
+  'human-resources': 'P&C',
+}
+
 const TEAM_ORDER: TeamSlug[] = [
   'management',
   'events',
@@ -40,8 +45,53 @@ const TEAM_ORDER: TeamSlug[] = [
   'outreach',
 ]
 
+// Role priority within management team (lower = higher priority)
+const MANAGEMENT_ROLE_PRIORITY: Record<string, number> = {
+  president: 0,
+  'vice president': 1,
+  secretary: 2,
+  treasurer: 3,
+}
+
+function getManagementRolePriority(role: string): number {
+  const normalized = role.toLowerCase().trim()
+  for (const [key, priority] of Object.entries(MANAGEMENT_ROLE_PRIORITY)) {
+    if (normalized.includes(key)) return priority
+  }
+  return 99
+}
+
+function isDirector(role: string): boolean {
+  return role.toLowerCase().includes('director')
+}
+
+function sortMembers(members: CommitteeMember[]): CommitteeMember[] {
+  return [...members].sort((a, b) => {
+    // Sort by team order first
+    const teamOrderA = TEAM_ORDER.indexOf(a.team)
+    const teamOrderB = TEAM_ORDER.indexOf(b.team)
+    if (teamOrderA !== teamOrderB) return teamOrderA - teamOrderB
+
+    // Within management, sort by role priority
+    if (a.team === 'management') {
+      const priorityA = getManagementRolePriority(a.role)
+      const priorityB = getManagementRolePriority(b.role)
+      if (priorityA !== priorityB) return priorityA - priorityB
+    }
+
+    // Directors first within each team
+    const aIsDirector = isDirector(a.role)
+    const bIsDirector = isDirector(b.role)
+    if (aIsDirector && !bIsDirector) return -1
+    if (!aIsDirector && bIsDirector) return 1
+
+    // Then alphabetical by name
+    return a.name.localeCompare(b.name)
+  })
+}
+
 export default function CommitteePageClient({ pageData, members }: CommitteePageClientProps) {
-  const [selectedTeam, setSelectedTeam] = useState<TeamSlug | 'all'>('all')
+  const [selectedTeam, setSelectedTeam] = useState<TeamSlug | 'all' | 'alumni'>('all')
   const [selectedMember, setSelectedMember] = useState<CommitteeMember | null>(null)
   const sectionRef = useRef<HTMLDivElement>(null)
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
@@ -49,7 +99,23 @@ export default function CommitteePageClient({ pageData, members }: CommitteePage
 
   const title = pageData?.pageTitle || 'Meet the Committee'
 
-  // Group members by team
+  // Separate alumni from active members
+  // Check both the isAlumni flag and whether the role contains "alumni" (for imported data)
+  const { activeMembers, alumniMembers } = useMemo(() => {
+    const active: CommitteeMember[] = []
+    const alumni: CommitteeMember[] = []
+    members.forEach((member) => {
+      const memberIsAlumni = member.isAlumni || member.role?.toLowerCase().includes('alumni')
+      if (memberIsAlumni) {
+        alumni.push(member)
+      } else {
+        active.push(member)
+      }
+    })
+    return { activeMembers: sortMembers(active), alumniMembers: sortMembers(alumni) }
+  }, [members])
+
+  // Group active members by team
   const teamGroups = useMemo(() => {
     const groups: Record<TeamSlug, CommitteeMember[]> = {
       management: [],
@@ -63,23 +129,25 @@ export default function CommitteePageClient({ pageData, members }: CommitteePage
       outreach: [],
     }
 
-    members.forEach((member) => {
+    activeMembers.forEach((member) => {
       if (member.team && groups[member.team]) {
         groups[member.team].push(member)
       }
     })
 
     return groups
-  }, [members])
+  }, [activeMembers])
 
   // Filter members based on selected team
   const filteredMembers = useMemo(() => {
-    if (selectedTeam === 'all') return members
+    if (selectedTeam === 'all') return activeMembers
+    if (selectedTeam === 'alumni') return alumniMembers
     return teamGroups[selectedTeam] || []
-  }, [selectedTeam, members, teamGroups])
+  }, [selectedTeam, activeMembers, alumniMembers, teamGroups])
 
   // Get teams that have members
   const activeTeams = TEAM_ORDER.filter((team) => teamGroups[team].length > 0)
+  const hasAlumni = alumniMembers.length > 0
 
   // Mouse tracking for dither effect
   useEffect(() => {
@@ -195,7 +263,7 @@ export default function CommitteePageClient({ pageData, members }: CommitteePage
                     : 'bg-white/10 text-foreground hover:bg-white/20'
                 }`}
               >
-                All
+                2026
               </button>
               {activeTeams.map((team) => (
                 <button
@@ -207,9 +275,21 @@ export default function CommitteePageClient({ pageData, members }: CommitteePage
                       : 'bg-white/10 text-foreground hover:bg-white/20'
                   }`}
                 >
-                  {TEAM_LABELS[team]}
+                  {TEAM_LABELS_WITH_PC[team] || TEAM_LABELS[team]}
                 </button>
               ))}
+              {hasAlumni && (
+                <button
+                  onClick={() => setSelectedTeam('alumni')}
+                  className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 ${
+                    selectedTeam === 'alumni'
+                      ? 'bg-[#FFE330] text-black'
+                      : 'bg-white/10 text-foreground hover:bg-white/20'
+                  }`}
+                >
+                  Alumni
+                </button>
+              )}
             </div>
           </div>
 
@@ -335,8 +415,44 @@ export default function CommitteePageClient({ pageData, members }: CommitteePage
                   <p className="mb-6 text-sm leading-relaxed text-foreground/70">{selectedMember.bio}</p>
                 )}
 
+                {/* Additional Details */}
+                {(selectedMember.pastRoles?.length || selectedMember.mbti || selectedMember.birthday || selectedMember.firstDay || selectedMember.discordHandle) && (
+                  <div className="mb-6 w-full space-y-2 text-left text-sm">
+                    {selectedMember.pastRoles && selectedMember.pastRoles.length > 0 && (
+                      <div className="flex items-start gap-2">
+                        <span className="shrink-0 text-foreground/40">Past Roles:</span>
+                        <span className="text-foreground/70">{selectedMember.pastRoles.join(', ')}</span>
+                      </div>
+                    )}
+                    {selectedMember.mbti && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-foreground/40">MBTI:</span>
+                        <span className="text-foreground/70">{selectedMember.mbti}</span>
+                      </div>
+                    )}
+                    {selectedMember.birthday && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-foreground/40">Birthday:</span>
+                        <span className="text-foreground/70">{selectedMember.birthday}</span>
+                      </div>
+                    )}
+                    {selectedMember.firstDay && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-foreground/40">First Day:</span>
+                        <span className="text-foreground/70">{selectedMember.firstDay}</span>
+                      </div>
+                    )}
+                    {selectedMember.discordHandle && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-foreground/40">Discord:</span>
+                        <span className="text-foreground/70">{selectedMember.discordHandle}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* Social Links */}
-                <div className="flex gap-4">
+                <div className="flex flex-wrap justify-center gap-3">
                   {selectedMember.linkedIn && (
                     <a
                       href={selectedMember.linkedIn}
@@ -357,6 +473,22 @@ export default function CommitteePageClient({ pageData, members }: CommitteePage
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                         <polyline points="22,6 12,13 2,6" />
+                      </svg>
+                    </a>
+                  )}
+                  {selectedMember.bentoMe && (
+                    <a
+                      href={selectedMember.bentoMe}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-foreground transition-colors hover:bg-[#FFE330] hover:text-black"
+                      title="Bento.me"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1" />
+                        <rect x="14" y="3" width="7" height="7" rx="1" />
+                        <rect x="3" y="14" width="7" height="7" rx="1" />
+                        <rect x="14" y="14" width="7" height="7" rx="1" />
                       </svg>
                     </a>
                   )}

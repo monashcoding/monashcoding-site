@@ -10,34 +10,43 @@ interface CommitteeGridProps {
   members: CommitteeMember[]
 }
 
-type FilterOption = 'all' | TeamSlug
+type FilterOption = 'all' | 'alumni' | TeamSlug
 
 const FILTER_OPTIONS: { value: FilterOption; label: string }[] = [
-  { value: 'all', label: 'All' },
+  { value: 'all', label: '2026' },
   { value: 'management', label: 'Management' },
   { value: 'events', label: 'Events' },
   { value: 'marketing', label: 'Marketing' },
   { value: 'design', label: 'Design' },
-  { value: 'human-resources', label: 'Human Resources' },
+  { value: 'human-resources', label: 'P&C' },
   { value: 'sponsorship', label: 'Sponsorship' },
   { value: 'media', label: 'Media' },
   { value: 'projects', label: 'Projects' },
   { value: 'outreach', label: 'Outreach' },
+  { value: 'alumni', label: 'Alumni' },
 ]
 
 export default function CommitteeGrid({ members }: CommitteeGridProps) {
   const [activeFilter, setActiveFilter] = useState<FilterOption>('all')
   const [selectedMember, setSelectedMember] = useState<CommitteeMember | null>(null)
 
+  const isAlumniMember = (m: CommitteeMember) => m.isAlumni || m.role?.toLowerCase().includes('alumni')
+
   const filteredMembers = useMemo(() => {
-    if (activeFilter === 'all') return members
-    return members.filter((member) => member.team === activeFilter)
+    if (activeFilter === 'all') return members.filter((m) => !isAlumniMember(m))
+    if (activeFilter === 'alumni') return members.filter((m) => isAlumniMember(m))
+    return members.filter((member) => member.team === activeFilter && !isAlumniMember(member))
   }, [members, activeFilter])
 
   const availableFilters = useMemo(() => {
-    const teamsWithMembers = new Set(members.map((m) => m.team))
+    const activeMembers = members.filter((m) => !isAlumniMember(m))
+    const hasAlumni = members.some((m) => isAlumniMember(m))
+    const teamsWithMembers = new Set(activeMembers.map((m) => m.team))
     return FILTER_OPTIONS.filter(
-      (option) => option.value === 'all' || teamsWithMembers.has(option.value as TeamSlug)
+      (option) =>
+        option.value === 'all' ||
+        (option.value === 'alumni' && hasAlumni) ||
+        teamsWithMembers.has(option.value as TeamSlug)
     )
   }, [members])
 
