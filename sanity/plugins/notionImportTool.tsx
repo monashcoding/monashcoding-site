@@ -180,6 +180,74 @@ function parseCSV(content: string): Record<string, string>[] {
   return rows
 }
 
+// --- Normalize a raw first-day string into "27 Mar 2024" or "Mar 2024" ---
+
+const MONTH_NAMES: Record<string, string> = {
+  january: 'Jan', february: 'Feb', march: 'Mar', april: 'Apr',
+  may: 'May', june: 'Jun', july: 'Jul', august: 'Aug',
+  september: 'Sep', october: 'Oct', november: 'Nov', december: 'Dec',
+  jan: 'Jan', feb: 'Feb', mar: 'Mar', apr: 'Apr',
+  jun: 'Jun', jul: 'Jul', aug: 'Aug', sep: 'Sep',
+  oct: 'Oct', nov: 'Nov', dec: 'Dec',
+}
+
+function normalizeFirstDay(raw: string): string | undefined {
+  const s = raw.trim()
+  if (!s) return undefined
+
+  let day: number | undefined
+  let month: string | undefined
+  let year: number | undefined
+
+  // Format: DD/MM/YYYY or D/M/YYYY
+  const slashMatch = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/)
+  if (slashMatch) {
+    day = parseInt(slashMatch[1], 10)
+    const monthNum = parseInt(slashMatch[2], 10)
+    year = parseInt(slashMatch[3], 10)
+    const monthKeys = Object.keys(MONTH_NAMES).filter((k) => k.length > 3)
+    if (monthNum >= 1 && monthNum <= 12) {
+      month = MONTH_NAMES[monthKeys[monthNum - 1]]
+    }
+  }
+
+  // Format: "27 March 2020", "27 Mar 2020", "3 October 2024"
+  if (!month) {
+    const dayFirstMatch = s.match(/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})$/)
+    if (dayFirstMatch) {
+      day = parseInt(dayFirstMatch[1], 10)
+      month = MONTH_NAMES[dayFirstMatch[2].toLowerCase()]
+      year = parseInt(dayFirstMatch[3], 10)
+    }
+  }
+
+  // Format: "March 27, 2020" or "Mar 27 2020"
+  if (!month) {
+    const monthFirstMatch = s.match(/^([A-Za-z]+)\s+(\d{1,2}),?\s+(\d{4})$/)
+    if (monthFirstMatch) {
+      month = MONTH_NAMES[monthFirstMatch[1].toLowerCase()]
+      day = parseInt(monthFirstMatch[2], 10)
+      year = parseInt(monthFirstMatch[3], 10)
+    }
+  }
+
+  // Format: "October 2020" or "Mar 2024" (month + year only, no day)
+  if (!month) {
+    const monthYearMatch = s.match(/^([A-Za-z]+)\s+(\d{4})$/)
+    if (monthYearMatch) {
+      month = MONTH_NAMES[monthYearMatch[1].toLowerCase()]
+      year = parseInt(monthYearMatch[2], 10)
+      day = undefined
+    }
+  }
+
+  // Validate
+  if (!month || !year || year < 1900 || year > 2100) return undefined
+  if (day !== undefined && (day < 1 || day > 31)) return undefined
+
+  return day ? `${day} ${month} ${year}` : `${month} ${year}`
+}
+
 // --- Parse first day from .md body ---
 
 function parseFirstDayFromMd(content: string): string | undefined {
@@ -187,7 +255,7 @@ function parseFirstDayFromMd(content: string): string | undefined {
   const match = content.match(/\*\*First [Dd]ay\*\*\s*:\s*(.+)/i)
   if (match) {
     const val = match[1].trim()
-    if (val && val !== '' && val.length < 50) return val
+    if (val && val !== '' && val.length < 50) return normalizeFirstDay(val)
   }
   return undefined
 }
