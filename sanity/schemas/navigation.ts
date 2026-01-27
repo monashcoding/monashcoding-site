@@ -39,41 +39,6 @@ export const navigation = defineType({
       ],
       validation: (Rule) => Rule.required().min(1),
     }),
-    defineField({
-      name: 'socialLinks',
-      title: 'Social Links',
-      description: 'Social media links shown in footer/menu',
-      type: 'array',
-      of: [
-        defineArrayMember({
-          type: 'object',
-          fields: [
-            defineField({
-              name: 'label',
-              title: 'Label',
-              type: 'string',
-              validation: (Rule) => Rule.required(),
-            }),
-            defineField({
-              name: 'href',
-              title: 'URL',
-              type: 'url',
-              validation: (Rule) =>
-                Rule.uri({
-                  scheme: ['http', 'https'],
-                  allowRelative: true,
-                }),
-            }),
-          ],
-          preview: {
-            select: {
-              title: 'label',
-              subtitle: 'href',
-            },
-          },
-        }),
-      ],
-    }),
   ],
   preview: {
     prepare() {

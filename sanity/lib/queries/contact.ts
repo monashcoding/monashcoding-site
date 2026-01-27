@@ -8,11 +8,6 @@ export const contactPageQuery = groq`
     discordLink,
     discordLabel,
     location,
-    locationMapLink,
-    socialLinks[] {
-      _key,
-      platform,
-      url
-    }
+    locationMapLink
   }
 `

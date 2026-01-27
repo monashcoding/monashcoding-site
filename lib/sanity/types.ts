@@ -1,4 +1,5 @@
 import { PortableTextBlock } from '@portabletext/types'
+import type { SocialPlatform } from '@/lib/socialPlatforms'
 
 // Common types
 export interface SanityImage {
@@ -81,8 +82,8 @@ export interface NavItem {
 
 export interface SocialLink {
   _key: string
-  label: string
-  href: string
+  platform: SocialPlatform
+  url: string
 }
 
 export interface PageVisibility {
@@ -92,8 +93,11 @@ export interface PageVisibility {
 
 export interface NavigationData {
   navItems: NavItem[]
-  socialLinks: SocialLink[]
   pageVisibility?: PageVisibility
+}
+
+export interface SocialLinksData {
+  links: SocialLink[]
 }
 
 // Team types
@@ -233,11 +237,7 @@ export interface SponsorPageData {
 }
 
 // Contact
-export interface ContactSocialLink {
-  _key: string
-  platform: 'instagram' | 'linkedin' | 'github' | 'twitter' | 'facebook' | 'youtube' | 'tiktok'
-  url: string
-}
+export type ContactSocialLink = SocialLink
 
 export interface ContactPageData {
   pageTitle: string
@@ -247,7 +247,6 @@ export interface ContactPageData {
   discordLabel: string
   location: string
   locationMapLink: string
-  socialLinks: ContactSocialLink[]
 }
 
 // Homepage Sections

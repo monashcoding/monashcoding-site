@@ -1,4 +1,4 @@
-import { defineType, defineField, defineArrayMember } from 'sanity'
+import { defineType, defineField } from 'sanity'
 import { EnvelopeIcon } from '@sanity/icons'
 
 export const contactPage = defineType({
@@ -54,50 +54,6 @@ export const contactPage = defineType({
       title: 'Location Map Link',
       type: 'url',
       initialValue: 'https://maps.google.com/?q=Monash+University+Clayton',
-    }),
-    defineField({
-      name: 'socialLinks',
-      title: 'Social Media Links',
-      type: 'array',
-      of: [
-        defineArrayMember({
-          type: 'object',
-          fields: [
-            defineField({
-              name: 'platform',
-              title: 'Platform',
-              type: 'string',
-              options: {
-                list: [
-                  { title: 'Instagram', value: 'instagram' },
-                  { title: 'LinkedIn', value: 'linkedin' },
-                  { title: 'GitHub', value: 'github' },
-                  { title: 'Twitter/X', value: 'twitter' },
-                  { title: 'Facebook', value: 'facebook' },
-                  { title: 'YouTube', value: 'youtube' },
-                  { title: 'TikTok', value: 'tiktok' },
-                ],
-              },
-              validation: (Rule) => Rule.required(),
-            }),
-            defineField({
-              name: 'url',
-              title: 'URL',
-              type: 'url',
-              validation: (Rule) =>
-                Rule.required().uri({
-                  scheme: ['http', 'https'],
-                }),
-            }),
-          ],
-          preview: {
-            select: {
-              title: 'platform',
-              subtitle: 'url',
-            },
-          },
-        }),
-      ],
     }),
   ],
   preview: {
