@@ -2,8 +2,8 @@ import { client } from "@/sanity/lib/client";
 
 // Static generation - revalidated via webhook on Sanity publish
 export const revalidate = false;
-import { contactPageQuery } from "@/sanity/lib/queries";
-import { ContactPageData } from "@/lib/sanity/types";
+import { contactPageQuery, socialLinksQuery } from "@/sanity/lib/queries";
+import { ContactPageData, SocialLinksData } from "@/lib/sanity/types";
 import ContactPageClient from "@/components/ContactPageClient";
 
 async function getContactPageData(): Promise<ContactPageData | null> {
@@ -15,8 +15,20 @@ async function getContactPageData(): Promise<ContactPageData | null> {
   }
 }
 
-export default async function ContactPage() {
-  const data = await getContactPageData();
+async function getSocialLinksData(): Promise<SocialLinksData | null> {
+  try {
+    return await client.fetch(socialLinksQuery, {}, { next: { tags: ['socialLinks'] } });
+  } catch (error) {
+    console.error("Error fetching social links:", error);
+    return null;
+  }
+}
 
-  return <ContactPageClient data={data} />;
+export default async function ContactPage() {
+  const [data, socialLinksData] = await Promise.all([
+    getContactPageData(),
+    getSocialLinksData(),
+  ]);
+
+  return <ContactPageClient data={data} socialLinks={socialLinksData?.links || null} />;
 }

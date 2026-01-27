@@ -2,8 +2,8 @@ import Navigation from "@/components/Navigation";
 import ClickSpark from "@/components/ClickSpark";
 import { RibbonProvider } from "@/components/GlobalRibbons";
 import { client } from "@/sanity/lib/client";
-import { navigationQuery } from "@/sanity/lib/queries";
-import { NavigationData } from "@/lib/sanity/types";
+import { navigationQuery, socialLinksQuery } from "@/sanity/lib/queries";
+import { NavigationData, SocialLinksData } from "@/lib/sanity/types";
 
 async function getNavigationData(): Promise<NavigationData | null> {
   try {
@@ -14,12 +14,24 @@ async function getNavigationData(): Promise<NavigationData | null> {
   }
 }
 
+async function getSocialLinksData(): Promise<SocialLinksData | null> {
+  try {
+    return await client.fetch(socialLinksQuery, {}, { next: { tags: ['socialLinks'] } });
+  } catch (error) {
+    console.error("Error fetching social links:", error);
+    return null;
+  }
+}
+
 export default async function SiteLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const navigationData = await getNavigationData();
+  const [navigationData, socialLinksData] = await Promise.all([
+    getNavigationData(),
+    getSocialLinksData(),
+  ]);
 
   return (
     <RibbonProvider>
@@ -32,7 +44,7 @@ export default async function SiteLayout({
         easing="ease-out"
         extraScale={1.5}
       >
-        <Navigation data={navigationData} />
+        <Navigation data={navigationData} socialLinks={socialLinksData?.links || null} />
         {children}
       </ClickSpark>
     </RibbonProvider>
