@@ -281,14 +281,30 @@ async function parseNotionZip(file: File): Promise<ParsedMember[]> {
       ? pastRolesRaw.split(',').map((r) => r.trim()).filter(Boolean)
       : undefined
 
-    // If no team resolved (alumni or unrecognized), infer from the most recent past role
+    // If no team resolved (alumni or unrecognized), infer from past roles
+    // Priority: management > director role > most recent match
     if (!teamSlug && pastRoles?.length) {
+      let directorTeam: string | undefined
+      let firstMatch: string | undefined
+
       for (const pastRole of pastRoles) {
         const inferred = inferTeamFromRole(pastRole)
-        if (inferred) {
-          teamSlug = inferred
+        if (!inferred) continue
+
+        if (inferred === 'management') {
+          teamSlug = 'management'
           break
         }
+        if (!directorTeam && /director/i.test(pastRole)) {
+          directorTeam = inferred
+        }
+        if (!firstMatch) {
+          firstMatch = inferred
+        }
+      }
+
+      if (!teamSlug) {
+        teamSlug = directorTeam || firstMatch
       }
     }
 
@@ -361,7 +377,7 @@ function NotionImportToolComponent() {
   const [progress, setProgress] = useState('')
   const [error, setError] = useState('')
   const [importCount, setImportCount] = useState(0)
-  const [skipExisting, setSkipExisting] = useState(true)
+  const [existingMode, setExistingMode] = useState<'skip' | 'replace'>('replace')
 
   const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -386,7 +402,8 @@ function NotionImportToolComponent() {
     setStatus('importing')
     setImportCount(0)
 
-    let imported = 0
+    let created = 0
+    let updated = 0
     let skipped = 0
 
     for (let i = 0; i < members.length; i++) {
@@ -395,15 +412,15 @@ function NotionImportToolComponent() {
 
       try {
         // Check if member already exists
-        if (skipExisting) {
-          const existing = await client.fetch(
-            `count(*[_type == "committeeMember" && name == $name])`,
-            { name: member.name }
-          )
-          if (existing > 0) {
-            skipped++
-            continue
-          }
+        const existingDoc = await client.fetch<{ _id: string } | null>(
+          `*[_type == "committeeMember" && name == $name][0]{ _id }`,
+          { name: member.name }
+        )
+
+        if (existingDoc && existingMode === 'skip') {
+          skipped++
+          setImportCount(created + updated)
+          continue
         }
 
         // Upload image if present
@@ -421,42 +438,53 @@ function NotionImportToolComponent() {
           }
         }
 
-        // Create the document
-        const doc: { _type: string; [key: string]: unknown } = {
-          _type: 'committeeMember',
+        // Build the fields
+        const fields: Record<string, unknown> = {
           name: member.name,
           role: member.role,
         }
 
-        if (member.team) doc.team = member.team
-        if (member.isAlumni) doc.isAlumni = true
-        if (member.pastRoles) doc.pastRoles = member.pastRoles
-        if (member.birthday) doc.birthday = member.birthday
-        if (member.linkedIn) doc.linkedIn = member.linkedIn
-        if (member.discordHandle) doc.discordHandle = member.discordHandle
-        if (member.bentoMe) doc.bentoMe = member.bentoMe
-        if (member.gender) doc.gender = member.gender
-        if (member.mbti) doc.mbti = member.mbti
-        if (member.firstDay) doc.firstDay = member.firstDay
+        if (member.team) fields.team = member.team
+        if (member.isAlumni) fields.isAlumni = true
+        if (member.pastRoles) fields.pastRoles = member.pastRoles
+        if (member.birthday) fields.birthday = member.birthday
+        if (member.linkedIn) fields.linkedIn = member.linkedIn
+        if (member.discordHandle) fields.discordHandle = member.discordHandle
+        if (member.bentoMe) fields.bentoMe = member.bentoMe
+        if (member.gender) fields.gender = member.gender
+        if (member.mbti) fields.mbti = member.mbti
+        if (member.firstDay) fields.firstDay = member.firstDay
         if (photoAsset) {
-          doc.photo = {
+          fields.photo = {
             _type: 'image',
             asset: photoAsset,
             alt: member.name,
           }
         }
 
-        await client.create(doc)
-        imported++
-        setImportCount(imported)
+        if (existingDoc && existingMode === 'replace') {
+          // Patch the existing document
+          await client.patch(existingDoc._id).set(fields).commit()
+          updated++
+        } else {
+          // Create a new document
+          await client.create({ _type: 'committeeMember', ...fields })
+          created++
+        }
+
+        setImportCount(created + updated)
       } catch (err) {
         console.error(`Failed to import ${member.name}:`, err)
       }
     }
 
     setStatus('done')
-    setProgress(`Import complete! Created ${imported} members${skipped > 0 ? `, skipped ${skipped} existing` : ''}.`)
-  }, [members, client, skipExisting])
+    const parts: string[] = []
+    if (created > 0) parts.push(`created ${created}`)
+    if (updated > 0) parts.push(`updated ${updated}`)
+    if (skipped > 0) parts.push(`skipped ${skipped}`)
+    setProgress(`Import complete! ${parts.join(', ')} members.`)
+  }, [members, client, existingMode])
 
   const handleReset = useCallback(() => {
     setStatus('idle')
@@ -565,14 +593,25 @@ function NotionImportToolComponent() {
       {/* Preview */}
       {status === 'previewing' && (
         <div style={{ marginTop: '1.5rem' }}>
-          <div style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem' }}>
+          <div style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '1.5rem', fontSize: '0.875rem' }}>
+            <span style={{ color: '#aaa' }}>If member already exists:</span>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer' }}>
               <input
-                type="checkbox"
-                checked={skipExisting}
-                onChange={(e) => setSkipExisting(e.target.checked)}
+                type="radio"
+                name="existingMode"
+                checked={existingMode === 'replace'}
+                onChange={() => setExistingMode('replace')}
               />
-              Skip members that already exist (matched by name)
+              Replace with new data
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer' }}>
+              <input
+                type="radio"
+                name="existingMode"
+                checked={existingMode === 'skip'}
+                onChange={() => setExistingMode('skip')}
+              />
+              Skip
             </label>
           </div>
 
@@ -585,28 +624,35 @@ function NotionImportToolComponent() {
               marginBottom: '1rem',
             }}
           >
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.75rem' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #333', position: 'sticky', top: 0, background: '#1a1a1a' }}>
-                  <th style={{ padding: '0.5rem', textAlign: 'left' }}>Name</th>
-                  <th style={{ padding: '0.5rem', textAlign: 'left' }}>Role</th>
-                  <th style={{ padding: '0.5rem', textAlign: 'left' }}>Team</th>
-                  <th style={{ padding: '0.5rem', textAlign: 'left' }}>Photo</th>
-                  <th style={{ padding: '0.5rem', textAlign: 'left' }}>LinkedIn</th>
-                  <th style={{ padding: '0.5rem', textAlign: 'left' }}>Discord</th>
+                  {['Name', 'Role', 'Team', 'Alumni', 'Past Roles', 'Photo', 'LinkedIn', 'Discord', 'Bento.me', 'Birthday', 'Gender', 'MBTI', 'First Day'].map((h) => (
+                    <th key={h} style={{ padding: '0.4rem', textAlign: 'left', whiteSpace: 'nowrap' }}>{h}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {members.map((m, i) => (
-                  <tr key={i} style={{ borderBottom: '1px solid #222' }}>
-                    <td style={{ padding: '0.4rem 0.5rem' }}>{m.name}</td>
-                    <td style={{ padding: '0.4rem 0.5rem' }}>{m.role}</td>
-                    <td style={{ padding: '0.4rem 0.5rem' }}>{m.team || '—'}</td>
-                    <td style={{ padding: '0.4rem 0.5rem' }}>{m.imageData ? '✓' : '—'}</td>
-                    <td style={{ padding: '0.4rem 0.5rem' }}>{m.linkedIn ? '✓' : '—'}</td>
-                    <td style={{ padding: '0.4rem 0.5rem' }}>{m.discordHandle || '—'}</td>
-                  </tr>
-                ))}
+                {members.map((m, i) => {
+                  const empty = '\u2014'
+                  return (
+                    <tr key={i} style={{ borderBottom: '1px solid #222' }}>
+                      <td style={{ padding: '0.3rem 0.4rem', whiteSpace: 'nowrap' }}>{m.name}</td>
+                      <td style={{ padding: '0.3rem 0.4rem' }}>{m.role}</td>
+                      <td style={{ padding: '0.3rem 0.4rem' }}>{m.team || empty}</td>
+                      <td style={{ padding: '0.3rem 0.4rem' }}>{m.isAlumni ? 'Yes' : empty}</td>
+                      <td style={{ padding: '0.3rem 0.4rem' }}>{m.pastRoles ? m.pastRoles.join(', ') : empty}</td>
+                      <td style={{ padding: '0.3rem 0.4rem' }}>{m.imageData ? '\u2713' : empty}</td>
+                      <td style={{ padding: '0.3rem 0.4rem' }}>{m.linkedIn || empty}</td>
+                      <td style={{ padding: '0.3rem 0.4rem' }}>{m.discordHandle || empty}</td>
+                      <td style={{ padding: '0.3rem 0.4rem' }}>{m.bentoMe || empty}</td>
+                      <td style={{ padding: '0.3rem 0.4rem' }}>{m.birthday || empty}</td>
+                      <td style={{ padding: '0.3rem 0.4rem' }}>{m.gender || empty}</td>
+                      <td style={{ padding: '0.3rem 0.4rem' }}>{m.mbti || empty}</td>
+                      <td style={{ padding: '0.3rem 0.4rem' }}>{m.firstDay || empty}</td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
