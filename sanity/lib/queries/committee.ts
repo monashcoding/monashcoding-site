@@ -22,6 +22,13 @@ export const committeeMembersQuery = groq`
     bio,
     linkedIn,
     email,
+    discordHandle,
+    bentoMe,
+    birthday,
+    mbti,
+    isAlumni,
+    pastRoles,
+    firstDay,
     photo {
       asset->,
       alt,

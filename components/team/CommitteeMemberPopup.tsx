@@ -124,9 +124,45 @@ export default function CommitteeMemberPopup({
                   <p className="mt-6 text-left text-white/70">{member.bio}</p>
                 )}
 
+                {/* Additional Details */}
+                {(member.pastRoles?.length || member.mbti || member.birthday || member.firstDay || member.discordHandle) && (
+                  <div className="mt-6 w-full space-y-2 text-left text-sm">
+                    {member.pastRoles && member.pastRoles.length > 0 && (
+                      <div className="flex items-start gap-2">
+                        <span className="shrink-0 text-white/40">Past Roles:</span>
+                        <span className="text-white/70">{member.pastRoles.join(', ')}</span>
+                      </div>
+                    )}
+                    {member.mbti && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-white/40">MBTI:</span>
+                        <span className="text-white/70">{member.mbti}</span>
+                      </div>
+                    )}
+                    {member.birthday && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-white/40">Birthday:</span>
+                        <span className="text-white/70">{member.birthday}</span>
+                      </div>
+                    )}
+                    {member.firstDay && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-white/40">First Day:</span>
+                        <span className="text-white/70">{member.firstDay}</span>
+                      </div>
+                    )}
+                    {member.discordHandle && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-white/40">Discord:</span>
+                        <span className="text-white/70">{member.discordHandle}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* Social Links */}
-                {(member.linkedIn || member.email) && (
-                  <div className="mt-6 flex justify-center gap-4">
+                {(member.linkedIn || member.email || member.bentoMe) && (
+                  <div className="mt-6 flex flex-wrap justify-center gap-3">
                     {member.linkedIn && (
                       <a
                         href={member.linkedIn}
@@ -145,6 +181,16 @@ export default function CommitteeMemberPopup({
                       >
                         <Mail className="h-4 w-4" />
                         Email
+                      </a>
+                    )}
+                    {member.bentoMe && (
+                      <a
+                        href={member.bentoMe}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-sm text-white/70 transition-colors hover:bg-accent hover:text-white"
+                      >
+                        Bento.me
                       </a>
                     )}
                   </div>
