@@ -26,16 +26,23 @@ interface ParsedMember {
 
 // --- Team slug mapping ---
 
+// Used for both direct team name lookup (normalizeTeam) and substring matching in role titles (inferTeamFromRole)
 const TEAM_SLUG_MAP: Record<string, string> = {
   management: 'management',
+  president: 'management',
+  secretary: 'management',
+  treasurer: 'management',
   events: 'events',
+  event: 'events',
   marketing: 'marketing',
   design: 'design',
   'human resources': 'human-resources',
   'people and culture': 'human-resources',
   sponsorship: 'sponsorship',
+  sponsor: 'sponsorship',
   media: 'media',
   projects: 'projects',
+  project: 'projects',
   outreach: 'outreach',
   infrastructure: 'projects',
 }
