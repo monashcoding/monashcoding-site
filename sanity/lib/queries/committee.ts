@@ -55,3 +55,45 @@ export const committeeMembersByTeamQuery = groq`
     }
   }
 `
+
+// --- Filtered queries for lazy loading ---
+
+const memberProjection = `{
+  _id,
+  name,
+  role,
+  team,
+  bio,
+  linkedIn,
+  email,
+  discordHandle,
+  bentoMe,
+  birthday,
+  mbti,
+  isAlumni,
+  pastRoles,
+  firstDay,
+  photo {
+    asset->,
+    alt,
+    hotspot,
+    crop
+  }
+}`
+
+export const activeCommitteeMembersQuery = groq`
+  *[_type == "committeeMember" && isAlumni != true && !(role match "alumni")] | order(team asc, name asc) ${memberProjection}
+`
+
+export const alumniCommitteeMembersQuery = groq`
+  *[_type == "committeeMember" && (isAlumni == true || role match "alumni")] | order(name asc) ${memberProjection}
+`
+
+export const committeeMembersByTeamFilteredQuery = groq`
+  *[_type == "committeeMember" && team == $team && isAlumni != true && !(role match "alumni")] | order(name asc) ${memberProjection}
+`
+
+export const committeeTeamSummaryQuery = groq`{
+  "teams": array::unique(*[_type == "committeeMember" && isAlumni != true && !(role match "alumni")].team),
+  "hasAlumni": count(*[_type == "committeeMember" && (isAlumni == true || role match "alumni")]) > 0
+}`

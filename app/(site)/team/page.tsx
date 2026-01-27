@@ -3,8 +3,9 @@ import { Metadata } from 'next'
 // Static generation - revalidated via webhook on Sanity publish
 export const revalidate = false
 import { client } from '@/sanity/lib/client'
-import { committeePageQuery, committeeMembersQuery } from '@/sanity/lib/queries'
-import { CommitteeMember, CommitteePageData } from '@/lib/sanity/types'
+import { committeePageQuery, activeCommitteeMembersQuery, committeeTeamSummaryQuery } from '@/sanity/lib/queries'
+import { CommitteeMember, CommitteePageData, TeamSlug } from '@/lib/sanity/types'
+import { sortMembers } from '@/lib/committee-utils'
 import CommitteePageClient from '@/components/CommitteePageClient'
 
 export const metadata: Metadata = {
@@ -21,20 +22,38 @@ async function getCommitteePageData(): Promise<CommitteePageData | null> {
   }
 }
 
-async function getCommitteeMembers(): Promise<CommitteeMember[]> {
+async function getInitialMembers(): Promise<CommitteeMember[]> {
   try {
-    return (await client.fetch(committeeMembersQuery, {}, { next: { tags: ['committeeMember'] } })) || []
+    const members = await client.fetch(activeCommitteeMembersQuery, {}, { next: { tags: ['committeeMember'] } })
+    return sortMembers(members || [])
   } catch (error) {
-    console.error('Failed to fetch committee members:', error)
+    console.error('Failed to fetch initial committee members:', error)
     return []
   }
 }
 
+async function getTeamSummary(): Promise<{ teams: TeamSlug[]; hasAlumni: boolean }> {
+  try {
+    return await client.fetch(committeeTeamSummaryQuery, {}, { next: { tags: ['committeeMember'] } })
+  } catch (error) {
+    console.error('Failed to fetch team summary:', error)
+    return { teams: [], hasAlumni: false }
+  }
+}
+
 export default async function CommitteePage() {
-  const [pageData, members] = await Promise.all([
+  const [pageData, initialMembers, teamSummary] = await Promise.all([
     getCommitteePageData(),
-    getCommitteeMembers(),
+    getInitialMembers(),
+    getTeamSummary(),
   ])
 
-  return <CommitteePageClient pageData={pageData} members={members} />
+  return (
+    <CommitteePageClient
+      pageData={pageData}
+      initialMembers={initialMembers}
+      availableTeams={teamSummary.teams}
+      hasAlumni={teamSummary.hasAlumni}
+    />
+  )
 }

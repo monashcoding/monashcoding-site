@@ -1,11 +1,13 @@
 'use client'
 
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion'
-import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, useTransition } from 'react'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import { urlFor } from '@/sanity/lib/image'
 import { CommitteeMember, CommitteePageData, TeamSlug } from '@/lib/sanity/types'
+import { TEAM_ORDER } from '@/lib/committee-utils'
+import { fetchCommitteeMembersByFilter, type FilterOption } from '@/app/(site)/team/actions'
 import Timeline from '@/components/team/Timeline'
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
 
@@ -13,7 +15,9 @@ const Dither = dynamic(() => import('@/components/Dither'), { ssr: false })
 
 interface CommitteePageClientProps {
   pageData: CommitteePageData | null
-  members: CommitteeMember[]
+  initialMembers: CommitteeMember[]
+  availableTeams: TeamSlug[]
+  hasAlumni: boolean
 }
 
 const TEAM_LABELS: Record<TeamSlug, string> = {
@@ -33,121 +37,43 @@ const TEAM_LABELS_WITH_PC: Record<string, string> = {
   'human-resources': 'P&C',
 }
 
-const TEAM_ORDER: TeamSlug[] = [
-  'management',
-  'events',
-  'marketing',
-  'design',
-  'human-resources',
-  'sponsorship',
-  'media',
-  'projects',
-  'outreach',
-]
-
-// Role priority within management team (lower = higher priority)
-const MANAGEMENT_ROLE_PRIORITY: Record<string, number> = {
-  president: 0,
-  'vice president': 1,
-  secretary: 2,
-  treasurer: 3,
-}
-
-function getManagementRolePriority(role: string): number {
-  const normalized = role.toLowerCase().trim()
-  for (const [key, priority] of Object.entries(MANAGEMENT_ROLE_PRIORITY)) {
-    if (normalized.includes(key)) return priority
-  }
-  return 99
-}
-
-function isDirector(role: string): boolean {
-  return role.toLowerCase().includes('director')
-}
-
-function sortMembers(members: CommitteeMember[]): CommitteeMember[] {
-  return [...members].sort((a, b) => {
-    // Sort by team order first
-    const teamOrderA = TEAM_ORDER.indexOf(a.team)
-    const teamOrderB = TEAM_ORDER.indexOf(b.team)
-    if (teamOrderA !== teamOrderB) return teamOrderA - teamOrderB
-
-    // Within management, sort by role priority
-    if (a.team === 'management') {
-      const priorityA = getManagementRolePriority(a.role)
-      const priorityB = getManagementRolePriority(b.role)
-      if (priorityA !== priorityB) return priorityA - priorityB
-    }
-
-    // Directors first within each team
-    const aIsDirector = isDirector(a.role)
-    const bIsDirector = isDirector(b.role)
-    if (aIsDirector && !bIsDirector) return -1
-    if (!aIsDirector && bIsDirector) return 1
-
-    // Then alphabetical by name
-    return a.name.localeCompare(b.name)
-  })
-}
-
-export default function CommitteePageClient({ pageData, members }: CommitteePageClientProps) {
-  const [selectedTeam, setSelectedTeam] = useState<TeamSlug | 'all' | 'alumni'>('all')
+export default function CommitteePageClient({
+  pageData,
+  initialMembers,
+  availableTeams,
+  hasAlumni,
+}: CommitteePageClientProps) {
+  const [selectedTeam, setSelectedTeam] = useState<FilterOption>('all')
+  const [displayedMembers, setDisplayedMembers] = useState<CommitteeMember[]>(initialMembers)
   const [selectedMember, setSelectedMember] = useState<CommitteeMember | null>(null)
+  const [isPending, startTransition] = useTransition()
+  const cache = useRef(new Map<FilterOption, CommitteeMember[]>([['all', initialMembers]]))
   const sectionRef = useRef<HTMLDivElement>(null)
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [isHovering, setIsHovering] = useState(false)
 
   const title = pageData?.pageTitle || 'Meet the Committee'
 
-  // Separate alumni from active members
-  // Check both the isAlumni flag and whether the role contains "alumni" (for imported data)
-  const { activeMembers, alumniMembers } = useMemo(() => {
-    const active: CommitteeMember[] = []
-    const alumni: CommitteeMember[] = []
-    members.forEach((member) => {
-      const memberIsAlumni = member.isAlumni || member.role?.toLowerCase().includes('alumni')
-      if (memberIsAlumni) {
-        alumni.push(member)
-      } else {
-        active.push(member)
-      }
-    })
-    return { activeMembers: sortMembers(active), alumniMembers: sortMembers(alumni) }
-  }, [members])
+  // Ordered list of teams that have members
+  const activeTeams = TEAM_ORDER.filter((team) => availableTeams.includes(team))
 
-  // Group active members by team
-  const teamGroups = useMemo(() => {
-    const groups: Record<TeamSlug, CommitteeMember[]> = {
-      management: [],
-      events: [],
-      marketing: [],
-      design: [],
-      'human-resources': [],
-      sponsorship: [],
-      media: [],
-      projects: [],
-      outreach: [],
+  const handleTabClick = useCallback((team: FilterOption) => {
+    setSelectedTeam(team)
+
+    // Check client-side cache first
+    const cached = cache.current.get(team)
+    if (cached) {
+      setDisplayedMembers(cached)
+      return
     }
 
-    activeMembers.forEach((member) => {
-      if (member.team && groups[member.team]) {
-        groups[member.team].push(member)
-      }
+    // Fetch from server via action
+    startTransition(async () => {
+      const members = await fetchCommitteeMembersByFilter(team)
+      cache.current.set(team, members)
+      setDisplayedMembers(members)
     })
-
-    return groups
-  }, [activeMembers])
-
-  // Filter members based on selected team
-  const filteredMembers = useMemo(() => {
-    if (selectedTeam === 'all') return activeMembers
-    if (selectedTeam === 'alumni') return alumniMembers
-    return teamGroups[selectedTeam] || []
-  }, [selectedTeam, activeMembers, alumniMembers, teamGroups])
-
-  // Get teams that have members
-  const activeTeams = TEAM_ORDER.filter((team) => teamGroups[team].length > 0)
-  const hasAlumni = alumniMembers.length > 0
+  }, [])
 
   // Mouse tracking for dither effect
   useEffect(() => {
@@ -256,7 +182,7 @@ export default function CommitteePageClient({ pageData, members }: CommitteePage
           <div className="relative mx-auto mb-12 flex justify-center">
             <div className="inline-flex flex-wrap justify-center gap-2 rounded-2xl bg-[#252525] p-3 shadow-lg">
               <button
-                onClick={() => setSelectedTeam('all')}
+                onClick={() => handleTabClick('all')}
                 className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 ${
                   selectedTeam === 'all'
                     ? 'bg-[#FFE330] text-black'
@@ -268,7 +194,7 @@ export default function CommitteePageClient({ pageData, members }: CommitteePage
               {activeTeams.map((team) => (
                 <button
                   key={team}
-                  onClick={() => setSelectedTeam(team)}
+                  onClick={() => handleTabClick(team)}
                   className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 ${
                     selectedTeam === team
                       ? 'bg-[#FFE330] text-black'
@@ -280,7 +206,7 @@ export default function CommitteePageClient({ pageData, members }: CommitteePage
               ))}
               {hasAlumni && (
                 <button
-                  onClick={() => setSelectedTeam('alumni')}
+                  onClick={() => handleTabClick('alumni')}
                   className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 ${
                     selectedTeam === 'alumni'
                       ? 'bg-[#FFE330] text-black'
@@ -295,62 +221,99 @@ export default function CommitteePageClient({ pageData, members }: CommitteePage
 
           {/* Committee Member Grid */}
           <div className="relative mx-auto max-w-7xl">
-            <LayoutGroup>
-              <motion.div
-                layout
-                className="grid gap-6"
-                style={{
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-                }}
-              >
-                {filteredMembers.map((member) => (
-                  <motion.div
-                    key={member._id}
-                    layoutId={member._id}
-                    initial={false}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.25, ease: 'easeOut' }}
-                    onClick={() => setSelectedMember(member)}
-                    className="group cursor-pointer overflow-hidden rounded-2xl bg-card border border-white/10 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
-                  >
-                    {/* Photo */}
-                    <div className="relative aspect-square overflow-hidden">
-                      {member.photo?.asset ? (
-                        <Image
-                          src={urlFor(member.photo).width(400).height(400).url()}
-                          alt={member.photo.alt || member.name}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#FFE330]/50 to-[#FFE330]/20">
-                          <span className="text-4xl font-bold text-white/40">
-                            {member.name
-                              .split(' ')
-                              .map((n) => n[0])
-                              .join('')}
-                          </span>
-                        </div>
-                      )}
+            <AnimatePresence mode="wait">
+              {isPending ? (
+                <motion.div
+                  key="skeleton"
+                  className="grid gap-6"
+                  style={{
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                  }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="animate-pulse overflow-hidden rounded-2xl border border-white/10 bg-card"
+                    >
+                      <div className="aspect-square bg-white/5" />
+                      <div className="space-y-2 p-4">
+                        <div className="h-5 w-3/4 rounded bg-white/10" />
+                        <div className="h-4 w-1/2 rounded bg-white/5" />
+                      </div>
                     </div>
-                    {/* Info */}
-                    <div className="p-4">
-                      <h3 className="text-lg font-semibold text-foreground">{member.name}</h3>
-                      <p className="text-sm text-[#d4a900]">{member.role}</p>
-                      <p className="mt-1 text-xs text-foreground/50">
-                        {TEAM_LABELS[member.team]}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </LayoutGroup>
+                  ))}
+                </motion.div>
+              ) : (
+                <motion.div
+                  key={selectedTeam}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <LayoutGroup>
+                    <motion.div
+                      layout
+                      className="grid gap-6"
+                      style={{
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                      }}
+                    >
+                      {displayedMembers.map((member) => (
+                        <motion.div
+                          key={member._id}
+                          layoutId={member._id}
+                          initial={false}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.25, ease: 'easeOut' }}
+                          onClick={() => setSelectedMember(member)}
+                          className="group cursor-pointer overflow-hidden rounded-2xl bg-card border border-white/10 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                        >
+                          {/* Photo */}
+                          <div className="relative aspect-square overflow-hidden">
+                            {member.photo?.asset ? (
+                              <Image
+                                src={urlFor(member.photo).width(400).height(400).url()}
+                                alt={member.photo.alt || member.name}
+                                fill
+                                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                              />
+                            ) : (
+                              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#FFE330]/50 to-[#FFE330]/20">
+                                <span className="text-4xl font-bold text-white/40">
+                                  {member.name
+                                    .split(' ')
+                                    .map((n) => n[0])
+                                    .join('')}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          {/* Info */}
+                          <div className="p-4">
+                            <h3 className="text-lg font-semibold text-foreground">{member.name}</h3>
+                            <p className="text-sm text-[#d4a900]">{member.role}</p>
+                            <p className="mt-1 text-xs text-foreground/50">
+                              {TEAM_LABELS[member.team]}
+                            </p>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  </LayoutGroup>
 
-            {filteredMembers.length === 0 && (
-              <div className="py-16 text-center text-foreground/50">
-                No committee members found for this team yet.
-              </div>
-            )}
+                  {displayedMembers.length === 0 && (
+                    <div className="py-16 text-center text-foreground/50">
+                      No committee members found for this team yet.
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </RibbonAwareSection>
