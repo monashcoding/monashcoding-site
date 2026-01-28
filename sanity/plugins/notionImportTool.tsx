@@ -53,7 +53,7 @@ function normalizeTeam(team: string): string | undefined {
   return TEAM_SLUG_MAP[lower]
 }
 
-// --- Infer team from a role string (e.g. "Events Director" → "events") ---
+// --- Infer team from a role string (e.g. "Events Director" -> "events") ---
 
 // Management keywords take priority over other matches
 const MANAGEMENT_KEYWORDS = ['president', 'secretary', 'treasurer', 'vice president']
@@ -129,7 +129,7 @@ function parseMbti(raw: string): string | undefined {
   if (!raw) return undefined
   const trimmed = raw.trim()
   if (!trimmed) return undefined
-  // Extract just the 4-letter code, e.g. "INTP : Logician" → "INTP"
+  // Extract just the 4-letter code, e.g. "INTP : Logician" -> "INTP"
   const match = trimmed.match(/^([A-Z]{4})/)
   if (match) return match[1]
   return trimmed
@@ -271,13 +271,17 @@ function parseFirstDayFromMd(content: string): string | undefined {
   return undefined
 }
 
-// --- Parse first image reference from .md ---
+// --- Parse all image references from .md ---
 
-function parseFirstImageFromMd(content: string): string | undefined {
-  // Match ![...](path) pattern — get the first image
-  const match = content.match(/!\[.*?\]\(([^)]+)\)/)
-  if (match) return decodeURIComponent(match[1])
-  return undefined
+function parseImagesFromMd(content: string): string[] {
+  // Match all ![...](path) patterns
+  const regex = /!\[.*?\]\(([^)]+)\)/g
+  const images: string[] = []
+  let match
+  while ((match = regex.exec(content)) !== null) {
+    images.push(match[1]) // Keep encoded, we'll decode later
+  }
+  return images
 }
 
 // --- Get MIME type from filename ---
@@ -358,7 +362,7 @@ async function parseNotionZip(file: File): Promise<ParsedMember[]> {
   for (const path of allFiles) {
     if (path.endsWith('.md') && path.includes('Committee Directory/')) {
       const content = await zip.files[path].async('string')
-      // Extract the name from the filename (e.g. "Ryan Nguyen 00ac01909b2b457a92b71ddbae03645f.md" → "Ryan Nguyen")
+      // Extract the name from the filename (e.g. "Ryan Nguyen 00ac01909b2b457a92b71ddbae03645f.md" -> "Ryan Nguyen")
       const basename = path.split('/').pop() || ''
       const nameFromFile = basename.replace(/\s+[a-f0-9]{32}\.md$/, '')
       mdFiles[nameFromFile] = content
@@ -430,19 +434,38 @@ async function parseNotionZip(file: File): Promise<ParsedMember[]> {
     const mdContent = mdFiles[name]
     const firstDay = mdContent ? parseFirstDayFromMd(mdContent) : undefined
 
-    // Find the first image from the .md file
+    // Find the first usable image from the .md file
     let imageData: ParsedMember['imageData'] = undefined
     if (mdContent) {
-      const imagePath = parseFirstImageFromMd(mdContent)
-      if (imagePath) {
+      const imagePaths = parseImagesFromMd(mdContent)
+
+      // Try each image in order until we find one that works
+      for (const imagePath of imagePaths) {
+        if (imageData) break // Already found a working image
+
         // The image path in .md is relative to the member's folder
-        // e.g. "Ryan%20Nguyen/unnamed.jpg" → look in "Committee Directory/Ryan Nguyen/unnamed.jpg"
+        // e.g. "Rafael%20Enrique%20Abes/IMG_6457.heic" - look for IMG_6457.heic in a folder starting with "Rafael Enrique Abes"
         const decodedImagePath = decodeURIComponent(imagePath)
+        const imageFilename = decodedImagePath.split('/').pop() || ''
+        const folderHint = decodedImagePath.split('/')[0] || '' // e.g. "Rafael Enrique Abes"
+
         // Try to find the image in the zip
+        // Note: Notion exports have folders with hash suffixes like "Rafael Enrique Abes a7cc9e4f97364c1c87515935e6898747"
+        // but the md file references just "Rafael Enrique Abes/IMG_6457.heic"
         const possiblePaths = [
+          // Direct path (unlikely to work due to hash suffix)
           `Private & Shared/Committee Directory/${decodedImagePath}`,
-          // Sometimes the path in md uses the folder name directly
-          ...allFiles.filter((f) => f.endsWith(decodedImagePath.split('/').pop() || '') && f.includes(name)),
+          // Match by filename in folder that STARTS WITH the folder hint (handles hash suffix)
+          ...allFiles.filter((f) => {
+            if (!f.endsWith(imageFilename)) return false
+            const parts = f.split('/')
+            const folderName = parts[parts.length - 2] || ''
+            return folderHint && folderName.startsWith(folderHint)
+          }),
+          // Match by filename in any folder containing the member's name
+          ...allFiles.filter((f) => f.endsWith(imageFilename) && f.includes(name)),
+          // Last resort: just match by exact filename anywhere in Committee Directory
+          ...allFiles.filter((f) => f.includes('Committee Directory') && f.endsWith(imageFilename)),
         ]
 
         for (const tryPath of possiblePaths) {
@@ -456,12 +479,13 @@ async function parseNotionZip(file: File): Promise<ParsedMember[]> {
               try {
                 imageData = await convertHeicToJpeg(data, filename)
               } catch (err) {
-                console.warn(`Failed to convert HEIC for ${name}:`, err)
+                console.warn(`Failed to convert HEIC for ${name}, trying next image...`)
+                // Don't break - try the next image path instead
               }
             } else {
               imageData = { data, filename, mimeType: getMimeType(filename) }
             }
-            break
+            if (imageData) break
           }
         }
       }
