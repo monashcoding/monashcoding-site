@@ -57,10 +57,10 @@ export default function CommitteePageClient({
   const sectionRef = useRef<HTMLDivElement>(null)
   const loadMoreCallbackRef = useRef<() => Promise<void>>(null!)
   const observerRef = useRef<IntersectionObserver | null>(null)
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [isHovering, setIsHovering] = useState(false)
+  const ditherContainerRef = useRef<HTMLDivElement>(null)
 
-  const title = pageData?.pageTitle || 'Meet the Committee'
+  const title = pageData?.pageTitle || 'Meet the Team'
 
   // Ordered list of teams that have members
   const activeTeams = TEAM_ORDER.filter((team) => availableTeams.includes(team))
@@ -153,17 +153,16 @@ export default function CommitteePageClient({
     }
   }, [])
 
-  // Mouse tracking for dither effect
+  // Mouse tracking for dither effect - uses DOM manipulation to avoid React re-renders
   useEffect(() => {
     const section = sectionRef.current
-    if (!section) return
+    const ditherContainer = ditherContainerRef.current
+    if (!section || !ditherContainer) return
 
     const handleMouseMove = (e: MouseEvent) => {
-      const rect = section.getBoundingClientRect()
-      setMousePos({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-      })
+      // Use viewport-relative coordinates since dither is fixed positioned
+      ditherContainer.style.setProperty('--mouse-x', `${e.clientX}px`)
+      ditherContainer.style.setProperty('--mouse-y', `${e.clientY}px`)
     }
 
     const handleMouseEnter = () => setIsHovering(true)
@@ -177,6 +176,29 @@ export default function CommitteePageClient({
       section.removeEventListener('mousemove', handleMouseMove)
       section.removeEventListener('mouseenter', handleMouseEnter)
       section.removeEventListener('mouseleave', handleMouseLeave)
+    }
+  }, [])
+
+  // Clip-path update for dither effect - clips at section top
+  useEffect(() => {
+    const section = sectionRef.current
+    const ditherContainer = ditherContainerRef.current
+    if (!section || !ditherContainer) return
+
+    const updateClipPath = () => {
+      const rect = section.getBoundingClientRect()
+      // Clip everything above the section's top edge
+      const clipTop = Math.max(0, rect.top)
+      ditherContainer.style.setProperty('--clip-top', `${clipTop}px`)
+    }
+
+    updateClipPath()
+    window.addEventListener('scroll', updateClipPath, { passive: true })
+    window.addEventListener('resize', updateClipPath, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', updateClipPath)
+      window.removeEventListener('resize', updateClipPath)
     }
   }, [])
 
@@ -233,32 +255,33 @@ export default function CommitteePageClient({
         className="overflow-hidden"
         backgroundClassName="bg-[#252525]"
         contentClassName="px-4 py-16"
+        contentRef={sectionRef}
       >
-        <div ref={sectionRef} className="relative">
-          {/* Dither effect following cursor - disabled for alumni to save GPU */}
-          {selectedTeam !== 'alumni' && (
-            <div
-              className="absolute inset-0 pointer-events-none transition-opacity duration-300 -z-10"
-              style={{
-                opacity: isHovering ? 1 : 0,
-                maskImage: `radial-gradient(circle 300px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 70%)`,
-                WebkitMaskImage: `radial-gradient(circle 300px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 70%)`,
-              }}
-            >
-              <Dither
-                waveSpeed={0.03}
-                waveFrequency={3}
-                waveAmplitude={0.3}
-                waveColor={[0.97, 0.89, 0.36]}
-                colorNum={4}
-                pixelSize={2}
-                enableMouseInteraction={false}
-                mouseRadius={0.4}
-              />
-            </div>
-          )}
+        {/* Dither effect - fixed to viewport, clipped to section bounds */}
+        <div
+          ref={ditherContainerRef}
+          className="fixed inset-0 pointer-events-none -z-10"
+          style={{
+            opacity: isHovering ? 1 : 0,
+            transition: 'opacity 0.3s',
+            clipPath: `inset(var(--clip-top, 0px) 0 0 0)`,
+            maskImage: `radial-gradient(circle 300px at var(--mouse-x, 0px) var(--mouse-y, 0px), black 0%, transparent 70%)`,
+            WebkitMaskImage: `radial-gradient(circle 300px at var(--mouse-x, 0px) var(--mouse-y, 0px), black 0%, transparent 70%)`,
+          }}
+        >
+          <Dither
+            waveSpeed={0.03}
+            waveFrequency={3}
+            waveAmplitude={0.3}
+            waveColor={[0.97, 0.89, 0.36]}
+            colorNum={4}
+            pixelSize={2}
+            enableMouseInteraction={false}
+            mouseRadius={0.4}
+          />
+        </div>
 
-          {/* Filter Tabs */}
+        {/* Filter Tabs */}
           <div className="relative mx-auto mb-12 flex justify-center">
             <div className="inline-flex flex-wrap justify-center gap-2 rounded-2xl bg-[#252525] p-3 shadow-lg">
               <button
@@ -467,7 +490,6 @@ export default function CommitteePageClient({
               )}
             </AnimatePresence>
           </div>
-        </div>
       </RibbonAwareSection>
 
       {/* Member Popup */}

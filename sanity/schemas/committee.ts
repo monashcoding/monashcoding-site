@@ -155,7 +155,7 @@ export const committeePage = defineType({
       name: 'pageTitle',
       title: 'Page Title',
       type: 'string',
-      initialValue: 'Meet the Committee',
+      initialValue: 'Meet the Team',
     }),
     defineField({
       name: 'pageSubtitle',
