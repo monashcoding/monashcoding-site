@@ -38,7 +38,7 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
   const pageTitle = data?.pageTitle || "Get in Touch";
   const pageSubtitle = data?.pageSubtitle || "Have a question or want to collaborate? We'd love to hear from you.";
   const email = data?.email || "hello@monashcoding.com";
-  const discordLink = data?.discordLink || "https://discord.gg/monashcoding";
+  const discordLink = data?.discordLink || "https://discord.gg/px8UcXcpeC";
   const discordLabel = data?.discordLabel || "Join our community";
   const location = data?.location || "Monash University, Clayton VIC";
   const locationMapLink = data?.locationMapLink || "https://maps.google.com/?q=Monash+University+Clayton";
