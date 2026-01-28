@@ -5,6 +5,7 @@ import { UploadIcon } from '@sanity/icons'
 import { useState, useCallback, useRef } from 'react'
 import { useClient } from 'sanity'
 import JSZip from 'jszip'
+import heic2any from 'heic2any'
 
 // --- Types ---
 
@@ -293,9 +294,35 @@ function getMimeType(filename: string): string {
       return 'image/gif'
     case 'webp':
       return 'image/webp'
+    case 'heic':
+    case 'heif':
+      return 'image/heic'
     default:
       return 'image/jpeg'
   }
+}
+
+// --- Check if file is HEIC format ---
+
+function isHeicFile(filename: string): boolean {
+  const ext = filename.split('.').pop()?.toLowerCase()
+  return ext === 'heic' || ext === 'heif'
+}
+
+// --- Convert HEIC to JPEG ---
+
+async function convertHeicToJpeg(data: ArrayBuffer, filename: string): Promise<{ data: ArrayBuffer; filename: string; mimeType: string }> {
+  const blob = new Blob([data], { type: 'image/heic' })
+  const converted = await heic2any({
+    blob,
+    toType: 'image/jpeg',
+    quality: 0.9,
+  })
+  // heic2any can return a single blob or array of blobs
+  const resultBlob = Array.isArray(converted) ? converted[0] : converted
+  const newData = await resultBlob.arrayBuffer()
+  const newFilename = filename.replace(/\.heic$/i, '.jpg').replace(/\.heif$/i, '.jpg')
+  return { data: newData, filename: newFilename, mimeType: 'image/jpeg' }
 }
 
 // --- Main parse function ---
@@ -423,7 +450,17 @@ async function parseNotionZip(file: File): Promise<ParsedMember[]> {
           if (imageFile && !imageFile.dir) {
             const data = await imageFile.async('arraybuffer')
             const filename = tryPath.split('/').pop() || 'photo.jpg'
-            imageData = { data, filename, mimeType: getMimeType(filename) }
+
+            // Convert HEIC to JPEG if necessary
+            if (isHeicFile(filename)) {
+              try {
+                imageData = await convertHeicToJpeg(data, filename)
+              } catch (err) {
+                console.warn(`Failed to convert HEIC for ${name}:`, err)
+              }
+            } else {
+              imageData = { data, filename, mimeType: getMimeType(filename) }
+            }
             break
           }
         }
