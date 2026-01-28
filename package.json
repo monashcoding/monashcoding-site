@@ -34,6 +34,7 @@
     "clsx": "^2.1.1",
     "framer-motion": "^12.26.2",
     "gsap": "^3.14.2",
+    "heic2any": "^0.0.4",
     "jszip": "^3.10.1",
     "lucide-react": "^0.562.0",
     "motion": "^12.26.2",
