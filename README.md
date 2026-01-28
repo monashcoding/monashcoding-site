@@ -1,5 +1,23 @@
 # monashcoding-site
 
+## Notion Committee Import
+
+Import committee members from Notion into Sanity via **Sanity Studio → Notion Import**.
+
+**Export from Notion:**
+1. Go to **Home > Committee Directory > All**
+2. Click **...** → **Export**
+3. Select: Markdown & CSV, Current view, Everything, Include subpages, Create folders
+
+**Import to Sanity:**
+1. Upload the zip in Sanity Studio
+2. Review parsed members, choose Replace/Skip for duplicates
+3. Click Import
+
+Parses: name, role, team, past roles, birthday, LinkedIn, Discord, Bento.me, MBTI, first day, photos.
+
+---
+
 ## Sanity Webhook Setup
 
 The site uses on-demand revalidation via a webhook that Sanity calls when content is published.
