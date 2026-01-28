@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { ReactNode, forwardRef, Ref } from 'react'
 import { cn } from '@/lib/utils'
 
 interface RibbonAwareSectionProps {
@@ -11,6 +11,8 @@ interface RibbonAwareSectionProps {
   contentClassName?: string
   /** HTML element to render as (default: section) */
   as?: 'section' | 'div' | 'article' | 'aside' | 'main' | 'footer'
+  /** Optional ref for the content wrapper (z-10 layer) */
+  contentRef?: Ref<HTMLDivElement>
 }
 
 /**
@@ -27,6 +29,7 @@ export function RibbonAwareSection({
   backgroundClassName,
   className,
   contentClassName,
+  contentRef,
   as: Component = 'section',
 }: RibbonAwareSectionProps) {
   return (
@@ -40,7 +43,7 @@ export function RibbonAwareSection({
         aria-hidden="true"
       />
       {/* Content layer - sits above the ribbon (z-5) */}
-      <div className={cn('relative z-10', contentClassName)}>
+      <div ref={contentRef} className={cn('relative z-10', contentClassName)}>
         {children}
       </div>
     </Component>
