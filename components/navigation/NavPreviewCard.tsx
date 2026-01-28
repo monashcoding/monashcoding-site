@@ -61,8 +61,7 @@ export default function NavPreviewCard({ preview, isVisible }: NavPreviewCardPro
                     <iframe
                       src={p.href}
                       title={p.title}
-                      scrolling="no"
-                      className="w-[200%] h-[200%] origin-top-left scale-50 pointer-events-none"
+                      className="w-[200%] h-[200%] origin-top-left scale-50 pointer-events-none overflow-hidden"
                       style={{
                         border: "none",
                         background: "#000",
