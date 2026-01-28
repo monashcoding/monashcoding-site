@@ -189,7 +189,7 @@ export default function CommitteePageClient({
                     : 'bg-white/10 text-foreground hover:bg-white/20'
                 }`}
               >
-                2026
+                All
               </button>
               {activeTeams.map((team) => (
                 <button
