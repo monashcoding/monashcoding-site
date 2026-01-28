@@ -13,7 +13,7 @@ interface CommitteeGridProps {
 type FilterOption = 'all' | 'alumni' | TeamSlug
 
 const FILTER_OPTIONS: { value: FilterOption; label: string }[] = [
-  { value: 'all', label: '2026' },
+  { value: 'all', label: 'All' },
   { value: 'management', label: 'Management' },
   { value: 'events', label: 'Events' },
   { value: 'marketing', label: 'Marketing' },
