@@ -11,6 +11,9 @@ const defaultSocialLinks: SocialLink[] = [
   { _key: "1", platform: "instagram", url: "https://instagram.com/monashcoding" },
   { _key: "2", platform: "linkedin", url: "https://linkedin.com/company/monashcoding" },
   { _key: "3", platform: "github", url: "https://github.com/monashcoding" },
+  { _key: "4", platform: "youtube", url: "https://www.youtube.com/@MonashAssociationofCoding" },
+  { _key: "5", platform: "tiktok", url: "https://www.tiktok.com/@monashcoding" },
+  { _key: "6", platform: "facebook", url: "https://www.facebook.com/monashcoding/" },
 ];
 
 interface ContactPageClientProps {
