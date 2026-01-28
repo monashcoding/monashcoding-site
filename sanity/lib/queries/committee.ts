@@ -89,6 +89,15 @@ export const alumniCommitteeMembersQuery = groq`
   *[_type == "committeeMember" && (isAlumni == true || role match "alumni")] | order(name asc) ${memberProjection}
 `
 
+// Paginated alumni query for better performance with large lists
+export const alumniCommitteeMembersPaginatedQuery = groq`
+  *[_type == "committeeMember" && (isAlumni == true || role match "alumni")] | order(name asc) [$start...$end] ${memberProjection}
+`
+
+export const alumniCommitteeMembersCountQuery = groq`
+  count(*[_type == "committeeMember" && (isAlumni == true || role match "alumni")])
+`
+
 export const committeeMembersByTeamFilteredQuery = groq`
   *[_type == "committeeMember" && team == $team && isAlumni != true && !(role match "alumni")] | order(name asc) ${memberProjection}
 `

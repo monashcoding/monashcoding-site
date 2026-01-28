@@ -7,7 +7,8 @@ import dynamic from 'next/dynamic'
 import { urlFor } from '@/sanity/lib/image'
 import { CommitteeMember, CommitteePageData, TeamSlug } from '@/lib/sanity/types'
 import { TEAM_ORDER } from '@/lib/committee-utils'
-import { fetchCommitteeMembersByFilter, type FilterOption } from '@/app/(site)/team/actions'
+import { fetchCommitteeMembersByFilter, fetchAlumniPaginated } from '@/app/(site)/team/actions'
+import { type FilterOption } from '@/app/(site)/team/constants'
 import Timeline from '@/components/team/Timeline'
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
 
@@ -47,8 +48,15 @@ export default function CommitteePageClient({
   const [displayedMembers, setDisplayedMembers] = useState<CommitteeMember[]>(initialMembers)
   const [selectedMember, setSelectedMember] = useState<CommitteeMember | null>(null)
   const [isPending, startTransition] = useTransition()
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [alumniPage, setAlumniPage] = useState(0)
+  const [hasMoreAlumni, setHasMoreAlumni] = useState(true)
+  const [alumniTotal, setAlumniTotal] = useState(0)
   const cache = useRef(new Map<FilterOption, CommitteeMember[]>([['all', initialMembers]]))
+  const alumniPaginationCache = useRef<{ page: number; hasMore: boolean; total: number } | null>(null)
   const sectionRef = useRef<HTMLDivElement>(null)
+  const loadMoreCallbackRef = useRef<() => Promise<void>>(null!)
+  const observerRef = useRef<IntersectionObserver | null>(null)
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [isHovering, setIsHovering] = useState(false)
 
@@ -64,15 +72,85 @@ export default function CommitteePageClient({
     const cached = cache.current.get(team)
     if (cached) {
       setDisplayedMembers(cached)
+      // Restore alumni pagination state from cache
+      if (team === 'alumni' && alumniPaginationCache.current) {
+        setAlumniPage(alumniPaginationCache.current.page)
+        setHasMoreAlumni(alumniPaginationCache.current.hasMore)
+        setAlumniTotal(alumniPaginationCache.current.total)
+      }
       return
     }
 
     // Fetch from server via action
     startTransition(async () => {
-      const members = await fetchCommitteeMembersByFilter(team)
-      cache.current.set(team, members)
-      setDisplayedMembers(members)
+      if (team === 'alumni') {
+        const result = await fetchAlumniPaginated(0)
+        cache.current.set(team, result.members)
+        setDisplayedMembers(result.members)
+        setHasMoreAlumni(result.hasMore)
+        setAlumniTotal(result.total)
+        setAlumniPage(0)
+        alumniPaginationCache.current = { page: 0, hasMore: result.hasMore, total: result.total }
+      } else {
+        const members = await fetchCommitteeMembersByFilter(team)
+        cache.current.set(team, members)
+        setDisplayedMembers(members)
+      }
     })
+  }, [])
+
+  const handleLoadMoreAlumni = useCallback(async () => {
+    if (isLoadingMore || !hasMoreAlumni) return
+
+    setIsLoadingMore(true)
+    const nextPage = alumniPage + 1
+
+    const result = await fetchAlumniPaginated(nextPage)
+    const newMembers = [...displayedMembers, ...result.members]
+
+    cache.current.set('alumni', newMembers)
+    setDisplayedMembers(newMembers)
+    setHasMoreAlumni(result.hasMore)
+    setAlumniPage(nextPage)
+    setAlumniTotal(result.total)
+    alumniPaginationCache.current = { page: nextPage, hasMore: result.hasMore, total: result.total }
+    setIsLoadingMore(false)
+  }, [alumniPage, displayedMembers, hasMoreAlumni, isLoadingMore])
+
+  // Keep ref updated for intersection observer callback
+  loadMoreCallbackRef.current = handleLoadMoreAlumni
+
+  // Callback ref for infinite scroll sentinel - fires when element mounts/unmounts
+  const loadMoreSentinelRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      // Cleanup previous observer
+      if (observerRef.current) {
+        observerRef.current.disconnect()
+        observerRef.current = null
+      }
+
+      // Don't observe if conditions aren't met
+      if (!node || selectedTeam !== 'alumni' || !hasMoreAlumni || isLoadingMore) return
+
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            loadMoreCallbackRef.current()
+          }
+        },
+        { rootMargin: '400px', threshold: 0 }
+      )
+
+      observerRef.current.observe(node)
+    },
+    [selectedTeam, hasMoreAlumni, isLoadingMore]
+  )
+
+  // Cleanup observer on unmount
+  useEffect(() => {
+    return () => {
+      observerRef.current?.disconnect()
+    }
   }, [])
 
   // Mouse tracking for dither effect
@@ -157,26 +235,28 @@ export default function CommitteePageClient({
         contentClassName="px-4 py-16"
       >
         <div ref={sectionRef} className="relative">
-          {/* Dither effect following cursor */}
-          <div
-            className="absolute inset-0 pointer-events-none transition-opacity duration-300 -z-10"
-            style={{
-              opacity: isHovering ? 1 : 0,
-              maskImage: `radial-gradient(circle 300px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 70%)`,
-              WebkitMaskImage: `radial-gradient(circle 300px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 70%)`,
-            }}
-          >
-            <Dither
-              waveSpeed={0.03}
-              waveFrequency={3}
-              waveAmplitude={0.3}
-              waveColor={[0.97, 0.89, 0.36]}
-              colorNum={4}
-              pixelSize={2}
-              enableMouseInteraction={false}
-              mouseRadius={0.4}
-            />
-          </div>
+          {/* Dither effect following cursor - disabled for alumni to save GPU */}
+          {selectedTeam !== 'alumni' && (
+            <div
+              className="absolute inset-0 pointer-events-none transition-opacity duration-300 -z-10"
+              style={{
+                opacity: isHovering ? 1 : 0,
+                maskImage: `radial-gradient(circle 300px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 70%)`,
+                WebkitMaskImage: `radial-gradient(circle 300px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 70%)`,
+              }}
+            >
+              <Dither
+                waveSpeed={0.03}
+                waveFrequency={3}
+                waveAmplitude={0.3}
+                waveColor={[0.97, 0.89, 0.36]}
+                colorNum={4}
+                pixelSize={2}
+                enableMouseInteraction={false}
+                mouseRadius={0.4}
+              />
+            </div>
+          )}
 
           {/* Filter Tabs */}
           <div className="relative mx-auto mb-12 flex justify-center">
@@ -255,23 +335,19 @@ export default function CommitteePageClient({
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <LayoutGroup>
-                    <motion.div
-                      layout
+                  {/* Use plain divs for alumni to avoid GPU-intensive animations */}
+                  {selectedTeam === 'alumni' ? (
+                    <div
                       className="grid gap-6"
                       style={{
                         gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
                       }}
                     >
                       {displayedMembers.map((member) => (
-                        <motion.div
+                        <div
                           key={member._id}
-                          layoutId={member._id}
-                          initial={false}
-                          animate={{ opacity: 1 }}
-                          transition={{ duration: 0.25, ease: 'easeOut' }}
                           onClick={() => setSelectedMember(member)}
-                          className="group cursor-pointer overflow-hidden rounded-2xl bg-card border border-white/10 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                          className="group cursor-pointer overflow-hidden rounded-2xl bg-card border border-white/10 shadow-sm transition-shadow duration-200 hover:shadow-md"
                         >
                           {/* Photo */}
                           <div className="relative aspect-square overflow-hidden">
@@ -280,7 +356,8 @@ export default function CommitteePageClient({
                                 src={urlFor(member.photo).width(400).height(400).url()}
                                 alt={member.photo.alt || member.name}
                                 fill
-                                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                loading="lazy"
+                                className="object-cover"
                               />
                             ) : (
                               <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#FFE330]/50 to-[#FFE330]/20">
@@ -301,10 +378,85 @@ export default function CommitteePageClient({
                               {TEAM_LABELS[member.team]}
                             </p>
                           </div>
-                        </motion.div>
+                        </div>
                       ))}
-                    </motion.div>
-                  </LayoutGroup>
+                    </div>
+                  ) : (
+                    <LayoutGroup>
+                      <motion.div
+                        layout
+                        className="grid gap-6"
+                        style={{
+                          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                        }}
+                      >
+                        {displayedMembers.map((member) => (
+                          <motion.div
+                            key={member._id}
+                            layoutId={member._id}
+                            initial={false}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.25, ease: 'easeOut' }}
+                            onClick={() => setSelectedMember(member)}
+                            className="group cursor-pointer overflow-hidden rounded-2xl bg-card border border-white/10 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                          >
+                            {/* Photo */}
+                            <div className="relative aspect-square overflow-hidden">
+                              {member.photo?.asset ? (
+                                <Image
+                                  src={urlFor(member.photo).width(400).height(400).url()}
+                                  alt={member.photo.alt || member.name}
+                                  fill
+                                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                />
+                              ) : (
+                                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#FFE330]/50 to-[#FFE330]/20">
+                                  <span className="text-4xl font-bold text-white/40">
+                                    {member.name
+                                      .split(' ')
+                                      .map((n) => n[0])
+                                      .join('')}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                            {/* Info */}
+                            <div className="p-4">
+                              <h3 className="text-lg font-semibold text-foreground">{member.name}</h3>
+                              <p className="text-sm text-[#d4a900]">{member.role}</p>
+                              <p className="mt-1 text-xs text-foreground/50">
+                                {TEAM_LABELS[member.team]}
+                              </p>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </motion.div>
+                    </LayoutGroup>
+                  )}
+
+                  {/* Infinite scroll sentinel and status for alumni */}
+                  {selectedTeam === 'alumni' && displayedMembers.length > 0 && (
+                    <div className="mt-8 flex flex-col items-center gap-2">
+                      {hasMoreAlumni && (
+                        <>
+                          <div ref={loadMoreSentinelRef} className="h-4" />
+                          <button
+                            onClick={handleLoadMoreAlumni}
+                            disabled={isLoadingMore}
+                            className="flex items-center gap-2 rounded-full bg-white/10 px-6 py-2 text-sm text-foreground transition-colors hover:bg-white/20 disabled:opacity-50"
+                          >
+                            {isLoadingMore && (
+                              <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#FFE330] border-t-transparent" />
+                            )}
+                            {isLoadingMore ? 'Loading...' : 'Load More'}
+                          </button>
+                        </>
+                      )}
+                      <p className="text-sm text-foreground/50">
+                        Showing {displayedMembers.length} of {alumniTotal} alumni
+                      </p>
+                    </div>
+                  )}
 
                   {displayedMembers.length === 0 && (
                     <div className="py-16 text-center text-foreground/50">
