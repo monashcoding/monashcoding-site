@@ -54,8 +54,18 @@ function normalizeTeam(team: string): string | undefined {
 
 // --- Infer team from a role string (e.g. "Events Director" → "events") ---
 
+// Management keywords take priority over other matches
+const MANAGEMENT_KEYWORDS = ['president', 'secretary', 'treasurer', 'vice president']
+
 function inferTeamFromRole(role: string): string | undefined {
   const lower = role.trim().toLowerCase()
+
+  // Check management keywords first (they take priority)
+  for (const keyword of MANAGEMENT_KEYWORDS) {
+    if (lower.includes(keyword)) return 'management'
+  }
+
+  // Then check other team keywords
   for (const [keyword, slug] of Object.entries(TEAM_SLUG_MAP)) {
     if (lower.includes(keyword)) return slug
   }
@@ -343,13 +353,18 @@ async function parseNotionZip(file: File): Promise<ParsedMember[]> {
     const isAlumni = team?.toLowerCase() === 'alumni'
     let teamSlug = isAlumni ? undefined : normalizeTeam(team || '')
 
+    // If no team resolved, try to infer from current role
+    if (!teamSlug && role) {
+      teamSlug = inferTeamFromRole(role)
+    }
+
     // Parse past roles from CSV (comma-separated)
     const pastRolesRaw = row['Past Roles']?.trim()
     const pastRoles = pastRolesRaw
       ? pastRolesRaw.split(',').map((r) => r.trim()).filter(Boolean)
       : undefined
 
-    // If no team resolved (alumni or unrecognized), infer from past roles
+    // If still no team resolved, infer from past roles
     // Priority: management > director role > most recent match
     if (!teamSlug && pastRoles?.length) {
       let directorTeam: string | undefined
