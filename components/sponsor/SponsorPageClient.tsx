@@ -1,97 +1,39 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import { SponsorPageData, Stat, SponsorTier, Benefit } from "@/lib/sanity/types";
 import { RibbonAwareSection } from "@/components/RibbonAwareSection";
+import { SponsorLogosGrid } from "./SponsorLogosGrid";
 
 // Fallback data
 const defaultStats: Stat[] = [
-  { _key: "1", value: "2,000+", label: "Active Members" },
-  { _key: "2", value: "50+", label: "Events Per Year" },
-  { _key: "3", value: "30+", label: "Partner Companies" },
-  { _key: "4", value: "95%", label: "Satisfaction Rate" },
+  { _key: "1", value: "1,500+", label: "Members" },
+  { _key: "2", value: "2,000+", label: "Event Attendees" },
+  { _key: "3", value: "230M+", label: "Total Social Views" },
+  { _key: "4", value: "35+", label: "Events Per Year" },
 ];
 
-const defaultTiers: SponsorTier[] = [
-  {
-    _key: "1",
-    name: "Bronze",
-    price: "$500",
-    featured: false,
-    features: [
-      "Logo on website",
-      "Social media shoutout",
-      "Newsletter mention",
-      "1 event ticket",
-    ],
-  },
-  {
-    _key: "2",
-    name: "Silver",
-    price: "$1,500",
-    featured: false,
-    features: [
-      "Everything in Bronze",
-      "Logo on event materials",
-      "Workshop opportunity",
-      "3 event tickets",
-      "Resume access",
-    ],
-  },
-  {
-    _key: "3",
-    name: "Gold",
-    price: "$3,500",
-    featured: true,
-    features: [
-      "Everything in Silver",
-      "Prominent logo placement",
-      "Dedicated social posts",
-      "Keynote speaking slot",
-      "10 event tickets",
-      "Priority resume access",
-    ],
-  },
-  {
-    _key: "4",
-    name: "Platinum",
-    price: "Custom",
-    featured: false,
-    features: [
-      "Everything in Gold",
-      "Exclusive naming rights",
-      "Custom workshop series",
-      "Year-round partnership",
-      "Unlimited event tickets",
-      "Direct hiring pipeline",
-    ],
-  },
-];
+const defaultTiers: SponsorTier[] = [];
 
 const defaultBenefits: Benefit[] = [
   {
     _key: "1",
-    icon: "🎯",
+    icon: "🎓",
     title: "Access Top Talent",
-    description: "Connect directly with motivated computer science students from Monash University, one of Australia's leading tech programs.",
+    description: "Engage with highly motivated students from 7+ disciplines including Computer Science, Data Science, and Software Engineering through workshops and hackathons.",
   },
   {
     _key: "2",
-    icon: "🌟",
-    title: "Brand Visibility",
-    description: "Get your brand in front of thousands of future tech professionals through our events, social media, and newsletter.",
+    icon: "💼",
+    title: "Promote Opportunities",
+    description: "Champion graduate and intern roles through our publications, tailored campaigns, and custom-built job board reaching engaged, career-focused students.",
   },
   {
     _key: "3",
-    icon: "🤝",
-    title: "Meaningful Engagement",
-    description: "Host workshops, tech talks, and networking sessions that create genuine connections with potential future employees.",
-  },
-  {
-    _key: "4",
-    icon: "📈",
-    title: "Recruitment Pipeline",
-    description: "Build your talent pipeline by showcasing your company culture and opportunities to engaged, career-focused students.",
+    icon: "🌟",
+    title: "Strengthen Brand Presence",
+    description: "Align with Monash's largest tech society to build authentic engagement across a global member base and authentic community connections.",
   },
 ];
 
@@ -100,19 +42,65 @@ interface SponsorPageClientProps {
 }
 
 export default function SponsorPageClient({ data }: SponsorPageClientProps) {
+  const [formData, setFormData] = useState({
+    companyName: "",
+    contactName: "",
+    email: "",
+    message: "",
+  });
+  const [formStatus, setFormStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [copied, setCopied] = useState(false);
+
   // Use Sanity data or fallbacks
   const stats = data?.stats || defaultStats;
-  const tiers = data?.tiers || defaultTiers;
   const benefits = data?.benefits || defaultBenefits;
   const pageTitle = data?.pageTitle || "Partner With Us";
   const pageSubtitle = data?.pageSubtitle || "Join leading tech companies in supporting the next generation of developers. Your partnership helps us create impactful events and opportunities for students.";
-  const tiersTitle = data?.tiersTitle || "Sponsorship Tiers";
-  const tiersSubtitle = data?.tiersSubtitle || "Choose a partnership level that aligns with your goals and budget";
   const benefitsTitle = data?.benefitsTitle || "Why Partner With MAC?";
   const ctaTitle = data?.ctaTitle || "Ready to Partner?";
   const ctaDescription = data?.ctaDescription || "Let's discuss how we can create a partnership that benefits both your organization and our community.";
-  const ctaButtonText = data?.ctaButtonText || "Contact Us";
-  const ctaButtonLink = data?.ctaButtonLink || "/contact";
+
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormStatus("loading");
+
+    try {
+      const response = await fetch("/api/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "sponsor",
+          companyName: formData.companyName,
+          contactName: formData.contactName,
+          email: formData.email,
+          message: formData.message,
+        }),
+      });
+
+      if (response.ok) {
+        setFormStatus("success");
+        setFormData({ companyName: "", contactName: "", email: "", message: "" });
+        setTimeout(() => setFormStatus("idle"), 5000);
+      } else {
+        setFormStatus("error");
+        setTimeout(() => setFormStatus("idle"), 5000);
+      }
+    } catch (error) {
+      setFormStatus("error");
+      setTimeout(() => setFormStatus("idle"), 5000);
+    }
+  };
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText("sponsorship@monashcoding.com");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <main className="min-h-screen pt-32">
@@ -161,73 +149,6 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
         </div>
       </RibbonAwareSection>
 
-      {/* Tiers Section */}
-      <RibbonAwareSection
-        backgroundClassName="bg-accent/[0.03]"
-        contentClassName="py-24 px-8"
-      >
-        <div className="max-w-[1200px] mx-auto">
-          <motion.h2
-            className="text-4xl font-bold text-foreground mb-4 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            {tiersTitle}
-          </motion.h2>
-          <motion.p
-            className="text-white/60 text-center max-w-[600px] mx-auto mb-12"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-          >
-            {tiersSubtitle}
-          </motion.p>
-
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-8">
-            {tiers.map((tier, index) => (
-              <motion.div
-                key={tier._key}
-                className={`p-10 bg-white/5 border border-white/10 rounded-3xl transition-all duration-300 relative overflow-hidden hover:border-accent/30 hover:-translate-y-1 ${
-                  tier.featured ? "border-accent/40 bg-linear-to-br from-accent/[0.08] to-accent/[0.02]" : ""
-                }`}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-              >
-                {tier.featured && (
-                  <span className="absolute top-4 right-4 py-1 px-3 bg-accent text-white text-xs font-semibold rounded-full">
-                    Most Popular
-                  </span>
-                )}
-                <h3 className="text-2xl font-bold text-accent mb-2">{tier.name}</h3>
-                <div className="text-3xl font-extrabold text-foreground mb-6">
-                  {tier.price}
-                  {tier.price !== "Custom" && <span className="text-base font-normal text-white/50"> /year</span>}
-                </div>
-                <ul className="list-none p-0 m-0 mb-8">
-                  {tier.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="py-3 text-white/70 flex items-center gap-3 border-b border-white/5 last:border-b-0">
-                      <span className="text-accent">✓</span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <button
-                  className={`w-full py-4 px-8 bg-transparent border border-accent/30 rounded-full text-accent font-semibold cursor-pointer transition-all duration-300 hover:bg-accent/10 hover:border-accent/50 ${
-                    tier.featured ? "bg-accent border-accent text-white hover:bg-accent/80 hover:border-accent/80" : ""
-                  }`}
-                >
-                  Get Started
-                </button>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </RibbonAwareSection>
-
       {/* Benefits Section */}
       <RibbonAwareSection
         backgroundClassName="bg-secondary"
@@ -264,44 +185,154 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
         </div>
       </RibbonAwareSection>
 
-      {/* CTA Section */}
+      {/* 2025 Sponsors Section */}
+      <SponsorLogosGrid title="2025 Sponsors" />
+
+      {/* Contact Section - Become a Sponsor */}
       <RibbonAwareSection
         backgroundClassName="bg-linear-to-b from-transparent to-accent/5"
-        contentClassName="py-24 px-8 text-center"
+        contentClassName="py-24 px-8"
       >
-        <motion.h2
-          className="text-[clamp(2rem,4vw,3rem)] font-bold text-foreground mb-4"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          {ctaTitle}
-        </motion.h2>
-        <motion.p
-          className="text-white/60 max-w-[500px] mx-auto mb-8"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.1 }}
-        >
-          {ctaDescription}
-        </motion.p>
-        <motion.a
-          href={ctaButtonLink}
-          className="inline-flex items-center gap-3 py-4 px-10 bg-linear-to-br from-accent to-accent text-white font-semibold text-lg rounded-full no-underline transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_40px_rgba(180,83,9,0.3)]"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          {ctaButtonText}
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
-        </motion.a>
+        <div className="max-w-[800px] mx-auto">
+          <motion.h2
+            className="text-[clamp(2rem,4vw,3rem)] font-bold text-foreground mb-4 text-center"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            {ctaTitle}
+          </motion.h2>
+          <motion.p
+            className="text-white/60 max-w-[600px] mx-auto mb-12 text-center"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+          >
+            {ctaDescription}
+          </motion.p>
+
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            {/* Contact Form */}
+            <motion.form
+              onSubmit={handleFormSubmit}
+              className="space-y-4 p-8 bg-white/5 border border-white/10 rounded-3xl"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4 }}
+            >
+              <div>
+                <label className="block text-sm font-medium text-white/80 mb-2">Company Name</label>
+                <input
+                  type="text"
+                  name="companyName"
+                  value={formData.companyName}
+                  onChange={handleFormChange}
+                  required
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-accent/50 focus:bg-white/10 transition-all"
+                  placeholder="Your company name"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-white/80 mb-2">Contact Name</label>
+                <input
+                  type="text"
+                  name="contactName"
+                  value={formData.contactName}
+                  onChange={handleFormChange}
+                  required
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-accent/50 focus:bg-white/10 transition-all"
+                  placeholder="Your name"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-white/80 mb-2">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleFormChange}
+                  required
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-accent/50 focus:bg-white/10 transition-all"
+                  placeholder="your@email.com"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-white/80 mb-2">Message</label>
+                <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleFormChange}
+                  required
+                  rows={4}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-accent/50 focus:bg-white/10 transition-all resize-none"
+                  placeholder="Tell us about your sponsorship interests..."
+                />
+              </div>
+
+              <motion.button
+                type="submit"
+                disabled={formStatus === "loading"}
+                className="w-full py-3 px-6 bg-accent text-background font-semibold rounded-full hover:bg-accent/90 transition-all disabled:opacity-50 cursor-pointer"
+                whileTap={{ scale: 0.95 }}
+              >
+                {formStatus === "loading" ? "Sending..." : formStatus === "success" ? "Sent! ✓" : "Send Message"}
+              </motion.button>
+
+              <AnimatePresence>
+                {formStatus === "error" && (
+                  <motion.p
+                    className="text-red-400 text-sm text-center"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    Failed to send message. Please try again.
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </motion.form>
+
+            {/* Direct Contact Info */}
+            <motion.div
+              className="p-8 bg-white/5 border border-white/10 rounded-3xl flex flex-col justify-center"
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+            >
+              <h3 className="text-2xl font-bold text-foreground mb-6">Direct Contact</h3>
+              <div className="space-y-6">
+                <div>
+                  <p className="text-white/60 text-sm mb-2">Email</p>
+                  <div className="flex items-center justify-between gap-4 p-4 bg-white/5 border border-white/10 rounded-xl">
+                    <span className="text-foreground font-medium">sponsorship@monashcoding.com</span>
+                    <motion.button
+                      onClick={handleCopyEmail}
+                      className="px-3 py-2 bg-accent/20 hover:bg-accent/30 border border-accent/30 rounded-lg text-accent text-sm font-medium transition-all cursor-pointer"
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {copied ? "Copied!" : "Copy"}
+                    </motion.button>
+                  </div>
+                </div>
+
+                <div className="pt-6 border-t border-white/10">
+                  <p className="text-white/70 text-sm leading-relaxed">
+                    Prefer to reach out directly? Our sponsorship team is ready to discuss partnership opportunities tailored to your company's goals.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+            
+          </div>
+        </div>
       </RibbonAwareSection>
     </main>
   );
 }
+
