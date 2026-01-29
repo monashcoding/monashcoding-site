@@ -35,6 +35,73 @@ export async function POST(req: Request) {
       );
     }
 
+    const formType = body.type as string | undefined;
+
+    // Handle sponsor form
+    if (formType === 'sponsor') {
+      const {
+        companyName,
+        contactName,
+        email,
+        message,
+      } = body as {
+        companyName?: unknown;
+        contactName?: unknown;
+        email?: unknown;
+        message?: unknown;
+      };
+
+      if (!isNonEmptyString(companyName)) {
+        return Response.json(
+          { error: 'Field "companyName" is required and must be a non-empty string.' },
+          { status: 400 },
+        );
+      }
+
+      if (!isNonEmptyString(contactName)) {
+        return Response.json(
+          { error: 'Field "contactName" is required and must be a non-empty string.' },
+          { status: 400 },
+        );
+      }
+
+      if (!isValidEmail(email)) {
+        return Response.json(
+          { error: 'Field "email" is required and must be a valid email address.' },
+          { status: 400 },
+        );
+      }
+
+      if (!isNonEmptyString(message)) {
+        return Response.json(
+          { error: 'Field "message" is required and must be a non-empty string.' },
+          { status: 400 },
+        );
+      }
+
+      const { data, error } = await resend.emails.send({
+        from: 'noreply@monashcoding.com',
+        // TODO change to sponsorship email
+        to: 'projects@monashcoding.com',
+        replyTo: (email as string).trim(),
+        subject: `Sponsorship Inquiry from ${companyName}`,
+        react: EmailTemplate({
+          name: `${contactName} (${companyName})`,
+          emailAddress: (email as string).trim(),
+          subject: `Sponsorship Inquiry from ${companyName}`,
+          message: (message as string).trim(),
+        }),
+      });
+
+      if (error) {
+        console.error('Resend API error:', error);
+        return Response.json({ error }, { status: 500 });
+      }
+
+      return Response.json(data);
+    }
+
+    // Handle regular contact form (default)
     const {
       name,
       emailAddress,
@@ -75,7 +142,7 @@ export async function POST(req: Request) {
 
     const { data, error } = await resend.emails.send({
       from: 'noreply@monashcoding.com', 
-      // to: 'coding@monashclubs.org',
+      // TODO change to marketing email
       to: 'projects@monashcoding.com',
       replyTo: (emailAddress as string).trim(), // User's email will be set as reply-to
       subject: normalizedSubject, 
