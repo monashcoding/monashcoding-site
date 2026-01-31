@@ -30,14 +30,10 @@ export const sponsorPageQuery = groq`
       _key,
       name,
       logo {
-        asset->{
-          _id,
-          url,
-          metadata {
-            dimensions
-          }
-        },
-        alt
+        asset->,
+        alt,
+        hotspot,
+        crop
       }
     },
     ctaTitle,
