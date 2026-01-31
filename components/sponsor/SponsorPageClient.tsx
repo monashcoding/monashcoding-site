@@ -64,37 +64,51 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormStatus("loading");
+  // Validate form fields
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
 
-    try {
-      const response = await fetch("/api/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: "sponsor",
-          companyName: formData.companyName,
-          contactName: formData.contactName,
-          email: formData.email,
-          message: formData.message,
-        }),
-      });
+    if (!formData.contactName.trim()) newErrors.contactName = "Contact name is required";
+    if (!formData.email.trim()) newErrors.email = "Email is required";
+    if (!formData.companyName.trim()) newErrors.companyName = "Company name is required";
+    if (!formData.message.trim()) newErrors.message = "Message is required";
 
-      if (response.ok) {
-        setFormStatus("success");
-        setFormData({ companyName: "", contactName: "", email: "", message: "" });
-        setTimeout(() => setFormStatus("idle"), 5000);
-      } else {
-        setFormStatus("error");
-        setTimeout(() => setFormStatus("idle"), 5000);
-      }
-    } catch (error) {
-      setFormStatus("error");
-      setTimeout(() => setFormStatus("idle"), 5000);
-    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
+
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  if (!validate()) return;
+  
+  setFormStatus("loading");
+
+  try {
+    const response = await fetch("/api/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    // CRITICAL: Fetch doesn't "fail" on 500/400 errors, 
+    // it just sets ok to false.
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to send");
+    }
+
+    setFormStatus("success");
+    setFormData({ companyName: "", contactName: "", email: "", message: "" });
+  } catch (error) {
+    console.error("Submission error:", error);
+    setFormStatus("error");
+  } finally {
+    // Optional: reset to idle after 5 seconds
+    setTimeout(() => setFormStatus("idle"), 5000);
+  }
+};
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText("sponsorship@monashcoding.com");
@@ -106,7 +120,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
     <main className="min-h-screen pt-32">
       {/* Hero Section */}
       <RibbonAwareSection
-        backgroundClassName="bg-linear-to-b from-background to-secondary"
+        backgroundClassName="bg-background"
         contentClassName="py-16 px-8 pb-24 text-center"
       >
         <motion.h1
@@ -129,8 +143,8 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
 
       {/* Stats Section */}
       <RibbonAwareSection
-        backgroundClassName="bg-secondary"
-        contentClassName="py-16 px-8 max-w-[1200px] mx-auto"
+        backgroundClassName="bg-background"
+        contentClassName="py-16 px-8 max-w-[1400px] mx-auto"
       >
         <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-8">
           {stats.map((stat, index) => (
@@ -332,6 +346,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
           </div>
         </div>
       </RibbonAwareSection>
+
     </main>
   );
 }

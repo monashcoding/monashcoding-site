@@ -164,6 +164,54 @@ export const sponsorPage = defineType({
       ],
     }),
     defineField({
+      name: 'sponsorsTitle',
+      title: 'Sponsors Section Title',
+      type: 'string',
+      initialValue: '2025 Sponsors',
+    }),
+    defineField({
+      name: 'sponsors',
+      title: 'Sponsor Logos',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'name',
+              title: 'Company Name',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'logo',
+              title: 'Logo',
+              type: 'image',
+              options: {
+                hotspot: true,
+                accept: 'image/jpeg,image/png,image/svg+xml',
+              },
+              fields: [
+                defineField({
+                  name: 'alt',
+                  title: 'Alt Text',
+                  type: 'string',
+                  validation: (Rule) => Rule.required(),
+                }),
+              ],
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+          preview: {
+            select: {
+              title: 'name',
+              media: 'logo',
+            },
+          },
+        }),
+      ],
+    }),
+    defineField({
       name: 'ctaTitle',
       title: 'CTA Title',
       type: 'string',

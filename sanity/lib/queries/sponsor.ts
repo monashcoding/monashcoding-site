@@ -25,6 +25,21 @@ export const sponsorPageQuery = groq`
       title,
       description
     },
+    sponsorsTitle,
+    sponsors[] {
+      _key,
+      name,
+      logo {
+        asset->{
+          _id,
+          url,
+          metadata {
+            dimensions
+          }
+        },
+        alt
+      }
+    },
     ctaTitle,
     ctaDescription,
     ctaButtonText,
