@@ -5,7 +5,7 @@ import { UploadIcon } from '@sanity/icons'
 import { useState, useCallback, useRef } from 'react'
 import { useClient } from 'sanity'
 import JSZip from 'jszip'
-import heic2any from 'heic2any'
+// heic2any is dynamically imported to avoid SSR issues (it references `window` at module level)
 
 // --- Types ---
 
@@ -317,6 +317,7 @@ function isHeicFile(filename: string): boolean {
 
 async function convertHeicToJpeg(data: ArrayBuffer, filename: string): Promise<{ data: ArrayBuffer; filename: string; mimeType: string }> {
   const blob = new Blob([data], { type: 'image/heic' })
+  const { default: heic2any } = await import('heic2any')
   const converted = await heic2any({
     blob,
     toType: 'image/jpeg',

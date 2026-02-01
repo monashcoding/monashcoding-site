@@ -1,6 +1,6 @@
 import Navigation from "@/components/Navigation";
 import ClickSpark from "@/components/ClickSpark";
-import { RibbonProvider } from "@/components/GlobalRibbons";
+import { RibbonProvider, GlobalRibbons } from "@/components/GlobalRibbons";
 import { client } from "@/sanity/lib/client";
 import { navigationQuery } from "@/sanity/lib/queries";
 import { NavigationData } from "@/lib/sanity/types";
@@ -27,6 +27,7 @@ export default async function SiteLayout({
 
   return (
     <RibbonProvider>
+      <GlobalRibbons />
       <ClickSpark
         sparkColor="#FFE330"
         sparkSize={10}
