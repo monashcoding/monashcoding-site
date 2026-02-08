@@ -7,6 +7,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { NavigationData, PageVisibility, SocialLink } from "@/lib/sanity/types";
 import { PLATFORM_ICONS, PLATFORM_LABELS } from "@/lib/socialPlatforms";
+import { JOB_BOARD_URL, MEMBER_SIGNUP_URL } from "@/lib/links";
 import NavPreviewCard from "./navigation/NavPreviewCard";
 import { getPreviewConfig, DEFAULT_PREVIEW_HREF } from "./navigation/navPreviewConfig";
 
@@ -111,7 +112,6 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const pathname = usePathname();
   const isHomePage = pathname === "/";
-
   // Get preview config for hovered item (falls back to default when nothing hovered
   // or when no preview exists for the hovered path)
   const previewConfig =
@@ -147,11 +147,9 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Show logo text on all pages except homepage (unless scrolled past hero)
-  const showLogoText = !isHomePage || isPastHero;
-
   // Hide navbar on homepage until scrolled past hero
   const showNavbar = !isHomePage || isPastHero || isOpen;
+  const showMemberCta = !isHomePage || isPastHero;
 
   useEffect(() => {
     if (isOpen) {
@@ -167,14 +165,22 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
   return (
     <>
       {/* Fixed header bar */}
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between pl-4 pr-6 py-4 lg:pl-10 lg:pr-12 lg:py-6 pointer-events-none">
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center gap-3 pl-4 pr-6 py-4 lg:pl-10 lg:pr-12 lg:py-6 pointer-events-none">
         {/* Logo - animates in/out */}
         <motion.div
-          initial={{ y: -100, opacity: 0 }}
-          animate={{ y: showNavbar ? 0 : -100, opacity: showNavbar ? 1 : 0 }}
-          transition={{ duration: 0.4, ease: [0.76, 0, 0.24, 1] }}
+          className="relative z-50 shrink-0 overflow-hidden"
+          initial={false}
+          animate={{
+            width: showNavbar ? 48 : 0,
+            x: showNavbar ? 0 : -20,
+            opacity: showNavbar ? 1 : 0,
+          }}
+          transition={{ duration: 0.35, ease: [0.76, 0, 0.24, 1] }}
         >
-          <Link href="/" className="relative z-50 no-underline flex items-center pointer-events-auto">
+          <Link
+            href="/"
+            className={`no-underline flex items-center ${showNavbar ? "pointer-events-auto" : "pointer-events-none"}`}
+          >
             <Image
               src="/logo/logo.jpg"
               alt="MAC Logo"
@@ -186,37 +192,98 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
           </Link>
         </motion.div>
 
-        {/* Menu Button */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className={`relative z-50 flex items-center gap-3 py-3 px-5 rounded-full border cursor-pointer transition-all duration-300 backdrop-blur-[12px] pointer-events-auto ${
-            isOpen
-              ? "bg-accent border-accent text-accent-foreground hover:bg-[#e6c800]"
-              : "bg-black/85 border-accent/30 text-accent hover:bg-black/95 hover:border-accent/50"
-          }`}
+        <motion.div
+          layout
+          className="relative z-50 flex flex-1 items-center justify-end gap-3 pointer-events-auto"
+          transition={{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }}
         >
-          <span className="text-sm font-medium tracking-[0.05em] uppercase">
-            {isOpen ? "Close" : "Menu"}
-          </span>
-          <div className="relative w-5 h-5 flex items-center justify-center">
-            <motion.span
-              className="absolute w-5 h-0.5 rounded-sm bg-current"
-              animate={{
-                rotate: isOpen ? 45 : 0,
-                y: isOpen ? 0 : -4,
-              }}
-              transition={{ duration: 0.3 }}
-            />
-            <motion.span
-              className="absolute w-5 h-0.5 rounded-sm bg-current"
-              animate={{
-                rotate: isOpen ? -45 : 0,
-                y: isOpen ? 0 : 4,
-              }}
-              transition={{ duration: 0.3 }}
-            />
-          </div>
-        </button>
+          <motion.a
+            layout
+            href={MEMBER_SIGNUP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative lg:hidden min-w-0 flex-1 overflow-hidden rounded-full border border-accent/45 bg-black/85 px-4 py-3 text-xs font-semibold uppercase tracking-[0.09em] text-accent backdrop-blur-[12px]"
+            transition={{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }}
+          >
+            <span className="pointer-events-none absolute inset-0 translate-y-full rounded-full bg-accent transition-transform duration-300 ease-out group-hover:translate-y-0" />
+            <span className="pointer-events-none absolute inset-0 -translate-x-[130%] bg-[linear-gradient(120deg,transparent_20%,rgba(255,255,255,0.4)_50%,transparent_80%)] transition-transform duration-700 ease-out group-hover:translate-x-[130%]" />
+            <span className="relative z-10 block truncate text-center transition-colors duration-300 group-hover:text-accent-foreground">
+              Become a Member
+            </span>
+          </motion.a>
+
+          <motion.a
+            href={JOB_BOARD_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative hidden lg:inline-flex items-center gap-2 overflow-hidden rounded-full border border-[#7070e0]/70 bg-[#161625]/95 px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.07em] text-[#a9a9ff] shadow-[0_8px_20px_rgba(20,20,50,0.35)] backdrop-blur-[12px]"
+            animate={{ x: showMemberCta ? -14 : 0 }}
+            whileHover={{ y: -2, scale: 1.02 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <span className="pointer-events-none absolute inset-0 -translate-x-full bg-[linear-gradient(120deg,transparent_25%,rgba(112,112,224,0.25)_50%,transparent_75%)] transition-transform duration-500 ease-out group-hover:translate-x-[120%]" />
+            <span className="relative z-10">Job Board</span>
+            <span className="relative z-10 rounded-full border border-[#7c7cff]/60 bg-[#2a2a52] px-2 py-0.5 text-[10px] font-bold tracking-[0.14em] text-[#d2d2ff]">
+              PROJECT
+            </span>
+          </motion.a>
+
+          <AnimatePresence initial={false} mode="popLayout">
+            {showMemberCta && (
+              <motion.a
+                key="header-member-cta"
+                layout
+                href={MEMBER_SIGNUP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative hidden lg:inline-flex overflow-hidden rounded-full border border-accent/45 bg-black/85 px-5 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-accent backdrop-blur-[12px]"
+                initial={{ y: -24, opacity: 0, scale: 0.97 }}
+                animate={{ y: 0, opacity: 1, scale: 1 }}
+                exit={{ y: -24, opacity: 0, scale: 0.97 }}
+                whileHover={{ y: -2, scale: 1.02 }}
+                transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <span className="pointer-events-none absolute inset-0 translate-y-full rounded-full bg-accent transition-transform duration-300 ease-out group-hover:translate-y-0" />
+                <span className="pointer-events-none absolute inset-0 -translate-x-[130%] bg-[linear-gradient(120deg,transparent_20%,rgba(255,255,255,0.4)_50%,transparent_80%)] transition-transform duration-700 ease-out group-hover:translate-x-[130%]" />
+                <span className="relative z-10 transition-colors duration-300 group-hover:text-accent-foreground">
+                  Become a Member
+                </span>
+              </motion.a>
+            )}
+          </AnimatePresence>
+
+          {/* Menu Button */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className={`relative shrink-0 flex items-center gap-3 py-3 px-5 rounded-full border cursor-pointer transition-all duration-300 backdrop-blur-[12px] ${
+              isOpen
+                ? "bg-accent border-accent text-accent-foreground hover:bg-[#e6c800]"
+                : "bg-black/85 border-accent/30 text-accent hover:bg-black/95 hover:border-accent/50"
+            }`}
+          >
+            <span className="text-sm font-medium tracking-[0.05em] uppercase">
+              {isOpen ? "Close" : "Menu"}
+            </span>
+            <div className="relative w-5 h-5 flex items-center justify-center">
+              <motion.span
+                className="absolute w-5 h-0.5 rounded-sm bg-current"
+                animate={{
+                  rotate: isOpen ? 45 : 0,
+                  y: isOpen ? 0 : -4,
+                }}
+                transition={{ duration: 0.3 }}
+              />
+              <motion.span
+                className="absolute w-5 h-0.5 rounded-sm bg-current"
+                animate={{
+                  rotate: isOpen ? -45 : 0,
+                  y: isOpen ? 0 : 4,
+                }}
+                transition={{ duration: 0.3 }}
+              />
+            </div>
+          </button>
+        </motion.div>
       </header>
 
       {/* Full screen navigation overlay */}
