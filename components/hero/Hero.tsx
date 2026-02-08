@@ -3,9 +3,10 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { HeroData, HeroMedia, HeroImageMedia, HeroVideoMedia, SanityImage } from '@/lib/sanity/types'
 import { HeroDescription } from '@/lib/sanity/portableText'
+import { MEMBER_SIGNUP_URL } from '@/lib/links'
 import { urlFor } from '@/sanity/lib/image'
 import CircularText from '@/components/CircularText'
 import { getRibbonPoints, getRibbonThickness, RibbonPoint } from '@/components/RibbonContext'
@@ -262,11 +263,13 @@ function FallbackDescription({ className }: { className?: string }) {
 
 export function Hero({ data }: HeroProps) {
   const heroRef = useRef<HTMLElement>(null)
+  const mobileTextRef = useRef<HTMLDivElement>(null)
   const videoRefs = useRef<Map<string, HTMLVideoElement>>(new Map())
   const heroData = data || fallbackData
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0)
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
   const [isLogoHovered, setIsLogoHovered] = useState(false)
+  const [mobileTextHeight, setMobileTextHeight] = useState(220)
   const prefersReducedMotion = useReducedMotion()
 
   const {
@@ -319,8 +322,38 @@ export function Hero({ data }: HeroProps) {
     }
   }, [currentMediaIndex, currentMedia])
 
+  // Keep a measured safe area for the absolute-positioned mobile text panel.
+  useEffect(() => {
+    const node = mobileTextRef.current
+    if (!node) return
+
+    const updateHeight = () => {
+      const nextHeight = node.offsetHeight
+      if (nextHeight > 0) {
+        setMobileTextHeight(nextHeight)
+      }
+    }
+
+    updateHeight()
+
+    let observer: ResizeObserver | null = null
+    if (typeof ResizeObserver !== 'undefined') {
+      observer = new ResizeObserver(updateHeight)
+      observer.observe(node)
+    }
+
+    window.addEventListener('resize', updateHeight)
+    return () => {
+      observer?.disconnect()
+      window.removeEventListener('resize', updateHeight)
+    }
+  }, [])
+
   const hasDescription = description && description.length > 0
   const hasAnnouncements = showAnnouncements && announcements && announcements.length > 0
+  const heroContentStyle = {
+    '--hero-mobile-overlay-height': `${mobileTextHeight}px`,
+  } as CSSProperties
 
   return (
     <>
@@ -376,9 +409,12 @@ export function Hero({ data }: HeroProps) {
       </div>
 
       {/* Content Container */}
-      <div className="relative z-20 min-h-screen flex flex-col lg:flex-row items-center justify-center">
+      <div
+        className="relative z-20 min-h-screen flex flex-col lg:flex-row items-center justify-center pb-[calc(var(--hero-mobile-overlay-height)+1.5rem)] lg:pb-0"
+        style={heroContentStyle}
+      >
         {/* Logo Section */}
-        <div className="flex-1 flex items-center justify-center py-20 lg:py-0">
+        <div className="flex-1 flex flex-col items-center justify-center py-20 lg:py-0">
           <motion.div
             key="hero-logo"
             className="relative flex items-center justify-center"
@@ -401,6 +437,23 @@ export function Hero({ data }: HeroProps) {
             {/* 3D Logo */}
             <MacLogo3D className="w-48 h-64 md:w-64 md:h-80 lg:w-72 lg:h-96 drop-shadow-2xl pointer-events-none" />
           </motion.div>
+
+          <motion.a
+            href={MEMBER_SIGNUP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative z-40 mt-8 hidden lg:inline-flex w-[min(90vw,22rem)] items-center justify-center overflow-hidden rounded-full border-2 border-accent bg-accent px-8 py-4 text-base font-extrabold uppercase tracking-[0.09em] text-accent-foreground shadow-[0_10px_28px_rgba(0,0,0,0.45)] lg:w-auto lg:px-10 lg:text-lg"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.95, duration: 0.5 }}
+            whileHover={{ y: -2, scale: 1.02 }}
+          >
+            <span className="pointer-events-none absolute inset-0 -translate-x-full bg-[#252525] transition-transform duration-300 ease-out group-hover:translate-x-0" />
+            <span className="pointer-events-none absolute inset-0 -translate-x-[130%] bg-[linear-gradient(120deg,transparent_25%,rgba(255,255,255,0.35)_50%,transparent_75%)] transition-transform duration-700 ease-out group-hover:translate-x-[130%]" />
+            <span className="relative z-10 transition-colors duration-300 group-hover:text-white">
+              Become a Member
+            </span>
+          </motion.a>
         </div>
 
         {/* Text Content Section - Desktop */}
@@ -430,12 +483,13 @@ export function Hero({ data }: HeroProps) {
                 )}
               </RibbonBlock>
             </motion.div>
+
           </div>
         </div>
       </div>
 
       {/* Mobile Text Content */}
-      <div className="lg:hidden absolute bottom-0 left-0 right-0 z-30 p-6 bg-gradient-to-t from-background via-background/90 to-transparent">
+      <div ref={mobileTextRef} className="lg:hidden absolute bottom-0 left-0 right-0 z-30 p-6 bg-gradient-to-t from-background via-background/90 to-transparent">
         {/* Title */}
         <h1 className="text-[clamp(2rem,8vw,3rem)] font-extrabold tracking-tight leading-[1.1] text-white">
           {titleLines.map((line, lineIndex) => (
@@ -460,11 +514,12 @@ export function Hero({ data }: HeroProps) {
             )}
           </RibbonBlock>
         </motion.div>
+
       </div>
 
       {/* Scroll Indicator */}
       <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50 z-30 pointer-events-none"
+        className="hidden lg:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-white/50 z-30 pointer-events-none"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5, duration: 0.6 }}
