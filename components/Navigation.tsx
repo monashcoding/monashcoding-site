@@ -112,10 +112,6 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const pathname = usePathname();
   const isHomePage = pathname === "/";
-  const handleMemberHover = () => {
-    window.open(MEMBER_SIGNUP_URL, "_blank", "noopener,noreferrer");
-  };
-
   // Get preview config for hovered item (falls back to default when nothing hovered
   // or when no preview exists for the hovered path)
   const previewConfig =
@@ -240,7 +236,6 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
                 href={MEMBER_SIGNUP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                onMouseEnter={handleMemberHover}
                 className="group relative hidden lg:inline-flex overflow-hidden rounded-full border border-accent/45 bg-black/85 px-5 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-accent backdrop-blur-[12px]"
                 initial={{ y: -24, opacity: 0, scale: 0.97 }}
                 animate={{ y: 0, opacity: 1, scale: 1 }}
