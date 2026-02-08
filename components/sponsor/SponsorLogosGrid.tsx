@@ -5,17 +5,15 @@ import { RibbonAwareSection } from "@/components/RibbonAwareSection";
 import { SanityImage, SponsorLogo } from "@/lib/sanity/types";
 import { urlFor } from "@/sanity/lib/image";
 
-
-
 interface SponsorLogosGridProps {
   title?: string;
   sponsors?: SponsorLogo[];
 }
 
-// Helper to build image URL from Sanity image or fallback
 function getImageUrl(image: SanityImage | undefined): string {
-  if (!image?.asset?.url) return ''
-  return image.asset.url || urlFor(image).width(1200).height(1600).fit('crop').url()
+  if (!image?.asset?.url) return '';
+  // Force a consistent height/width for logos to look good in a row
+  return image.asset.url || urlFor(image).height(200).fit('max').url();
 }
 
 const defaultLogo: SanityImage = {
@@ -26,8 +24,6 @@ const defaultLogo: SanityImage = {
   alt: "Default Sponsor Logo",
 };
 
-// Default 2025 sponsors - placeholder structure
-// In production, these would come from Sanity or the data prop
 const defaultSponsors: SponsorLogo[] = [
   { _key: "1", name: "Sponsor 1", logo: defaultLogo },
   { _key: "2", name: "Sponsor 2", logo: defaultLogo },
@@ -38,12 +34,19 @@ const defaultSponsors: SponsorLogo[] = [
 ];
 
 export function SponsorLogosGrid({ title = "2025 Sponsors", sponsors = defaultSponsors }: SponsorLogosGridProps) {
+  
+  // 1. DUPLICATE DATA: We need two sets of sponsors to create the seamless loop.
+  // When the first set finishes scrolling, we snap back to the start.
+  const marqueeSponsors = [...sponsors, ...sponsors];
+
   return (
     <RibbonAwareSection
-      backgroundClassName="bg-background"
-      contentClassName="py-24 px-8"
+      backgroundClassName="bg-blue"
+      contentClassName="py-24" // Removed px-8 to allow full-width scroll
     >
-      <div className="max-w-8xl mx-auto">
+      <div className="w-full">
+        
+        {/* Title */}
         <motion.h2
           className="text-4xl font-bold text-foreground mb-12 text-center"
           initial={{ opacity: 0, y: 20 }}
@@ -53,46 +56,50 @@ export function SponsorLogosGrid({ title = "2025 Sponsors", sponsors = defaultSp
           {title}
         </motion.h2>
 
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-6 md:gap-8">
-          {sponsors.map((sponsor, index) => (
-            <motion.div
-              key={sponsor._key}
-              className="group relative p-6 bg-white/5 border border-white/10 rounded-2xl hover:border-accent/30 transition-all duration-300 flex items-center justify-center min-h-[150px] cursor-pointer"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.05 }}
-              whileHover={{ y: -4, borderColor: "rgba(180, 83, 9, 0.3)" }}
-            >
-              {sponsor.logo ? (
-                <motion.img
-                  src={getImageUrl(sponsor.logo)}
-                  alt={sponsor.logo.alt || sponsor.name}
-                  className="w-24 h-24 object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
-                  initial={{ opacity: 0.7 }}
-                  whileHover={{ opacity: 1 }}
-                />
-              ) : (
-                // Placeholder for when logo URL isn't provided
-                <div className="text-center">
-                  <div className="text-3xl mb-2">🏢</div>
-                  <p className="text-white/60 text-xs">{sponsor.name}</p>
+        {/* 2. MASKING: 
+            This adds a fade effect on the left and right edges so logos 
+            don't just pop in/out of existence harshly.
+        */}
+        <div className="relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+          
+          {/* 3. THE TRACK: Moves endlessly to the left */}
+          <motion.div
+            className="flex gap-8 w-max"
+            animate={{ x: "-50%" }} // Move exactly half the width (the length of one set)
+            transition={{
+              ease: "linear",
+              duration: 30, // Adjust speed: Higher = Slower
+              repeat: Infinity,
+            }}
+          >
+            {marqueeSponsors.map((sponsor, index) => (
+              <div
+                key={`${sponsor._key}-${index}`} // Unique key for the duplicate
+                className="shrink-0 w-[200px] md:w-[240px]" // Fixed width ensures smooth scrolling
+              >
+                {/* Card Design
+                   (Copied from your grid, but adapted for flex items) 
+                */}
+                <div 
+                  className="group relative p-6 bg-white/80 border border-white/10 rounded-2xl hover:border-background/90 transition-all duration-300 flex items-center justify-center h-[140px] cursor-pointer"
+                >
+                  {sponsor.logo ? (
+                    <img
+                      src={getImageUrl(sponsor.logo)}
+                      alt={sponsor.logo.alt || sponsor.name}
+                      className="w-full h-full object-contain opacity-100 group-hover:opacity-100 transition-opacity duration-300"
+                    />
+                  ) : (
+                    <div className="text-center">
+                      <div className="text-3xl mb-2">🏢</div>
+                      <p className="text-black/60 text-xs font-medium">{sponsor.name}</p>
+                    </div>
+                  )}
                 </div>
-              )}
-            </motion.div>
-          ))}
+              </div>
+            ))}
+          </motion.div>
         </div>
-
-        {/* Note for future implementation */}
-        <motion.p
-          className="text-white/50 text-sm text-center mt-12"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
-        >
-          Add sponsor logos from sponsorship partners
-        </motion.p>
 
       </div>
     </RibbonAwareSection>

@@ -4,7 +4,8 @@ import { motion, AnimatePresence, Variants } from "framer-motion";
 import { useEffect, useState } from "react";
 import { SponsorPageData, Stat, SponsorTier, Benefit } from "@/lib/sanity/types";
 import { RibbonAwareSection } from "@/components/RibbonAwareSection";
-import { SponsorLogosGrid } from "./SponsorLogosGrid";
+import { SponsorLogosGrid } from "@/components/sponsor/SponsorLogosGrid";
+import ScrollZoomHero  from "@/components/sponsor/SponsorHeroSectionTop";
 
 // Fallback data
 const defaultStats: Stat[] = [
@@ -126,36 +127,26 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
 
 
   return (
-    <main className="min-h-screen pt-24">
-      
-      {/* Hero Section */}
+    <main className="min-h-screen">
+      {/* Zooming scroll section */}
+      <ScrollZoomHero title={pageTitle} />
+
+      {/* Partner with us section */}
       <RibbonAwareSection
         backgroundClassName="bg-background"
-        contentClassName="py-5 px-8 pb-24 text-center"
+        contentClassName="py-5 px-8 pb-24 text-center max-w-[1400px] mx-auto mt-[-40vh]" // Negative margin to pull up over the hero
       >
+
+        {/* H */}
         <motion.h1
           className="text-[clamp(3rem,6vw,5rem)] font-extrabold text-foreground mb-4"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          {pageTitle}
+          Our Numbers
         </motion.h1>
-        <motion.p
-          className="text-xl text-white/60 max-w-[700px] mx-auto leading-relaxed"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-        >
-          {pageSubtitle}
-        </motion.p>
-      </RibbonAwareSection>
 
-      {/* Stats Section */}
-      <RibbonAwareSection
-        backgroundClassName="bg-accent/5"
-        contentClassName="py-12 px-8 max-w-[1400px] mx-auto"
-      >
         <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-8">
           {stats.map((stat, index) => (
             <motion.div
@@ -171,9 +162,29 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
             </motion.div>
           ))}
         </div>
-      </RibbonAwareSection>
 
-      {/* Benefits Section */}
+        <motion.p
+          className="text-xl text-white/60 max-w-[700px] mx-auto leading-relaxed"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+        >
+          {pageSubtitle}
+        </motion.p>
+      </RibbonAwareSection>
+      
+      {/* 2025 Sponsors Section */}
+      <SponsorLogosGrid title={sponsorsTitle} sponsors={sponsors} />
+
+      {/* Stats Section */}
+      {/* <RibbonAwareSection
+        backgroundClassName="bg-accent/5"
+        contentClassName="py-12 px-8 max-w-[1400px] mx-auto"
+      >
+        
+      </RibbonAwareSection> */}
+
+      {/* Benefits Section/ Why partner with us */}
       <RibbonAwareSection
         backgroundClassName="bg-accent/20"
         contentClassName="py-24 px-8 max-w-[1200px] mx-auto" // Slightly wider for side-by-side
@@ -223,8 +234,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
         </div>
       </RibbonAwareSection>
 
-      {/* 2025 Sponsors Section */}
-      <SponsorLogosGrid title={sponsorsTitle} sponsors={sponsors} />
+      
 
       {/* Contact Section - Become a Sponsor */}
       <RibbonAwareSection
@@ -263,6 +273,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
             >
               <h3 className="text-2xl font-bold text-foreground mb-6">Contact form</h3>
 
+              {/* Company name  */}
               <div>
                 <label className="block text-sm font-medium text-white/80 mb-2">Company Name</label>
                 <input
@@ -275,7 +286,8 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
                   placeholder="Your company name"
                 />
               </div>
-
+              
+              {/* Contact name */}
               <div>
                 <label className="block text-sm font-medium text-white/80 mb-2">Contact Name</label>
                 <input
@@ -289,6 +301,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
                 />
               </div>
 
+              {/* Email */}
               <div>
                 <label className="block text-sm font-medium text-white/80 mb-2">Email</label>
                 <input
@@ -302,6 +315,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
                 />
               </div>
 
+              {/* Message */}
               <div>
                 <label className="block text-sm font-medium text-white/80 mb-2">Message</label>
                 <textarea
