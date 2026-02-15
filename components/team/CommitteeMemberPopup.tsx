@@ -73,7 +73,7 @@ export default function CommitteeMemberPopup({
 
           {/* Popup */}
           <motion.div
-            className="fixed inset-x-4 bottom-0 z-50 max-h-[85vh] overflow-y-auto rounded-t-2xl border border-white/10 bg-card shadow-xl md:inset-x-auto md:bottom-auto md:left-1/2 md:top-1/2 md:w-full md:max-w-lg md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-2xl"
+            className="fixed inset-x-4 bottom-0 z-50 max-h-[85vh] overflow-y-auto rounded-t-2xl border border-white/10 bg-card md:inset-x-auto md:bottom-auto md:left-1/2 md:top-1/2 md:w-full md:max-w-lg md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-2xl"
             initial={{ y: '100%', opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: '100%', opacity: 0 }}

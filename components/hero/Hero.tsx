@@ -430,19 +430,19 @@ export function Hero({ data }: HeroProps) {
                 spinDuration={20}
                 onHover="speedUp"
                 fontSize="24px"
-                className="w-full! h-full! text-white! drop-shadow-lg"
+                className="w-full! h-full! text-white!"
                 forceHover={isLogoHovered}
               />
             </div>
             {/* 3D Logo */}
-            <MacLogo3D className="w-48 h-64 md:w-64 md:h-80 lg:w-72 lg:h-96 drop-shadow-2xl pointer-events-none" />
+            <MacLogo3D className="w-48 h-64 md:w-64 md:h-80 lg:w-72 lg:h-96 pointer-events-none" />
           </motion.div>
 
           <motion.a
             href={MEMBER_SIGNUP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative z-40 mt-8 hidden lg:inline-flex w-[min(90vw,22rem)] items-center justify-center overflow-hidden rounded-full border-2 border-accent bg-accent px-8 py-4 text-base font-extrabold uppercase tracking-[0.09em] text-accent-foreground shadow-[0_10px_28px_rgba(0,0,0,0.45)] lg:w-auto lg:px-10 lg:text-lg"
+            className="group relative z-40 mt-8 hidden lg:inline-flex w-[min(90vw,22rem)] items-center justify-center overflow-hidden rounded-full border-2 border-accent bg-accent px-8 py-4 text-base font-extrabold uppercase tracking-[0.09em] text-accent-foreground lg:w-auto lg:px-10 lg:text-lg"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.95, duration: 0.5 }}

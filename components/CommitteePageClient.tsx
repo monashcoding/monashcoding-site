@@ -283,7 +283,7 @@ export default function CommitteePageClient({
 
         {/* Filter Tabs */}
           <div className="relative mx-auto mb-12 flex justify-center">
-            <div className="inline-flex flex-wrap justify-center gap-2 rounded-2xl bg-[#252525] p-3 shadow-lg">
+            <div className="inline-flex flex-wrap justify-center gap-2 rounded-2xl bg-[#252525] p-3">
               <button
                 onClick={() => handleTabClick('all')}
                 className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 ${
@@ -370,7 +370,7 @@ export default function CommitteePageClient({
                         <div
                           key={member._id}
                           onClick={() => setSelectedMember(member)}
-                          className="group cursor-pointer overflow-hidden rounded-2xl bg-card border border-white/10 shadow-sm transition-shadow duration-200 hover:shadow-md"
+                          className="group cursor-pointer overflow-hidden rounded-2xl bg-card border border-white/10 transition-colors duration-200"
                         >
                           {/* Photo */}
                           <div className="relative aspect-square overflow-hidden">
@@ -421,7 +421,7 @@ export default function CommitteePageClient({
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.25, ease: 'easeOut' }}
                             onClick={() => setSelectedMember(member)}
-                            className="group cursor-pointer overflow-hidden rounded-2xl bg-card border border-white/10 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                            className="group cursor-pointer overflow-hidden rounded-2xl bg-card border border-white/10 transition-all duration-300 hover:-translate-y-1"
                           >
                             {/* Photo */}
                             <div className="relative aspect-square overflow-hidden">
@@ -503,7 +503,7 @@ export default function CommitteePageClient({
             onClick={() => setSelectedMember(null)}
           >
             <motion.div
-              className="relative w-full max-w-lg rounded-t-3xl bg-card p-8 shadow-2xl sm:rounded-3xl"
+              className="relative w-full max-w-lg rounded-t-3xl bg-card p-8 sm:rounded-3xl"
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}

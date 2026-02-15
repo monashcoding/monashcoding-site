@@ -254,7 +254,7 @@ function EventsGrid({ events }: { events: TimelineEvent[] }) {
       {events.map((event, i) => (
         <motion.article
           key={event._key}
-          className="event-card relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-card shadow-sm"
+          className="event-card relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-card"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: i * 0.1 }}

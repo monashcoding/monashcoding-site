@@ -216,7 +216,7 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
             href={JOB_BOARD_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative hidden lg:inline-flex items-center gap-2 overflow-hidden rounded-full border border-[#7070e0]/70 bg-[#161625] px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.07em] text-[#a9a9ff] shadow-[0_8px_20px_rgba(20,20,50,0.35)]"
+            className="group relative hidden lg:inline-flex items-center gap-2 overflow-hidden rounded-full border border-[#7070e0]/70 bg-[#161625] px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.07em] text-[#a9a9ff]"
             animate={{ x: showMemberCta ? -14 : 0 }}
             whileHover={{ y: -2, scale: 1.02 }}
             transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}

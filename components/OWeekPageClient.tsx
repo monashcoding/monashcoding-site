@@ -104,7 +104,7 @@ export default function OWeekPageClient({ data }: OWeekPageClientProps) {
                 height: overlay.height,
               }}
             >
-              <span className="px-2 text-center text-sm font-bold leading-tight text-white drop-shadow-md">
+              <span className="px-2 text-center text-sm font-bold leading-tight text-white">
                 {overlay.label}
                 <svg className="ml-1 -mt-0.5 inline-block h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
