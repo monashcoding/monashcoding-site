@@ -1,5 +1,8 @@
 export { StorySection } from './StorySection'
 export { InstagramSection } from './InstagramSection'
 export { SponsorsSection } from './SponsorsSection'
+export { EventsSection } from './EventsSection'
+export { CommunitySection } from './CommunitySection'
+export { ContentStreamSection } from './ContentStreamSection'
 export { Footer } from './Footer'
 export { SectionRenderer } from './SectionRenderer'

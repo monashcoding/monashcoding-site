@@ -1,16 +1,21 @@
 'use client'
 
-import { HomepageSection } from '@/lib/sanity/types'
+import { HomepageSection, EventDocument, SocialLink } from '@/lib/sanity/types'
 import { StorySection } from './StorySection'
 import { InstagramSection } from './InstagramSection'
 import { SponsorsSection } from './SponsorsSection'
+import { EventsSection } from './EventsSection'
+import { CommunitySection } from './CommunitySection'
+import { ContentStreamSection } from './ContentStreamSection'
 import { Footer } from './Footer'
 
 interface SectionRendererProps {
   sections: HomepageSection[]
+  events?: EventDocument[]
+  socialLinks?: SocialLink[]
 }
 
-export function SectionRenderer({ sections }: SectionRendererProps) {
+export function SectionRenderer({ sections, events, socialLinks }: SectionRendererProps) {
   return (
     <>
       {sections.map((section) => {
@@ -21,6 +26,12 @@ export function SectionRenderer({ sections }: SectionRendererProps) {
             return <InstagramSection key={section._key} data={section} />
           case 'sponsorsSection':
             return <SponsorsSection key={section._key} data={section} />
+          case 'eventsSection':
+            return <EventsSection key={section._key} data={section} events={events} />
+          case 'communitySection':
+            return <CommunitySection key={section._key} data={section} socialLinks={socialLinks} />
+          case 'contentStreamSection':
+            return <ContentStreamSection key={section._key} data={section} />
           case 'footerSection':
             return <Footer key={section._key} data={section} />
           default:
