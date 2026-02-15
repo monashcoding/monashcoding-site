@@ -32,7 +32,7 @@ export default function CommitteeMemberCard({
   return (
     <motion.button
       onClick={onClick}
-      className="group relative w-full overflow-hidden rounded-xl border border-white/10 bg-card p-1 text-left shadow-sm transition-all hover:border-accent/30 hover:shadow-md"
+      className="group relative w-full overflow-hidden rounded-xl border border-white/10 bg-card p-1 text-left transition-all hover:border-accent/30"
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.05 }}

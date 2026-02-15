@@ -146,7 +146,7 @@ export function EventPageClient({ event }: EventPageClientProps) {
       >
         <div className="relative mx-auto grid max-w-[1200px] gap-8 lg:grid-cols-[minmax(0,340px)_minmax(0,1fr)]">
           <motion.aside
-            className="h-fit overflow-hidden rounded-[1.45rem] border border-white/12 bg-[#1e1e1e]/95 p-5 shadow-[0_22px_45px_rgba(0,0,0,0.35)] md:p-6"
+            className="h-fit overflow-hidden rounded-[1.45rem] border border-white/12 bg-[#1e1e1e]/95 p-5 md:p-6"
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
@@ -180,7 +180,7 @@ export function EventPageClient({ event }: EventPageClientProps) {
                   href={event.signupLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex w-full items-center justify-center gap-2 rounded-full border border-accent/70 bg-accent px-5 py-3 text-sm font-semibold tracking-[0.08em] uppercase text-accent-foreground no-underline shadow-lg transition-transform duration-300 hover:-translate-y-0.5"
+                  className="group inline-flex w-full items-center justify-center gap-2 rounded-full border border-accent/70 bg-accent px-5 py-3 text-sm font-semibold tracking-[0.08em] uppercase text-accent-foreground no-underline transition-transform duration-300 hover:-translate-y-0.5"
                 >
                   Sign Up / RSVP
                   <svg
@@ -200,7 +200,7 @@ export function EventPageClient({ event }: EventPageClientProps) {
           </motion.aside>
 
           <motion.article
-            className="overflow-hidden rounded-[1.45rem] border border-white/12 bg-[#1a1a1a]/95 p-6 shadow-[0_24px_52px_rgba(0,0,0,0.34)] md:p-8"
+            className="overflow-hidden rounded-[1.45rem] border border-white/12 bg-[#1a1a1a]/95 p-6 md:p-8"
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.16 }}

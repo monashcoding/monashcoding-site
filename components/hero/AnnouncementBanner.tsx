@@ -117,7 +117,7 @@ export function AnnouncementBanner({ announcements, cycleDuration = 5 }: Announc
         exit={{ y: -100, opacity: 0 }}
         className="fixed top-[10%] left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-2xl"
       >
-        <div className="relative overflow-hidden rounded-xl border border-white/10 bg-[#151515] shadow-2xl shadow-black/50">
+        <div className="relative overflow-hidden rounded-xl border border-white/10 bg-[#151515]">
           {/* Animated Squares Background */}
           <div className="absolute inset-0 opacity-60">
             <Squares

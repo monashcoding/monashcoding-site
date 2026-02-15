@@ -39,8 +39,8 @@ export function EventCard({ event, index }: EventCardProps) {
       <motion.article
         className={`relative isolate h-full overflow-hidden rounded-[1.6rem] border bg-[#2a2a2a] transition-colors duration-300 ${
           isFeatured
-            ? 'border-accent/45 shadow-[0_28px_70px_rgba(0,0,0,0.38)]'
-            : 'border-white/10 shadow-[0_20px_45px_rgba(0,0,0,0.38)] hover:border-white/20'
+            ? 'border-accent/45'
+            : 'border-white/10 hover:border-white/20'
         }`}
         initial={{ opacity: 0, y: 28 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -72,7 +72,7 @@ export function EventCard({ event, index }: EventCardProps) {
               {TAG_LABELS[event.tag]}
             </span>
             {isFeatured && (
-              <span className="inline-flex rounded-full border border-accent/50 bg-accent/20 px-3 py-1 text-[0.63rem] font-semibold tracking-[0.14em] uppercase text-accent shadow-lg">
+              <span className="inline-flex rounded-full border border-accent/50 bg-accent/20 px-3 py-1 text-[0.63rem] font-semibold tracking-[0.14em] uppercase text-accent">
                 Featured
               </span>
             )}

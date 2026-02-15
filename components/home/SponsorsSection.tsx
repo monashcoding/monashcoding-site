@@ -28,7 +28,7 @@ function SponsorBubble({
 
   return (
     <motion.div
-      className="absolute px-8 py-4 bg-accent/10 border border-accent/30 rounded-full text-accent font-medium cursor-grab select-none transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(180,83,9,0.2)] active:cursor-grabbing"
+      className="absolute px-8 py-4 bg-accent/10 border border-accent/30 rounded-full text-accent font-medium cursor-grab select-none active:cursor-grabbing"
       style={{
         left: `${position.x}%`,
         top: `${position.y}%`,
@@ -52,11 +52,7 @@ function SponsorBubble({
       }}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
-      animate={{
-        boxShadow: isDragging
-          ? '0 0 40px rgba(255, 215, 0, 0.4)'
-          : '0 0 20px rgba(255, 215, 0, 0.1)',
-      }}
+      animate={{}}
     >
       {name}
     </motion.div>

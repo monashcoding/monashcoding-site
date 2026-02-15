@@ -91,14 +91,10 @@ function SocialTiltCard({
         style={{
           transform: `rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(${hover.active && !isPlaceholder ? 1.03 : 1})`,
           transition:
-            'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.4s ease, box-shadow 0.4s ease',
+            'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.4s ease',
           transformStyle: 'preserve-3d',
           border: `1px solid ${hover.active && !isPlaceholder ? `${accent.color}44` : 'rgba(255,255,255,0.08)'}`,
           backgroundColor: 'rgba(28,28,28,0.8)',
-          boxShadow:
-            hover.active && !isPlaceholder
-              ? '0 25px 50px rgba(0,0,0,0.4)'
-              : '0 12px 32px rgba(0,0,0,0.3)',
         }}
       >
         {/* Content — translated forward for parallax depth */}
