@@ -105,7 +105,7 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
                 {active && (
                   <motion.span
                     layoutId="events-active-filter"
-                    className="absolute inset-0 rounded-xl border border-accent/60 bg-accent shadow-[0_10px_25px_rgba(255,227,48,0.35)]"
+                    className="absolute inset-0 rounded-xl border border-accent/60 bg-accent"
                     transition={{ type: 'spring', stiffness: 340, damping: 32 }}
                   />
                 )}

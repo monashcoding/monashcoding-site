@@ -19,15 +19,13 @@ const DEFAULT_PLATFORMS: SocialPlatform[] = [
   'discord',
 ]
 
-const PLATFORM_ACCENTS: Partial<
-  Record<SocialPlatform, { color: string; glow: string }>
-> = {
-  instagram: { color: '#E1306C', glow: 'rgba(225,48,108,0.35)' },
-  youtube: { color: '#FF0000', glow: 'rgba(255,0,0,0.28)' },
-  tiktok: { color: '#00F2EA', glow: 'rgba(0,242,234,0.28)' },
-  facebook: { color: '#1877F2', glow: 'rgba(24,119,242,0.3)' },
-  linkedin: { color: '#0A66C2', glow: 'rgba(10,102,194,0.3)' },
-  discord: { color: '#5865F2', glow: 'rgba(88,101,242,0.35)' },
+const PLATFORM_ACCENTS: Partial<Record<SocialPlatform, { color: string }>> = {
+  instagram: { color: '#E1306C' },
+  youtube: { color: '#FF0000' },
+  tiktok: { color: '#00F2EA' },
+  facebook: { color: '#1877F2' },
+  linkedin: { color: '#0A66C2' },
+  discord: { color: '#5865F2' },
 }
 
 /* ------------------------------------------------------------------ */
@@ -59,10 +57,7 @@ function SocialTiltCard({
 
   const Icon = PLATFORM_ICONS[platform]
   const label = PLATFORM_LABELS[platform]
-  const accent = PLATFORM_ACCENTS[platform] ?? {
-    color: '#FFE330',
-    glow: 'rgba(255,227,48,0.3)',
-  }
+  const accent = PLATFORM_ACCENTS[platform] ?? { color: '#FFE330' }
 
   const tiltX = hover.active && !isPlaceholder ? (hover.y - 0.5) * -14 : 0
   const tiltY = hover.active && !isPlaceholder ? (hover.x - 0.5) * 14 : 0
@@ -102,7 +97,7 @@ function SocialTiltCard({
           backgroundColor: 'rgba(28,28,28,0.8)',
           boxShadow:
             hover.active && !isPlaceholder
-              ? `0 25px 50px rgba(0,0,0,0.4), 0 0 40px ${accent.glow}`
+              ? '0 25px 50px rgba(0,0,0,0.4)'
               : '0 12px 32px rgba(0,0,0,0.3)',
         }}
       >
@@ -110,7 +105,7 @@ function SocialTiltCard({
         <div
           className="pointer-events-none absolute inset-0 rounded-2xl"
           style={{
-            background: `radial-gradient(circle at ${hover.x * 100}% ${hover.y * 100}%, ${accent.glow} 0%, transparent 55%)`,
+            background: `radial-gradient(circle at ${hover.x * 100}% ${hover.y * 100}%, ${accent.color}18 0%, transparent 55%)`,
             opacity: hover.active && !isPlaceholder ? 1 : 0,
             transition: 'opacity 0.4s ease',
           }}
@@ -139,10 +134,7 @@ function SocialTiltCard({
                     : 'scale(1) rotate(0deg)',
                 transition:
                   'color 0.3s, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s',
-                filter:
-                  hover.active && !isPlaceholder
-                    ? `drop-shadow(0 0 14px ${accent.glow})`
-                    : 'none',
+                filter: 'none',
               }}
             >
               <Icon size={34} />
