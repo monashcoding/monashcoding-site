@@ -2,8 +2,9 @@ import { client } from '@/sanity/lib/client'
 
 // Static generation - revalidated via webhook on Sanity publish
 export const revalidate = false
-import { heroQuery, homepageQuery } from '@/sanity/lib/queries'
-import { HeroData, HomepageData } from '@/lib/sanity/types'
+import { heroQuery, homepageQuery, upcomingEventsQuery } from '@/sanity/lib/queries'
+import { HeroData, HomepageData, EventDocument } from '@/lib/sanity/types'
+import { getSocialLinksData } from '@/lib/sanity/fetchers'
 import { Hero } from '@/components/hero/Hero'
 import { HomeContent } from '@/components/HomeContent'
 
@@ -25,16 +26,41 @@ async function getHomepageData(): Promise<HomepageData | null> {
   }
 }
 
+async function getUpcomingEvents(limit: number = 20): Promise<EventDocument[]> {
+  try {
+    return await client.fetch(upcomingEventsQuery, { limit }, { next: { tags: ['event'] } })
+  } catch (error) {
+    console.error('Failed to fetch events:', error)
+    return []
+  }
+}
+
 export default async function Home() {
-  const [heroData, homepageData] = await Promise.all([
+  const [heroData, homepageData, events, socialLinksData] = await Promise.all([
     getHeroData(),
     getHomepageData(),
+    getUpcomingEvents(),
+    getSocialLinksData(),
   ])
+
+  // Determine maxEvents from the eventsSection config if present
+  const eventsSection = homepageData?.sections?.find(
+    (s) => s._type === 'eventsSection'
+  )
+  const maxEvents =
+    eventsSection && 'maxEvents' in eventsSection
+      ? eventsSection.maxEvents
+      : 6
+  const limitedEvents = events.slice(0, maxEvents)
 
   return (
     <main className="bg-background">
       <Hero data={heroData} />
-      <HomeContent sections={homepageData?.sections} />
+      <HomeContent
+        sections={homepageData?.sections}
+        events={limitedEvents}
+        socialLinks={socialLinksData?.links || []}
+      />
     </main>
   )
 }
