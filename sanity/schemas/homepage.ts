@@ -294,6 +294,181 @@ const footerSectionSchema = defineArrayMember({
   },
 })
 
+const eventsSectionSchema = defineArrayMember({
+  type: 'object',
+  name: 'eventsSection',
+  title: 'Events / Announcements Section',
+  fields: [
+    defineField({
+      name: 'heading',
+      title: 'Section Heading',
+      type: 'string',
+      initialValue: 'Events & Announcements',
+    }),
+    defineField({
+      name: 'maxEvents',
+      title: 'Maximum Events to Show',
+      type: 'number',
+      initialValue: 6,
+      validation: (Rule) => Rule.min(1).max(20),
+    }),
+  ],
+  preview: {
+    select: { heading: 'heading' },
+    prepare({ heading }: { heading?: string }) {
+      return {
+        title: heading || 'Events Section',
+      }
+    },
+  },
+})
+
+const communitySectionSchema = defineArrayMember({
+  type: 'object',
+  name: 'communitySection',
+  title: 'Community Section',
+  fields: [
+    defineField({
+      name: 'heading',
+      title: 'Section Heading',
+      type: 'string',
+      initialValue: 'Our Community',
+    }),
+    defineField({
+      name: 'subheading',
+      title: 'Subheading',
+      type: 'text',
+      rows: 2,
+      initialValue: 'Connect with us on social media',
+    }),
+    defineField({
+      name: 'platforms',
+      title: 'Platforms to Show',
+      description:
+        'Select which platforms to display. Leave empty to show all.',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'string',
+          options: {
+            list: [
+              { title: 'Instagram', value: 'instagram' },
+              { title: 'YouTube', value: 'youtube' },
+              { title: 'TikTok', value: 'tiktok' },
+              { title: 'Facebook', value: 'facebook' },
+              { title: 'LinkedIn', value: 'linkedin' },
+              { title: 'Discord', value: 'discord' },
+            ],
+          },
+        }),
+      ],
+    }),
+  ],
+  preview: {
+    select: { heading: 'heading' },
+    prepare({ heading }: { heading?: string }) {
+      return {
+        title: heading || 'Community Section',
+      }
+    },
+  },
+})
+
+const contentItemSchema = {
+  type: 'object' as const,
+  name: 'contentItem',
+  title: 'Content Item',
+  fields: [
+    defineField({
+      name: 'url',
+      title: 'URL',
+      description: 'Instagram Reel URL or YouTube video URL',
+      type: 'url',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'title',
+      title: 'Title',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'platform',
+      title: 'Platform',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Instagram Reel', value: 'instagram' },
+          { title: 'YouTube', value: 'youtube' },
+        ],
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'year',
+      title: 'Year',
+      type: 'number',
+      validation: (Rule) => Rule.required().min(2019).max(2030),
+    }),
+  ],
+  preview: {
+    select: {
+      title: 'title',
+      platform: 'platform',
+      year: 'year',
+    },
+    prepare({
+      title,
+      platform,
+      year,
+    }: {
+      title?: string
+      platform?: string
+      year?: number
+    }) {
+      return {
+        title: title || 'Untitled',
+        subtitle: `${platform || 'unknown'} — ${year || ''}`,
+      }
+    },
+  },
+}
+
+const contentStreamSectionSchema = defineArrayMember({
+  type: 'object',
+  name: 'contentStreamSection',
+  title: 'Content Stream Section',
+  fields: [
+    defineField({
+      name: 'heading',
+      title: 'Section Heading',
+      type: 'string',
+      initialValue: 'Content',
+    }),
+    defineField({
+      name: 'items',
+      title: 'Content Items',
+      type: 'array',
+      of: [contentItemSchema],
+    }),
+  ],
+  preview: {
+    select: { heading: 'heading', items: 'items' },
+    prepare({
+      heading,
+      items,
+    }: {
+      heading?: string
+      items?: unknown[]
+    }) {
+      return {
+        title: heading || 'Content Stream Section',
+        subtitle: `${items?.length || 0} items`,
+      }
+    },
+  },
+})
+
 export const homepage = defineType({
   name: 'homepage',
   title: 'Homepage',
@@ -315,6 +490,9 @@ export const homepage = defineType({
         storySectionSchema,
         instagramSectionSchema,
         sponsorsSectionSchema,
+        eventsSectionSchema,
+        communitySectionSchema,
+        contentStreamSectionSchema,
         footerSectionSchema,
       ],
     }),
