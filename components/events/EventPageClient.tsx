@@ -180,7 +180,7 @@ export function EventPageClient({ event }: EventPageClientProps) {
                   href={event.signupLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex w-full items-center justify-center gap-2 rounded-full border border-accent/70 bg-accent px-5 py-3 text-sm font-semibold tracking-[0.08em] uppercase text-accent-foreground no-underline shadow-[0_12px_32px_rgba(255,227,48,0.3)] transition-transform duration-300 hover:-translate-y-0.5"
+                  className="group inline-flex w-full items-center justify-center gap-2 rounded-full border border-accent/70 bg-accent px-5 py-3 text-sm font-semibold tracking-[0.08em] uppercase text-accent-foreground no-underline shadow-lg transition-transform duration-300 hover:-translate-y-0.5"
                 >
                   Sign Up / RSVP
                   <svg
