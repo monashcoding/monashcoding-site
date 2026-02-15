@@ -84,7 +84,7 @@ export function EventPageClient({ event }: EventPageClientProps) {
               >
                 <Link
                   href="/"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/35 px-3.5 py-2 text-xs font-semibold tracking-[0.1em] uppercase text-white/75 no-underline backdrop-blur-[8px] transition-colors duration-300 hover:border-white/35 hover:text-white"
+                  className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/60 px-3.5 py-2 text-xs font-semibold tracking-[0.1em] uppercase text-white/75 no-underline transition-colors duration-300 hover:border-white/35 hover:text-white"
                 >
                   <svg
                     width="14"

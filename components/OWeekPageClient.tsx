@@ -96,7 +96,7 @@ export default function OWeekPageClient({ data }: OWeekPageClientProps) {
               href={overlay.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="absolute flex items-center justify-center rounded-lg bg-black/60 backdrop-blur-sm transition-colors hover:bg-black/80"
+              className="absolute flex items-center justify-center rounded-lg bg-black/70 transition-colors hover:bg-black/85"
               style={{
                 top: overlay.top,
                 left: overlay.left,

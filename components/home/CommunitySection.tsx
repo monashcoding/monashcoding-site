@@ -87,7 +87,7 @@ function SocialTiltCard({
       onMouseLeave={() => setHover({ x: 0.5, y: 0.5, active: false })}
     >
       <div
-        className="relative h-full overflow-hidden rounded-2xl backdrop-blur-sm"
+        className="relative h-full overflow-hidden rounded-2xl"
         style={{
           transform: `rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(${hover.active && !isPlaceholder ? 1.03 : 1})`,
           transition:
