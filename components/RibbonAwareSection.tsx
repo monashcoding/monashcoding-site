@@ -20,8 +20,8 @@ interface RibbonAwareSectionProps {
  * while keeping the background below it.
  *
  * Layering:
- * - Background: z-0 (below ribbon at z-5)
- * - GlobalRibbons: z-5 (fixed, rendered separately)
+ * - Background: z-0 (below ribbon at z-2)
+ * - GlobalRibbons: z-2 (fixed, rendered separately)
  * - Content: z-10 (above ribbon)
  */
 export function RibbonAwareSection({
@@ -34,7 +34,7 @@ export function RibbonAwareSection({
 }: RibbonAwareSectionProps) {
   return (
     <Component className={cn('relative', className)}>
-      {/* Background layer - sits below the ribbon (z-5) */}
+      {/* Background layer - sits below the ribbon (z-2) */}
       <div
         className={cn(
           'absolute inset-0 z-0',
@@ -42,7 +42,7 @@ export function RibbonAwareSection({
         )}
         aria-hidden="true"
       />
-      {/* Content layer - sits above the ribbon (z-5) */}
+      {/* Content layer - sits above the ribbon (z-2) */}
       <div ref={contentRef} className={cn('relative z-10', contentClassName)}>
         {children}
       </div>
