@@ -465,7 +465,7 @@ export default function Timeline({ events }: TimelineProps) {
   }
 
   return (
-    <div className="w-full overflow-hidden bg-card/80 backdrop-blur-sm border-y border-white/10">
+    <div className="w-full overflow-hidden bg-card border-y border-white/10">
       <HeaderItem text="Our Journey" />
       {yearGroups.map((group) => (
         <YearMenuItem

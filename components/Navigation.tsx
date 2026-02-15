@@ -202,7 +202,7 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
             href={MEMBER_SIGNUP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative lg:hidden min-w-0 flex-1 overflow-hidden rounded-full border border-accent/45 bg-black/85 px-4 py-3 text-xs font-semibold uppercase tracking-[0.09em] text-accent backdrop-blur-[12px]"
+            className="group relative lg:hidden min-w-0 flex-1 overflow-hidden rounded-full border border-accent/45 bg-black px-4 py-3 text-xs font-semibold uppercase tracking-[0.09em] text-accent"
             transition={{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }}
           >
             <span className="pointer-events-none absolute inset-0 translate-y-full rounded-full bg-accent transition-transform duration-300 ease-out group-hover:translate-y-0" />
@@ -216,7 +216,7 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
             href={JOB_BOARD_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative hidden lg:inline-flex items-center gap-2 overflow-hidden rounded-full border border-[#7070e0]/70 bg-[#161625]/95 px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.07em] text-[#a9a9ff] shadow-[0_8px_20px_rgba(20,20,50,0.35)] backdrop-blur-[12px]"
+            className="group relative hidden lg:inline-flex items-center gap-2 overflow-hidden rounded-full border border-[#7070e0]/70 bg-[#161625] px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.07em] text-[#a9a9ff] shadow-[0_8px_20px_rgba(20,20,50,0.35)]"
             animate={{ x: showMemberCta ? -14 : 0 }}
             whileHover={{ y: -2, scale: 1.02 }}
             transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
@@ -236,7 +236,7 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
                 href={MEMBER_SIGNUP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative hidden lg:inline-flex overflow-hidden rounded-full border border-accent/45 bg-black/85 px-5 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-accent backdrop-blur-[12px]"
+                className="group relative hidden lg:inline-flex overflow-hidden rounded-full border border-accent/45 bg-black px-5 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-accent"
                 initial={{ y: -24, opacity: 0, scale: 0.97 }}
                 animate={{ y: 0, opacity: 1, scale: 1 }}
                 exit={{ y: -24, opacity: 0, scale: 0.97 }}
@@ -255,10 +255,10 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
           {/* Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className={`relative shrink-0 flex items-center gap-3 py-3 px-5 rounded-full border cursor-pointer transition-all duration-300 backdrop-blur-[12px] ${
+            className={`relative shrink-0 flex items-center gap-3 py-3 px-5 rounded-full border cursor-pointer transition-all duration-300 ${
               isOpen
                 ? "bg-accent border-accent text-accent-foreground hover:bg-[#e6c800]"
-                : "bg-black/85 border-accent/30 text-accent hover:bg-black/95 hover:border-accent/50"
+                : "bg-black border-accent/30 text-accent hover:bg-black hover:border-accent/50"
             }`}
           >
             <span className="text-sm font-medium tracking-[0.05em] uppercase">

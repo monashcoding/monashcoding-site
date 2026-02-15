@@ -37,7 +37,7 @@ export function EventCard({ event, index }: EventCardProps) {
   return (
     <Link href={`/events/${event.slug.current}`} className="group block h-full no-underline">
       <motion.article
-        className={`relative isolate h-full overflow-hidden rounded-[1.6rem] border bg-[#2a2a2a]/90 backdrop-blur-[8px] transition-colors duration-300 ${
+        className={`relative isolate h-full overflow-hidden rounded-[1.6rem] border bg-[#2a2a2a] transition-colors duration-300 ${
           isFeatured
             ? 'border-accent/45 shadow-[0_28px_70px_rgba(0,0,0,0.38)]'
             : 'border-white/10 shadow-[0_20px_45px_rgba(0,0,0,0.38)] hover:border-white/20'
