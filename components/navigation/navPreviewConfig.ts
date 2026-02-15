@@ -30,6 +30,16 @@ export const NAV_PREVIEWS: Record<string, NavPreviewConfig> = {
     title: "Contact",
     description: "Get in touch with us. We'd love to hear from you.",
   },
+  "/o-week": {
+    href: "/o-week",
+    title: "O-Week 2026",
+    description: "Everything you need to know for Orientation Week. Check out our pamphlet and upcoming events.",
+  },
+  "/first-year-recruitment": {
+    href: "/first-year-recruitment",
+    title: "First Year Recruitment",
+    description: "Apply to become a First Year Representative and kickstart your journey with MAC.",
+  },
 };
 
 export const DEFAULT_PREVIEW_HREF = "/";
