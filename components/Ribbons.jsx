@@ -8,12 +8,13 @@ function initRibbon(config) {
   if (typeof window === 'undefined') return;
 
   // Check window for existing instance (survives HMR)
-  if (window[RIBBON_KEY]) return;
+  if (window[RIBBON_KEY]?.healthy) return;
 
-  // Also check if container already exists in DOM (extra safety)
-  if (document.getElementById('ribbon-container')) {
-    window[RIBBON_KEY] = { container: document.getElementById('ribbon-container') };
-    return;
+  // Clean up stale container from a failed previous init
+  const staleContainer = document.getElementById('ribbon-container');
+  if (staleContainer) {
+    staleContainer.remove();
+    delete window[RIBBON_KEY];
   }
 
   const {
@@ -36,22 +37,48 @@ function initRibbon(config) {
   // Create a permanent container outside React - prepend to be first in body
   const container = document.createElement('div');
   container.id = 'ribbon-container';
-  container.style.cssText = 'position:fixed;inset:0;z-index:5;pointer-events:none;will-change:transform;isolation:isolate;';
+  container.style.cssText = 'position:fixed;inset:0;z-index:2;pointer-events:none;';
   document.body.prepend(container);
 
-  const renderer = new Renderer({ dpr: window.devicePixelRatio || 2, alpha: true });
+  let renderer;
+  try {
+    // Cap DPR at 2 to avoid massive canvas on high-DPI mobile devices
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    renderer = new Renderer({ dpr, alpha: true });
+  } catch {
+    // WebGL not available — remove container and bail
+    container.remove();
+    return;
+  }
+
   const gl = renderer.gl;
+
+  // Verify we actually got a working context
+  if (!gl) {
+    container.remove();
+    return;
+  }
+
   if (Array.isArray(backgroundColor) && backgroundColor.length === 4) {
     gl.clearColor(backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3]);
   } else {
     gl.clearColor(0, 0, 0, 0);
   }
 
-  gl.canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;will-change:transform;';
+  gl.canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;';
   container.appendChild(gl.canvas);
 
-  // Store state on window to survive HMR
-  window[RIBBON_KEY] = { container, canvas: gl.canvas };
+  // Store state on window to survive HMR — mark as healthy
+  window[RIBBON_KEY] = { container, canvas: gl.canvas, healthy: true };
+
+  // Handle WebGL context loss/restore
+  gl.canvas.addEventListener('webglcontextlost', (e) => {
+    e.preventDefault();
+    if (window[RIBBON_KEY]) window[RIBBON_KEY].healthy = false;
+  });
+  gl.canvas.addEventListener('webglcontextrestored', () => {
+    if (window[RIBBON_KEY]) window[RIBBON_KEY].healthy = true;
+  });
 
   if (onCanvasReady) {
     onCanvasReady(gl.canvas);
@@ -106,7 +133,7 @@ function initRibbon(config) {
   `;
 
   const fragment = `
-    precision highp float;
+    precision mediump float;
     uniform vec3 uColor;
     uniform float uOpacity;
     uniform float uEnableFade;
@@ -180,16 +207,18 @@ function initRibbon(config) {
     if (e.changedTouches && e.changedTouches.length) {
       x = e.changedTouches[0].clientX;
       y = e.changedTouches[0].clientY;
-    } else {
+    } else if (e.clientX !== undefined) {
       x = e.clientX;
       y = e.clientY;
+    } else {
+      return;
     }
     // Use window dimensions since container is fixed fullscreen
     const width = window.innerWidth;
     const height = window.innerHeight;
     mouse.set((x / width) * 2 - 1, (y / height) * -2 + 1, 0);
   }
-  window.addEventListener('mousemove', updateMouse);
+  window.addEventListener('pointermove', updateMouse);
   window.addEventListener('touchstart', updateMouse, { passive: true });
   window.addEventListener('touchmove', updateMouse, { passive: true });
 
@@ -198,9 +227,17 @@ function initRibbon(config) {
 
   function update() {
     requestAnimationFrame(update);
+
+    // Skip rendering if context is lost
+    if (window[RIBBON_KEY] && !window[RIBBON_KEY].healthy) return;
+
     const currentTime = performance.now();
-    const dt = currentTime - lastTime;
+    let dt = currentTime - lastTime;
     lastTime = currentTime;
+
+    // Clamp dt to prevent trail collapse during frame spikes
+    // (e.g. hero media transitions, tab switches, heavy repaints)
+    dt = Math.min(dt, 32); // cap at ~30fps equivalent
 
     const width = window.innerWidth;
     const height = window.innerHeight;
