@@ -101,16 +101,6 @@ function SocialTiltCard({
               : '0 12px 32px rgba(0,0,0,0.3)',
         }}
       >
-        {/* Cursor-following spotlight */}
-        <div
-          className="pointer-events-none absolute inset-0 rounded-2xl"
-          style={{
-            background: `radial-gradient(circle at ${hover.x * 100}% ${hover.y * 100}%, ${accent.color}18 0%, transparent 55%)`,
-            opacity: hover.active && !isPlaceholder ? 1 : 0,
-            transition: 'opacity 0.4s ease',
-          }}
-        />
-
         {/* Content — translated forward for parallax depth */}
         <div
           className="relative z-10 flex flex-col justify-between p-6"
