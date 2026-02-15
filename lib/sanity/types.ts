@@ -230,6 +230,56 @@ export interface ContactPageData {
   locationMapLink: string
 }
 
+// Event types
+export type EventTag = 'event' | 'hackathon' | 'social' | 'recruitment'
+
+export interface EventDocument {
+  _id: string
+  title: string
+  slug: { current: string }
+  description: string
+  image?: SanityImage
+  date: string
+  endDate?: string
+  location?: string
+  signupLink?: string
+  tag: EventTag
+  isPinned: boolean
+  body?: PortableTextBlock[]
+}
+
+export interface EventsSectionData {
+  _key: string
+  _type: 'eventsSection'
+  heading: string
+  maxEvents: number
+}
+
+export interface CommunitySectionData {
+  _key: string
+  _type: 'communitySection'
+  heading: string
+  subheading?: string
+  platforms?: SocialPlatform[]
+}
+
+export type ContentPlatform = 'instagram' | 'youtube'
+
+export interface ContentItem {
+  _key: string
+  url: string
+  title: string
+  platform: ContentPlatform
+  year: number
+}
+
+export interface ContentStreamSectionData {
+  _key: string
+  _type: 'contentStreamSection'
+  heading: string
+  items: ContentItem[]
+}
+
 // Homepage Sections
 export interface StoryItem {
   _key: string
@@ -296,6 +346,9 @@ export type HomepageSection =
   | StorySectionData
   | InstagramSectionData
   | SponsorsSectionData
+  | EventsSectionData
+  | CommunitySectionData
+  | ContentStreamSectionData
   | FooterSectionData
 
 export interface HomepageData {

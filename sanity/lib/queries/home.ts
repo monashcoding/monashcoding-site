@@ -70,6 +70,28 @@ export const homepageQuery = groq`
           y
         }
       },
+      // Events section
+      _type == "eventsSection" => {
+        heading,
+        maxEvents
+      },
+      // Community section
+      _type == "communitySection" => {
+        heading,
+        subheading,
+        platforms
+      },
+      // Content stream section
+      _type == "contentStreamSection" => {
+        heading,
+        items[] {
+          _key,
+          url,
+          title,
+          platform,
+          year
+        }
+      },
       // Footer section
       _type == "footerSection" => {
         brandName,

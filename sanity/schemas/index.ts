@@ -8,6 +8,7 @@ import { contactPage } from './contact'
 import { socialLinks } from './socialLinks'
 import { oweekPage } from './oweek'
 import { firstYearRecruitmentPage } from './firstYearRecruitment'
+import { event } from './event'
 
 export const schemaTypes = [
   // Pages
@@ -24,4 +25,5 @@ export const schemaTypes = [
   // Individual items
   committeeMember,
   recruitmentPosition,
+  event,
 ]
