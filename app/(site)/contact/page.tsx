@@ -4,7 +4,7 @@ import { client } from "@/sanity/lib/client";
 export const revalidate = false;
 import { contactPageQuery } from "@/sanity/lib/queries";
 import { ContactPageData } from "@/lib/sanity/types";
-import ContactPageClient from "@/components/ContactPageClient";
+import ContactPageClient from "@/components/contact/ContactPageClient";
 import { getSocialLinksData } from "@/lib/sanity/fetchers";
 
 async function getContactPageData(): Promise<ContactPageData | null> {

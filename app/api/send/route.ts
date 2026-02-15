@@ -1,4 +1,4 @@
-import { EmailTemplate } from '../../../components/EmailTemplate';
+import { EmailTemplate } from '@/components/contact/EmailTemplate';
 import { Resend } from 'resend';
 
 // Validate RESEND_API_KEY is configured
