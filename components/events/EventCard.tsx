@@ -9,21 +9,28 @@ import { urlFor } from '@/sanity/lib/image'
 
 function formatEventDate(dateStr: string, endDateStr?: string): string {
   const date = new Date(dateStr)
-  const opts: Intl.DateTimeFormatOptions = {
+  const dateOpts: Intl.DateTimeFormatOptions = {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
     year: 'numeric',
     timeZone: 'Australia/Melbourne',
   }
-  const formatted = date.toLocaleDateString('en-AU', opts)
+  const timeOpts: Intl.DateTimeFormatOptions = {
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZone: 'Australia/Melbourne',
+  }
+  const formattedDate = date.toLocaleDateString('en-AU', dateOpts)
+  const formattedTime = date.toLocaleTimeString('en-AU', timeOpts)
 
   if (endDateStr) {
     const endDate = new Date(endDateStr)
-    const endFormatted = endDate.toLocaleDateString('en-AU', opts)
-    return `${formatted} - ${endFormatted}`
+    const endFormattedDate = endDate.toLocaleDateString('en-AU', dateOpts)
+    const endFormattedTime = endDate.toLocaleTimeString('en-AU', timeOpts)
+    return `${formattedDate}, ${formattedTime} - ${endFormattedDate}, ${endFormattedTime}`
   }
-  return formatted
+  return `${formattedDate}, ${formattedTime}`
 }
 
 interface EventCardProps {
@@ -37,35 +44,28 @@ export function EventCard({ event, index }: EventCardProps) {
   return (
     <Link href={`/events/${event.slug.current}`} className="group block h-full no-underline">
       <motion.article
-        className={`relative isolate h-full overflow-hidden rounded-[1.6rem] border bg-[#2a2a2a] transition-colors duration-300 ${
-          isFeatured
-            ? 'border-accent/45'
-            : 'border-white/10 hover:border-white/20'
-        }`}
+        className="relative isolate h-full overflow-hidden rounded-[1.6rem] bg-white transition-colors duration-300"
         initial={{ opacity: 0, y: 28 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.24 }}
         transition={{ duration: 0.5, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
         whileHover={{ y: -5, scale: 1.005 }}
       >
-        <div className="pointer-events-none absolute inset-0 rounded-[1.6rem] border border-white/5" />
 
-        <div className={`relative overflow-hidden ${isFeatured ? 'aspect-[16/8.4]' : 'aspect-[16/10.2]'}`}>
+        <div className="relative mx-3 mt-3 overflow-hidden rounded-xl aspect-2/1">
           {event.image?.asset ? (
             <Image
               src={urlFor(event.image)
                 .width(isFeatured ? 1400 : 800)
-                .height(isFeatured ? 760 : 540)
+                .height(isFeatured ? 700 : 400)
                 .url()}
               alt={event.image.alt || event.title}
               fill
               className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
             />
           ) : (
-            <div className="absolute inset-0 bg-[linear-gradient(140deg,rgba(87,87,211,0.55)_0%,rgba(37,37,37,0.9)_55%,rgba(255,227,48,0.35)_100%)]" />
+            <div className="absolute inset-0 bg-[#444040]" />
           )}
-
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,15,15,0.08)_0%,rgba(15,15,15,0.42)_50%,rgba(20,20,20,0.86)_100%)]" />
 
           <div className="absolute left-4 right-4 top-4 flex items-start justify-between gap-3">
             <span className={`inline-flex rounded-full px-3 py-1 text-[0.68rem] font-semibold tracking-[0.12em] uppercase ${TAG_STYLES[event.tag]}`}>
@@ -81,16 +81,16 @@ export function EventCard({ event, index }: EventCardProps) {
 
         <div className={`relative space-y-4 ${isFeatured ? 'p-7 md:p-8' : 'p-5 md:p-6'}`}>
           <div className="space-y-3">
-            <h3 className={`font-semibold leading-[1.14] text-foreground ${isFeatured ? 'text-[clamp(1.5rem,2.1vw,2.2rem)]' : 'text-[clamp(1.15rem,1.4vw,1.45rem)]'}`}>
+            <h3 className={`font-semibold leading-[1.14] text-[#1a1a1a] ${isFeatured ? 'text-[clamp(1.5rem,2.1vw,2.2rem)]' : 'text-[clamp(1.15rem,1.4vw,1.45rem)]'}`}>
               {event.title}
             </h3>
-            <p className={`text-white/65 leading-relaxed ${isFeatured ? 'line-clamp-3 text-[clamp(0.92rem,1.1vw,1.04rem)]' : 'line-clamp-2 text-[0.92rem]'}`}>
+            <p className={`text-black/55 leading-relaxed ${isFeatured ? 'line-clamp-3 text-[clamp(0.92rem,1.1vw,1.04rem)]' : 'line-clamp-2 text-[0.92rem]'}`}>
               {event.description}
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2.5 text-[0.74rem] text-white/75">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-black/25 px-3 py-1.5">
+          <div className="flex flex-wrap gap-2.5 text-[0.74rem] text-black/60">
+            <span className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-black/5 px-3 py-1.5">
               <svg
                 width="14"
                 height="14"
@@ -109,7 +109,7 @@ export function EventCard({ event, index }: EventCardProps) {
               {formatEventDate(event.date, event.endDate)}
             </span>
             {event.location && (
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-black/25 px-3 py-1.5">
+              <span className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-black/5 px-3 py-1.5">
                 <svg
                   width="14"
                   height="14"
@@ -128,7 +128,7 @@ export function EventCard({ event, index }: EventCardProps) {
             )}
           </div>
 
-          <div className="inline-flex items-center gap-2 text-[0.77rem] font-semibold tracking-[0.12em] uppercase text-accent transition-transform duration-300 group-hover:translate-x-1">
+          <div className="inline-flex items-center gap-2 text-[0.77rem] font-semibold tracking-[0.12em] uppercase text-[#1a1a1a] transition-transform duration-300 group-hover:translate-x-1">
             View event
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M7 17L17 7M17 7H8M17 7V16" />
