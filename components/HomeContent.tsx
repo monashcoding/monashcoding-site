@@ -6,7 +6,6 @@ import {
   StorySection,
   InstagramSection,
   SponsorsSection,
-  Footer,
   SectionRenderer,
 } from '@/components/home'
 
@@ -29,7 +28,6 @@ export function HomeContent({ sections, events, socialLinks, youtubeVideos }: Ho
       <StorySection />
       <InstagramSection />
       <SponsorsSection />
-      <Footer />
     </>
   )
 }

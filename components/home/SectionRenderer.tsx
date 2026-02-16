@@ -8,7 +8,6 @@ import { SponsorsSection } from './SponsorsSection'
 import { EventsSection } from './EventsSection'
 import { CommunitySection } from './CommunitySection'
 import { ContentStreamSection } from './ContentStreamSection'
-import { Footer } from './Footer'
 
 interface SectionRendererProps {
   sections: HomepageSection[]
@@ -35,7 +34,7 @@ export function SectionRenderer({ sections, events, socialLinks, youtubeVideos }
           case 'contentStreamSection':
             return <ContentStreamSection key={section._key} data={section} />
           case 'footerSection':
-            return <Footer key={section._key} data={section} />
+            return null // Footer is rendered globally in the site layout
           default:
             return null
         }

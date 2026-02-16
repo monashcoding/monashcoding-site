@@ -1,6 +1,7 @@
 import Navigation from "@/components/Navigation";
 import ClickSpark from "@/components/ClickSpark";
 import { RibbonProvider, GlobalRibbons } from "@/components/GlobalRibbons";
+import { Footer } from "@/components/home/Footer";
 import { client } from "@/sanity/lib/client";
 import { navigationQuery } from "@/sanity/lib/queries";
 import { NavigationData } from "@/lib/sanity/types";
@@ -39,6 +40,7 @@ export default async function SiteLayout({
       >
         <Navigation data={navigationData} socialLinks={socialLinksData?.links || null} />
         {children}
+        <Footer navItems={navigationData?.navItems} />
       </ClickSpark>
     </RibbonProvider>
   );

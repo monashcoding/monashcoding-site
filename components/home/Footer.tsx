@@ -2,7 +2,7 @@
 
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
 import { RibbonBlock } from '@/components/RibbonText'
-import { FooterSectionData, FooterColumn, FooterLink } from '@/lib/sanity/types'
+import { FooterSectionData, FooterColumn, NavItem } from '@/lib/sanity/types'
 
 const defaultColumns: FooterColumn[] = [
   {
@@ -38,12 +38,34 @@ const defaultColumns: FooterColumn[] = [
 
 interface FooterProps {
   data?: FooterSectionData
+  navItems?: NavItem[]
 }
 
-export function Footer({ data }: FooterProps) {
+export function Footer({ data, navItems }: FooterProps) {
   const brandName = data?.brandName ?? 'MAC'
   const tagline = data?.tagline ?? 'Monash Association of Coding - Empowering students through code since 2019.'
-  const columns = data?.columns ?? defaultColumns
+
+  // Build columns: use Sanity data if available, otherwise build from nav items + defaults
+  let columns: FooterColumn[]
+  if (data?.columns) {
+    columns = data.columns
+  } else if (navItems && navItems.length > 0) {
+    columns = [
+      {
+        _key: 'nav',
+        title: 'Navigation',
+        links: navItems.map((item) => ({
+          _key: item._key,
+          label: item.label,
+          url: item.href,
+          isExternal: false,
+        })),
+      },
+      ...defaultColumns.filter((c) => c._key !== 'nav'),
+    ]
+  } else {
+    columns = defaultColumns
+  }
   const instagramUrl = data?.instagramUrl ?? 'https://instagram.com/monashcoding'
   const linkedinUrl = data?.linkedinUrl ?? 'https://linkedin.com/company/monashcoding'
 
