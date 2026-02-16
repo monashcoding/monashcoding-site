@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { NavigationData, PageVisibility, SocialLink } from "@/lib/sanity/types";
 import { PLATFORM_ICONS, PLATFORM_LABELS } from "@/lib/socialPlatforms";
 import { JOB_BOARD_URL, MEMBER_SIGNUP_URL } from "@/lib/links";
@@ -110,7 +110,9 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isPastHero, setIsPastHero] = useState(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [isDesktop, setIsDesktop] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const isHomePage = pathname === "/";
   // Get preview config for hovered item (falls back to default when nothing hovered
   // or when no preview exists for the hovered path)
@@ -135,6 +137,20 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
       return pageVisibility[visibilityKey] === true;
     });
   }, [rawNavItems, data?.pageVisibility]);
+
+  // Desktop detection — prevents mounting preview card on mobile
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    setIsDesktop(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  // Prefetch all menu routes on mount so navigation is instant
+  useEffect(() => {
+    navItems.forEach((item) => router.prefetch(item.href));
+  }, [navItems, router]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -376,11 +392,13 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
         )}
       </AnimatePresence>
 
-      {/* Preview Card - outside AnimatePresence for prefetching */}
-      <NavPreviewCard
-        preview={previewConfig}
-        isVisible={isOpen}
-      />
+      {/* Preview Card — only mounted on desktop when menu is open */}
+      {isDesktop && (
+        <NavPreviewCard
+          preview={previewConfig}
+          isVisible={isOpen}
+        />
+      )}
     </>
   );
 }
