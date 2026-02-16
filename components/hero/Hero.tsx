@@ -233,8 +233,8 @@ export function Hero({ data }: HeroProps) {
         ref={heroRef}
         className="relative min-h-screen w-full overflow-hidden"
       >
-      {/* Hero Media Background — left half on desktop, full on mobile */}
-      <motion.div className="absolute inset-0 lg:right-1/2 z-0" style={{ opacity: mediaOpacity }}>
+      {/* Hero Media Background */}
+      <motion.div className="absolute inset-0 z-0" style={{ opacity: mediaOpacity }}>
         {heroMedia?.map((media, index) => (
           <motion.div
             key={media._key || index}
@@ -250,7 +250,7 @@ export function Hero({ data }: HeroProps) {
                 alt={media.alt || 'MAC community'}
                 fill
                 className="object-cover"
-                sizes="(min-width: 1024px) 50vw, 100vw"
+                sizes="100vw"
                 priority={index === 0}
               />
             ) : isVideoMedia(media) ? (
@@ -385,7 +385,7 @@ export function Hero({ data }: HeroProps) {
 
       {/* Scroll Indicator */}
       <motion.div
-        className="hidden lg:flex absolute bottom-8 left-3/4 -translate-x-1/2 flex-col items-center gap-2 text-white/50 z-30 pointer-events-none"
+        className="hidden lg:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-white/50 z-30 pointer-events-none"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5, duration: 0.6 }}
