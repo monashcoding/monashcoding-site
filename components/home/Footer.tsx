@@ -1,6 +1,7 @@
 'use client'
 
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
+import { RibbonBlock } from '@/components/RibbonText'
 import { FooterSectionData, FooterColumn, FooterLink } from '@/lib/sanity/types'
 
 const defaultColumns: FooterColumn[] = [
@@ -54,6 +55,7 @@ export function Footer({ data }: FooterProps) {
       contentClassName="py-24 px-8 pb-12"
     >
       <div className="max-w-[1200px] mx-auto">
+        <RibbonBlock darkClass="text-[#252525] [&_*]:!text-[#252525] [&_svg]:!fill-[#252525] [&_svg]:!text-[#252525]">
         <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-12 mb-16">
           <div>
             <div className="text-3xl font-extrabold text-foreground mb-4">{brandName}</div>
@@ -114,6 +116,7 @@ export function Footer({ data }: FooterProps) {
             )}
           </div>
         </div>
+        </RibbonBlock>
       </div>
     </RibbonAwareSection>
   )
