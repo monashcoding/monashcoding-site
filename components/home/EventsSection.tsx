@@ -1,11 +1,94 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
 import { EventsSectionData, EventDocument, EventTag } from '@/lib/sanity/types'
 import { EVENT_TAGS } from '@/lib/events/eventTags'
 import { EventCard } from '@/components/events/EventCard'
+
+// Yellow fizzle/sparkle canvas on the left or right edge
+function FizzleEdge({ side }: { side: 'left' | 'right' }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    let animId: number
+    const particles: { x: number; y: number; r: number; speed: number; opacity: number; phase: number }[] = []
+
+    const resize = () => {
+      const rect = canvas.parentElement!.getBoundingClientRect()
+      canvas.width = rect.width
+      canvas.height = rect.height
+    }
+
+    const init = () => {
+      resize()
+      particles.length = 0
+      const count = Math.floor(canvas.height / 8)
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.8 + 0.4,
+          speed: Math.random() * 0.3 + 0.1,
+          opacity: Math.random() * 0.6 + 0.1,
+          phase: Math.random() * Math.PI * 2,
+        })
+      }
+    }
+
+    const draw = (t: number) => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      for (const p of particles) {
+        const flicker = Math.sin(t * 0.001 * p.speed * 3 + p.phase) * 0.5 + 0.5
+        const alpha = p.opacity * flicker
+
+        // Fade out toward the inner edge
+        const edgeFade = side === 'left'
+          ? 1 - (p.x / canvas.width) * 0.8
+          : (p.x / canvas.width) * 0.8 + 0.2
+
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(255, 227, 48, ${alpha * edgeFade})`
+        ctx.fill()
+
+        // Slow drift upward
+        p.y -= p.speed
+        if (p.y < -2) {
+          p.y = canvas.height + 2
+          p.x = Math.random() * canvas.width
+        }
+      }
+      animId = requestAnimationFrame(draw)
+    }
+
+    init()
+    animId = requestAnimationFrame(draw)
+
+    window.addEventListener('resize', resize)
+    return () => {
+      cancelAnimationFrame(animId)
+      window.removeEventListener('resize', resize)
+    }
+  }, [side])
+
+  return (
+    <div
+      className={`absolute top-0 bottom-0 w-24 md:w-40 pointer-events-none z-[1] ${
+        side === 'left' ? 'left-0' : 'right-0'
+      }`}
+    >
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+    </div>
+  )
+}
 
 const FILTER_OPTIONS: { label: string; value: EventTag | 'all' }[] = [
   { label: 'All', value: 'all' },
@@ -65,6 +148,8 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
       className="overflow-hidden"
       contentClassName="relative py-[clamp(5.5rem,10vw,8rem)] px-6 md:px-8"
     >
+      <FizzleEdge side="left" />
+      <FizzleEdge side="right" />
       <motion.div
         className="relative mx-auto max-w-[1240px]"
         initial="hidden"
