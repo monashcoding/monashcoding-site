@@ -21,17 +21,14 @@ interface NavItem {
 const defaultNavItems: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "Meet the Team", href: "/team" },
-  { label: "Recruitment", href: "/recruitment" },
   { label: "Sponsor Us", href: "/sponsor" },
   { label: "Contact", href: "/contact" },
   { label: "O Week", href: "/o-week" },
-  { label: "First Year Recruitment", href: "/first-year-recruitment" },
 ];
 
 // Map paths to pageVisibility keys
 const visibilityMap: Record<string, keyof PageVisibility> = {
   "/o-week": "oWeek",
-  "/first-year-recruitment": "firstYearRecruitment",
 };
 
 const defaultFooterLinks: SocialLink[] = [

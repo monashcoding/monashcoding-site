@@ -11,9 +11,8 @@ const defaultColumns: FooterColumn[] = [
     links: [
       { _key: '1', label: 'Home', url: '/', isExternal: false },
       { _key: '2', label: 'Meet the Team', url: '/team', isExternal: false },
-      { _key: '3', label: 'Recruitment', url: '/recruitment', isExternal: false },
-      { _key: '4', label: 'Sponsor Us', url: '/sponsor', isExternal: false },
-      { _key: '5', label: 'Contact', url: '/contact', isExternal: false },
+      { _key: '3', label: 'Sponsor Us', url: '/sponsor', isExternal: false },
+      { _key: '4', label: 'Contact', url: '/contact', isExternal: false },
     ],
   },
   {

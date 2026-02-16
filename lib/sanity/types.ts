@@ -88,7 +88,6 @@ export interface SocialLink {
 
 export interface PageVisibility {
   oWeek: boolean | null
-  firstYearRecruitment: boolean | null
 }
 
 export interface NavigationData {

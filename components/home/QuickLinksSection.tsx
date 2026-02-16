@@ -14,16 +14,13 @@ interface NavItem {
 
 const defaultNavItems: NavItem[] = [
   { label: "Meet the Team", href: "/team" },
-  { label: "Recruitment", href: "/recruitment" },
   { label: "Sponsor Us", href: "/sponsor" },
   { label: "Contact", href: "/contact" },
   { label: "O Week", href: "/o-week" },
-  { label: "First Year Recruitment", href: "/first-year-recruitment" },
 ];
 
 const visibilityMap: Record<string, keyof PageVisibility> = {
   "/o-week": "oWeek",
-  "/first-year-recruitment": "firstYearRecruitment",
 };
 
 // The parallelogram skews 40px over 500px height ≈ 4.6°
