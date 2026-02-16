@@ -360,7 +360,7 @@ function CollapsiblePanel({
         </button>
 
         {/* Panel content — always mounted, height animated via grid trick */}
-        <div className="flex-1 min-w-0">
+        <div className="relative flex-1 min-w-0">
           <div
             className="grid transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
             style={{ gridTemplateRows: isOpen ? '1fr' : '0fr' }}
@@ -372,19 +372,15 @@ function CollapsiblePanel({
             </div>
           </div>
 
-          {/* "Click to open" hint when collapsed */}
-          <div
-            className={`overflow-hidden transition-[max-height,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-              isOpen ? 'max-h-0 opacity-0' : 'max-h-16 opacity-100'
+          {/* "Click to open" hint when collapsed — vertically centered */}
+          <button
+            onClick={onToggle}
+            className={`absolute inset-0 flex items-center justify-center text-[0.75rem] font-semibold tracking-[0.15em] uppercase text-white/35 hover:text-accent cursor-pointer transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+              isOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
             }`}
           >
-            <button
-              onClick={onToggle}
-              className="w-full py-4 text-center text-[0.75rem] font-semibold tracking-[0.15em] uppercase text-white/35 hover:text-accent cursor-pointer transition-colors duration-300"
-            >
-              Click to open
-            </button>
-          </div>
+            Click to open
+          </button>
         </div>
       </div>
     </div>
