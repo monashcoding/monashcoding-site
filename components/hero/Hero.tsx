@@ -272,8 +272,6 @@ export function Hero({ data }: HeroProps) {
         {/* Dark overlay with slight yellow tint */}
         <div className="absolute inset-0 bg-black/70" />
         <div className="absolute inset-0 bg-linear-to-b from-accent/10 via-accent/10 via-70% to-transparent" />
-        {/* Soft fade on the right edge into the dark background */}
-        <div className="hidden lg:block absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background to-transparent" />
       </motion.div>
 
       {/* Content Container */}
