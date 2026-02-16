@@ -8,6 +8,7 @@ import { getSocialLinksData } from '@/lib/sanity/fetchers'
 import { Hero } from '@/components/hero/Hero'
 import { HomeContent } from '@/components/HomeContent'
 import { QuickLinksSection } from '@/components/home/QuickLinksSection'
+import { fetchYouTubeVideos } from '@/lib/youtube/feed'
 
 async function getHeroData(): Promise<HeroData | null> {
   try {
@@ -46,12 +47,13 @@ async function getUpcomingEvents(limit: number = 20): Promise<EventDocument[]> {
 }
 
 export default async function Home() {
-  const [heroData, homepageData, events, socialLinksData, navigationData] = await Promise.all([
+  const [heroData, homepageData, events, socialLinksData, navigationData, youtubeVideos] = await Promise.all([
     getHeroData(),
     getHomepageData(),
     getUpcomingEvents(),
     getSocialLinksData(),
     getNavigationData(),
+    fetchYouTubeVideos(),
   ])
 
   // Determine maxEvents from the eventsSection config if present
@@ -72,6 +74,7 @@ export default async function Home() {
         sections={homepageData?.sections}
         events={limitedEvents}
         socialLinks={socialLinksData?.links || []}
+        youtubeVideos={youtubeVideos}
       />
     </main>
   )
