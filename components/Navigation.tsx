@@ -187,11 +187,11 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
           className="relative z-50 shrink-0 overflow-hidden"
           initial={false}
           animate={{
-            width: showNavbar ? 48 : 0,
-            x: showNavbar ? 0 : -20,
+            width: isDesktop ? 48 : showNavbar ? 48 : 0,
+            x: showNavbar ? 0 : isDesktop ? -80 : -20,
             opacity: showNavbar ? 1 : 0,
           }}
-          transition={{ duration: 0.35, ease: [0.76, 0, 0.24, 1] }}
+          transition={{ duration: isDesktop ? 0.5 : 0.35, ease: [0.76, 0, 0.24, 1] }}
         >
           <Link
             href="/"
