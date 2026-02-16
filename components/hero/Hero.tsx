@@ -1,6 +1,6 @@
 'use client'
 
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
@@ -208,6 +208,13 @@ export function Hero({ data }: HeroProps) {
     }
   }, [])
 
+  // Fade media out as user scrolls down
+  const { scrollYProgress: heroScrollProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  })
+  const mediaOpacity = useTransform(heroScrollProgress, [0, 0.7], [1, 0])
+
   const hasDescription = description && description.length > 0
   const hasAnnouncements = showAnnouncements && announcements && announcements.length > 0
   const heroContentStyle = {
@@ -226,8 +233,8 @@ export function Hero({ data }: HeroProps) {
         ref={heroRef}
         className="relative min-h-screen w-full overflow-hidden"
       >
-      {/* Full-width Hero Media Background */}
-      <div className="absolute inset-0 z-0">
+      {/* Hero Media Background — left half on desktop, full on mobile */}
+      <motion.div className="absolute inset-0 lg:right-1/2 z-0" style={{ opacity: mediaOpacity }}>
         {heroMedia?.map((media, index) => (
           <motion.div
             key={media._key || index}
@@ -243,7 +250,7 @@ export function Hero({ data }: HeroProps) {
                 alt={media.alt || 'MAC community'}
                 fill
                 className="object-cover"
-                sizes="100vw"
+                sizes="(min-width: 1024px) 50vw, 100vw"
                 priority={index === 0}
               />
             ) : isVideoMedia(media) ? (
@@ -265,7 +272,9 @@ export function Hero({ data }: HeroProps) {
         {/* Dark overlay with slight yellow tint */}
         <div className="absolute inset-0 bg-black/70" />
         <div className="absolute inset-0 bg-linear-to-b from-accent/10 via-accent/10 via-70% to-transparent" />
-      </div>
+        {/* Soft fade on the right edge into the dark background */}
+        <div className="hidden lg:block absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background to-transparent" />
+      </motion.div>
 
       {/* Content Container */}
       <div
