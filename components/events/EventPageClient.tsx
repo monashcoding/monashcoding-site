@@ -108,11 +108,11 @@ export function EventPageClient({ event }: EventPageClientProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.52, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
               >
-                <span className={`inline-flex rounded-full px-3 py-1 text-[0.67rem] font-semibold tracking-[0.13em] uppercase ${TAG_STYLES[event.tag]}`}>
+                <span className={`inline-flex items-center justify-center rounded-full px-3 pt-[0.3rem] pb-[0.22rem] text-[0.67rem] leading-none font-semibold tracking-[0.13em] uppercase ${TAG_STYLES[event.tag]}`}>
                   {TAG_LABELS[event.tag]}
                 </span>
                 {event.isPinned && (
-                  <span className="inline-flex rounded-full border border-accent/55 bg-accent/25 px-3 py-1 text-[0.67rem] font-semibold tracking-[0.13em] uppercase text-accent">
+                  <span className="inline-flex items-center justify-center rounded-full border border-accent bg-accent px-3 pt-[0.3rem] pb-[0.22rem] text-[0.67rem] leading-none font-semibold tracking-[0.13em] uppercase text-[#252525]">
                     Featured
                   </span>
                 )}
