@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { NavPreviewConfig, NAV_PREVIEWS } from "./navPreviewConfig";
+import { NavPreviewConfig } from "./navPreviewConfig";
 
 interface NavPreviewCardProps {
   preview: NavPreviewConfig | null;
@@ -28,12 +29,39 @@ const frameAnimation = {
   },
 };
 
+const EASE_OUT_EXPO: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
 export default function NavPreviewCard({ preview, isVisible }: NavPreviewCardProps) {
-  const allPreviews = Object.values(NAV_PREVIEWS);
-  const activeHref = preview?.href ?? null;
+  // Track whether ANY iframe has loaded since the menu opened.
+  // Once true, text stays at the bottom — no resetting on hover switch.
+  const [hasLoaded, setHasLoaded] = useState(false);
+  const [currentLoaded, setCurrentLoaded] = useState<string | null>(null);
+  const activeHrefRef = useRef<string | null>(null);
+
+  // Reset only when menu closes
+  useEffect(() => {
+    if (!isVisible) {
+      setHasLoaded(false);
+      setCurrentLoaded(null);
+      activeHrefRef.current = null;
+    }
+  }, [isVisible]);
+
+  const handleIframeLoad = (href: string) => {
+    if (activeHrefRef.current === href) {
+      setHasLoaded(true);
+      setCurrentLoaded(href);
+    }
+  };
+
+  activeHrefRef.current = preview?.href ?? null;
+
+  const isCurrentLoaded = currentLoaded === preview?.href;
+
+  if (!isVisible || !preview) return null;
 
   return (
-    <div className="fixed inset-0 z-50 pointer-events-none overflow-hidden hidden lg:block">
+    <div className="fixed inset-0 z-50 pointer-events-none overflow-hidden">
       <AnimatePresence>
         {isVisible && (
           <motion.div
@@ -48,58 +76,54 @@ export default function NavPreviewCard({ preview, isVisible }: NavPreviewCardPro
             variants={frameAnimation}
           >
             <div className="relative h-full overflow-hidden rounded-t-3xl border-2 border-b-0 border-white bg-black/95">
-              {/* Layered iframe previews — all mounted, only active one is visible */}
-              <div className="relative w-full h-[70%] overflow-hidden rounded-t-3xl">
-                {allPreviews.map((p) => (
+              {/* Iframe layer */}
+              <div className="absolute inset-0 overflow-hidden rounded-t-3xl">
+                <AnimatePresence mode="wait">
                   <motion.div
-                    key={p.href}
+                    key={preview.href}
                     className="absolute inset-0"
-                    initial={false}
-                    animate={{ opacity: activeHref === p.href ? 1 : 0 }}
-                    transition={{ duration: 0.25, ease: "easeInOut" }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: isCurrentLoaded ? 1 : 0 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
                   >
                     <iframe
-                      src={p.href}
-                      title={p.title}
+                      src={preview.href}
+                      title={preview.title}
                       className="w-[200%] h-[200%] origin-top-left scale-50 pointer-events-none overflow-hidden"
-                      style={{
-                        border: "none",
-                        background: "#000",
-                      }}
+                      style={{ border: "none", background: "#000" }}
+                      onLoad={() => handleIframeLoad(preview.href)}
                     />
                   </motion.div>
-                ))}
+                </AnimatePresence>
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
               </div>
 
-              {/* Layered text content — crossfade between previews */}
-              <div
-                className="absolute left-0 right-0 bg-gradient-to-t from-black via-black to-transparent"
-                style={{ bottom: "10vh" }}
+              {/* Text layer — starts centered, slides to bottom on first load */}
+              <motion.div
+                className="absolute left-0 right-0 z-10 px-8 lg:px-10 bg-gradient-to-t from-black/90 via-black/60 to-transparent py-10"
+                style={{ bottom: "10vh", x: 0 }}
+                initial={{ y: "-30vh" }}
+                animate={{ y: hasLoaded ? 0 : "-30vh" }}
+                transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
               >
-                <div className="relative p-8 lg:p-10">
-                  {allPreviews.map((p) => (
-                    <motion.div
-                      key={p.href}
-                      className={
-                        activeHref === p.href
-                          ? "relative"
-                          : "absolute inset-0 p-8 lg:p-10"
-                      }
-                      initial={false}
-                      animate={{ opacity: activeHref === p.href ? 1 : 0 }}
-                      transition={{ duration: 0.25, ease: "easeInOut" }}
-                    >
-                      <h3 className="text-3xl lg:text-4xl font-bold text-accent mb-3">
-                        {p.title}
-                      </h3>
-                      <p className="text-lg lg:text-xl text-white/70 leading-relaxed">
-                        {p.description}
-                      </p>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={preview.href}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                  >
+                    <h3 className="mb-3 text-3xl font-bold text-accent lg:text-4xl">
+                      {preview.title}
+                    </h3>
+                    <p className="text-lg leading-relaxed text-white/70 lg:text-xl">
+                      {preview.description}
+                    </p>
+                  </motion.div>
+                </AnimatePresence>
+              </motion.div>
             </div>
           </motion.div>
         )}
