@@ -13,6 +13,7 @@ interface NavItem {
 }
 
 const defaultNavItems: NavItem[] = [
+  { label: "About Us", href: "/about" },
   { label: "Meet the Team", href: "/team" },
   { label: "Sponsor Us", href: "/sponsor" },
   { label: "Contact", href: "/contact" },

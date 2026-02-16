@@ -1,3 +1,4 @@
+export * from './aboutUs'
 export * from './home'
 export * from './navigation'
 export * from './committee'

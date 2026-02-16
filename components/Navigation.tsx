@@ -20,6 +20,7 @@ interface NavItem {
 // Fallback data
 const defaultNavItems: NavItem[] = [
   { label: "Home", href: "/" },
+  { label: "About Us", href: "/about" },
   { label: "Meet the Team", href: "/team" },
   { label: "Sponsor Us", href: "/sponsor" },
   { label: "Contact", href: "/contact" },

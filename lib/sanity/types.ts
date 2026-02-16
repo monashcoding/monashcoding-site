@@ -354,6 +354,28 @@ export interface HomepageData {
   sections: HomepageSection[]
 }
 
+// About Us
+export interface AboutUsValue {
+  _key: string
+  title: string
+  description: string
+}
+
+export interface AboutUsStat {
+  _key: string
+  value: string
+  label: string
+}
+
+export interface AboutUsPageData {
+  pageTitle: string
+  pageSubtitle: string
+  mission: string
+  vision: string
+  values: AboutUsValue[]
+  stats: AboutUsStat[]
+}
+
 // O Week Page
 export interface OWeekPageData {
   shown: boolean

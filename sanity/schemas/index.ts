@@ -1,3 +1,4 @@
+import { aboutUsPage } from './aboutUs'
 import { hero } from './hero'
 import { homepage } from './homepage'
 import { navigation } from './navigation'
@@ -10,6 +11,7 @@ import { event } from './event'
 
 export const schemaTypes = [
   // Pages
+  aboutUsPage,
   hero,
   homepage,
   committeePage,

@@ -10,6 +10,11 @@ export const NAV_PREVIEWS: Record<string, NavPreviewConfig> = {
     title: "Home",
     description: "Welcome to the Monash Association of Coding. Discover our events, community, and opportunities.",
   },
+  "/about": {
+    href: "/about",
+    title: "About Us",
+    description: "Learn about our mission, values, and the community behind MAC.",
+  },
   "/team": {
     href: "/team",
     title: "Meet the Team",
