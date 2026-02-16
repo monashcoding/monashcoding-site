@@ -72,3 +72,61 @@
   background: #FFE330;
   color: #252525;
 }
+
+/* Quick Links expandable cards */
+.quick-link-card {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+  will-change: flex;
+  transition: flex 0.62s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.quick-link-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  z-index: 2;
+}
+
+.quick-link-card:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.06) 45%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  clip-path: polygon(40px 0, 41px 0, 1px 100%, 0 100%);
+  opacity: 0.5;
+  z-index: 3;
+}
+
+.quick-link-card:hover {
+  flex: 3.5;
+}
+
+/* Vertical slanted title — needs CSS for hover transform override */
+.quick-link-title {
+  transform: translate(-50%, -50%) rotate(-85.4deg);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              color 0.3s ease,
+              opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.quick-link-card:hover .quick-link-title {
+  transform: translate(30%, -50%) rotate(-85.4deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quick-link-card,
+  .quick-link-title {
+    transition: none;
+  }
+}
