@@ -4,13 +4,25 @@ export const aboutUsPageQuery = groq`
   *[_type == "aboutUsPage"][0] {
     pageTitle,
     pageSubtitle,
-    mission,
-    vision,
+    missionTitle,
+    missionBody,
     values[] {
       _key,
       title,
-      description
+      description,
+      image {
+        asset->,
+        alt,
+        hotspot,
+        crop
+      }
     },
+    journey[] {
+      _key,
+      year,
+      summary
+    },
+    whereAreWeNow,
     stats[] {
       _key,
       value,

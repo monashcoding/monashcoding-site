@@ -359,6 +359,7 @@ export interface AboutUsValue {
   _key: string
   title: string
   description: string
+  image?: SanityImage
 }
 
 export interface AboutUsStat {
@@ -367,12 +368,20 @@ export interface AboutUsStat {
   label: string
 }
 
+export interface AboutUsJourneyYear {
+  _key: string
+  year: string
+  summary: string
+}
+
 export interface AboutUsPageData {
   pageTitle: string
   pageSubtitle: string
-  mission: string
-  vision: string
+  missionTitle: string
+  missionBody: string
   values: AboutUsValue[]
+  journey: AboutUsJourneyYear[]
+  whereAreWeNow: string
   stats: AboutUsStat[]
 }
 
