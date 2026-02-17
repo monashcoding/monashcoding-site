@@ -88,7 +88,6 @@ export interface SocialLink {
 
 export interface PageVisibility {
   oWeek: boolean | null
-  firstYearRecruitment: boolean | null
 }
 
 export interface NavigationData {
@@ -353,6 +352,37 @@ export type HomepageSection =
 
 export interface HomepageData {
   sections: HomepageSection[]
+}
+
+// About Us
+export interface AboutUsValue {
+  _key: string
+  title: string
+  description: string
+  image?: SanityImage
+}
+
+export interface AboutUsStat {
+  _key: string
+  value: string
+  label: string
+}
+
+export interface AboutUsJourneyYear {
+  _key: string
+  year: string
+  summary: string
+}
+
+export interface AboutUsPageData {
+  pageTitle: string
+  pageSubtitle: string
+  missionTitle: string
+  missionBody: string
+  values: AboutUsValue[]
+  journey: AboutUsJourneyYear[]
+  whereAreWeNow: string
+  stats: AboutUsStat[]
 }
 
 // O Week Page

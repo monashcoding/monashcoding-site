@@ -10,15 +10,15 @@ export const NAV_PREVIEWS: Record<string, NavPreviewConfig> = {
     title: "Home",
     description: "Welcome to the Monash Association of Coding. Discover our events, community, and opportunities.",
   },
+  "/about": {
+    href: "/about",
+    title: "About Us",
+    description: "Learn about our mission, values, and the community behind MAC.",
+  },
   "/team": {
     href: "/team",
     title: "Meet the Team",
     description: "Get to know the passionate people behind MAC who make everything happen.",
-  },
-  "/recruitment": {
-    href: "/recruitment",
-    title: "Recruitment",
-    description: "Join our team and help shape the future of coding at Monash.",
   },
   "/sponsor": {
     href: "/sponsor",
@@ -34,11 +34,6 @@ export const NAV_PREVIEWS: Record<string, NavPreviewConfig> = {
     href: "/o-week",
     title: "O-Week 2026",
     description: "Everything you need to know for Orientation Week. Check out our pamphlet and upcoming events.",
-  },
-  "/first-year-recruitment": {
-    href: "/first-year-recruitment",
-    title: "First Year Recruitment",
-    description: "Apply to become a First Year Representative and kickstart your journey with MAC.",
   },
 };
 

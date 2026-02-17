@@ -8,8 +8,7 @@ export const navigationQuery = groq`
       href
     },
     "pageVisibility": {
-      "oWeek": *[_type == "oweekPage"][0].shown,
-      "firstYearRecruitment": *[_type == "firstYearRecruitmentPage"][0].shown
+      "oWeek": *[_type == "oweekPage"][0].shown
     }
   }
 `
