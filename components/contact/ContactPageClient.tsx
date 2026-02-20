@@ -31,8 +31,6 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
   const pageTitle = data?.pageTitle || "Get in Touch";
   const pageSubtitle = data?.pageSubtitle || "Have a question or want to collaborate? We'd love to hear from you.";
   const email = data?.email || "coding@monash.clubs.org";
-  const location = data?.location || "Monash University, Clayton VIC";
-  const locationMapLink = data?.locationMapLink || "https://maps.google.com/?q=Monash+University+Clayton";
   const socialLinks = socialLinksProp || defaultSocialLinks;
   const image = data?.bottomImage || null;
 
@@ -66,7 +64,7 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
       rotateX: 0,
       transition: { 
         type: "spring",
-        damping: 12,   // Resistance (lower = more bouncy)
+        damping: 6.7,   // Resistance (lower = more bouncy)
         stiffness: 100 // Speed of the spring
       },
     }
@@ -74,41 +72,11 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
   };
 
 
-/**
- * RESPONSIVE TEXT SIZE GUIDE - clamp()
- * 
- * Syntax: text-[clamp(MIN, PREFERRED, MAX)]
- * 
- * How it works:
- * - MIN: Smallest size (used on small screens)
- * - PREFERRED: Ideal size that scales with viewport (e.g., 5vw = 5% of viewport width)
- * - MAX: Largest size (caps growth on large screens)
- * 
- * Example: text-[clamp(2.5rem,5vw,4rem)]
- * - Minimum: 2.5rem (40px)
- * - Grows at: 5% of viewport width
- * - Maximum: 4rem (64px)
- * 
- * Adjusting:
- * - Smaller minimum → Lower first value (e.g., 2rem)
- * - Faster scaling → Higher vw value (e.g., 6vw or 7vw)
- * - Larger maximum → Higher last value (e.g., 5rem)
- * 
- * Common units:
- * - rem: 1rem = 16px (recommended for accessibility)
- * - px: Fixed pixels (less flexible)
- * - vw: Viewport width percentage (creates fluidity)
- * 
- * Tips:
- * - Keep vw between 2-8vw for readable scaling
- * - Test on mobile (320px) and desktop (1920px+)
- * - Use rem for min/max to respect user font preferences
- */
   return (
     <main className="flex flex-col">
 
         {/* Section 1 div at the top of the page */}
-        <div className="w-full text-center bg-background h-[30vh] flex px-24 py-8">
+        <div className="w-full text-center bg-background h-[30vh] flex px-4 md:px-32 lg:px-36 py-8">
             {/* Box inside */}
             <motion.div
               className="w-full bg-gold-700 flex items-center justify-center mt-16 rounded-3xl"
@@ -138,17 +106,17 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
         </div>
 
         {/* Section 2 div - form and newsletter*/}
-        <div className="bg-blue w-full flex items-center justify-center px-16 md:px-32 lg:px-36 py-8">
+        <div className="bg-blue w-full flex items-center justify-center px-4 md:px-32 lg:px-36 py-8">
           {/* Form and newsletter horizontal section */}
-          <div className="w-full flex flex-col gap-12 lg:flex-row my-12 px-[5vw]">
+          <div className="w-full flex flex-col gap-12 lg:flex-row my-12 px-[5vw] lg:items-center">
             {/* Left side - Form */}
-            <motion.div className="flex-2 bg-white rounded-4xl  overflow-y-auto" > 
+            <motion.div className="flex-2  rounded-4xl  overflow-y-auto outline-black outline-2  " > 
                 <ContactForm/>
             </motion.div>
 
             {/* Right side - Newsletter*/}
             {/* TODO make sanity and fallbacks for this */}
-            <motion.div className="flex-1  bg-white rounded-4xl text-center px-12 py-8 flex flex-col justify-evenly overflow-hidden max-h-[30vh] gap-4" >
+            <motion.div className="flex-1  bg-white shadow-lg shadow-accent rounded-4xl text-center px-12 py-8 flex flex-col items-center justify-center outline-black outline-2 overflow-hidden gap-4 " >
               <motion.h2 className="text-2xl font-bold text-gray-800"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -174,23 +142,23 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
               >
                 <input 
                   type="email"
-                  placeholder="Enter your email"
-                  className="w-full max-w-md px-4 py-2 rounded-4xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold-700/30"
+                  placeholder="Email"
+                  className="w-full max-w-md bg-gray-900/15 px-4 py-2 rounded-4xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold-700/30"
                 />
               </motion.div>
 
-              {/* Join button  temporary*/}
-              <motion.div className="flex justify-center text-background"
+              {/* Join button*/}
+              <motion.div className="justify-center text-background"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.15 }}
               >
                 <motion.button 
-                  className="flex justify-center w-full max-w-md px-6 py-2 bg-background text-white rounded-3xl  transition-colors duration-300"
+                  className="flex justify-center max-w-md px-6 py-2 bg-background text-white rounded-3xl  transition-colors duration-300"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Join Now
+                  Join!
                 </motion.button>
               </motion.div>
             </motion.div>
@@ -200,17 +168,15 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
         {/* Section 3 - Socials */}
         <motion.div
           className="bg-background flex flex-col justify-center items-center py-12 gap-6"
-          // initial={{ opacity: 0 }}
-          // whileInView={{ opacity: 1 }}
-          // viewport={{ once: true, amount: 0.5 }}
-          // transition={{ duration: 1, delay: 0.2 }}
+          
         >
           <motion.div className="text-base font-semibold text-white text-[clamp(2rem,3vw,6rem)]">
             Talk to us
           </motion.div>
 
-          <motion.div className="flex justify-center gap-6 flex-wrap">
-            {socialLinks.map((link) => {
+          <motion.div className="flex justify-center gap-6 flex-wrap"
+          >
+            {socialLinks.map((link, index) => {
               const IconComponent = PLATFORM_ICONS[link.platform];
               const label = PLATFORM_LABELS[link.platform] || link.platform;
               const description = link.description ? `${link.description}` : "";
@@ -225,7 +191,7 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
                   whileHover={{ scale: 1.05 }}>
                   {IconComponent && <IconComponent className="w-8 h-8" />}
                   <span className="text-xs text-center font-medium capitalize">{label}</span>
-                  <span className="text-xs text-center text-white/50">{description}</span>
+                  <span className="text-xs text-cente">{description}</span>
                 </motion.a>
               );
             })}
@@ -236,13 +202,22 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
               return (
                 <motion.button
                   onClick={handleEmailCopy}
-                  className="px-5 py-2 w-50 h-30 outline-accent outline-1 flex flex-col items-center justify-center gap-2 bg-white/5 border rounded-2xl text-white/50 duration-100 hover:bg-gold-700/10 hover:border-gold-700/30 hover:text-gold-700"
+                  className="px-5 py-2 w-50 h-30 flex flex-col items-center justify-center gap-2 bg-white/5 border rounded-2xl text-white/50 duration-100 hover:bg-gold-700/10 hover:border-gold-700/30 hover:text-gold-700 cursor-pointer"
                   aria-label="Copy email"
                   whileHover={{ scale: 1.05 }}>
                   <EmailIconComponent className="w-8 h-8" />
-                  <span className="text-xs text-center font-medium">
-                    {emailCopied ? "Copied!" : "Email coding@monashclubs.org"}
-                  </span>
+                  <AnimatePresence mode="wait">
+                    <motion.span 
+                      key={emailCopied ? "copied" : "email"}
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.2 }}
+                      className="text-xs text-center font-medium"
+                    >
+                      {emailCopied ? "Copied to clipboard!" : "Email coding@monashclubs.org"}
+                    </motion.span>
+                  </AnimatePresence>
                 </motion.button>
               );
             })()}       
@@ -252,123 +227,18 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
         </motion.div>
 
         {/* Svg and image*/}
-        <div className="relative w-full mt-2"> 
-            <svg 
-            width="100%" 
-            height="auto" 
-            viewBox="0 0 1546 580" 
-            preserveAspectRatio="none"
-            display= "block"
-            className="absolute inset-0 z-10 w-full pointer-events-none"
-
-            fill="none">
-            <path 
-              d="M1460.78 164.084C1615.72 362.45 1510.76 579.5 1510.76 579.5C1031.18 579.5 259.005 577.851 74.3079 577.851C74.3079 577.851 -91.7598 409.533 74.3079 322.337C281.893 213.342 739.995 325.885 853.369 132.419C966.742 -61.047 1305.84 -34.2831 1460.78 164.084Z" 
-              stroke="#FFE330"
-              strokeWidth="5"
-
-            />
-          </svg>
-
+        <div className="w-full overflow-hidden"> 
+       
           {image && (
-            <div className="">
+            <div className="absolute z-10 md:mt-10">
               <img
                 src={image.asset.url}
                 alt={image.alt || "Contact page bottom image"}
-                className="w-full h-auto block relative z-0"
+                className="w-full h-auto block"
               />
             </div>
           )}
         </div>
-        
-        {/* <div className="relative w-full">
-          <svg className="absolute inset-0 z-10 w-full h-auto pointer-events-none" ... >
-            <path d="..." stroke="#FFE330" fill="none" />
-          </svg>
-
-          <img 
-            src={your_exported_png} 
-            className="w-full h-auto block relative z-0" 
-            alt="People in a room"
-          />
-        </div> */}
-                
-
-
-
-        {/* The sections at the bottom. TODO make a component
-          <div className="flex flex-col gap-6">
-            <motion.a
-              href={`mailto:${email}`}
-              className="py-6 px-8 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-6 no-underline transition-all duration-300 hover:bg-white/10 hover:border-accent/30 hover:-translate-y-0.5 sm:flex-col sm:text-center"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-              whileHover={{ scale: 1.02 }}
-            >
-              <div className="w-12.5 h-12.5 bg-gold-700/10 rounded-2xl flex items-center justify-center shrink-0">
-                <svg className="w-6 h-6 text-gold-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                  <polyline points="22,6 12,13 2,6" />
-                </svg>
-              </div>
-              <div className="text-left sm:text-center">
-                <div className="text-sm text-white/50 mb-1">Email</div>
-                <div className="text-lg text-foreground font-medium">{email}</div>
-              </div>
-            </motion.a>
-
-            <motion.a
-              href={discordLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="py-6 px-8 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-6 no-underline transition-all duration-300 hover:bg-white/10 hover:border-accent/30 hover:-translate-y-0.5 sm:flex-col sm:text-center"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.3 }}
-              whileHover={{ scale: 1.02 }}
-            >
-              <div className="w-12.5 h-12.5 bg-gold-700/10 rounded-2xl flex items-center justify-center shrink-0">
-                <svg className="w-6 h-6 text-gold-700" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
-                </svg>
-              </div>
-              <div className="text-left sm:text-center">
-                <div className="text-sm text-white/50 mb-1">Discord</div>
-                <div className="text-lg text-foreground font-medium">{discordLabel}</div>
-              </div>
-            </motion.a>
-
-            <motion.a
-              href={locationMapLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="py-6 px-8 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-6 no-underline transition-all duration-300 hover:bg-white/10 hover:border-accent/30 hover:-translate-y-0.5 sm:flex-col sm:text-center"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.4 }}
-              whileHover={{ scale: 1.02 }}
-            >
-              <div className="w-12.5 h-12.5 bg-gold-700/10 rounded-2xl flex items-center justify-center shrink-0">
-                <svg className="w-6 h-6 text-gold-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                  <circle cx="12" cy="10" r="3" />
-                </svg>
-              </div>
-              <div className="text-left sm:text-center">
-                <div className="text-sm text-white/50 mb-1">Location</div>
-                <div className="text-lg text-foreground font-medium">{location}</div>
-              </div>
-            </motion.a>
-          </div>
-         */}
-
-        
-        
-       
-
-
-
 
     </main>
       
