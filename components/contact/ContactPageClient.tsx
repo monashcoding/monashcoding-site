@@ -188,10 +188,15 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
                   rel="noopener noreferrer"
                   className="w-36 h-30 flex flex-col items-center justify-center gap-2 bg-white/5 border border-white/10 rounded-2xl text-white/50 transition-all  hover:bg-gold-700/10 hover:border-gold-700/30 hover:text-gold-700 no-underline"
                   aria-label={label}
-                  whileHover={{ scale: 1.05 }}>
+                  whileHover={{ scale: 1.05 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{once: true}}
+                  transition={{ duration: 0.2, delay: index * 0.2 }}
+                  >
                   {IconComponent && <IconComponent className="w-8 h-8" />}
                   <span className="text-xs text-center font-medium capitalize">{label}</span>
-                  <span className="text-xs text-cente">{description}</span>
+                  <span className="text-xs text-center">{description}</span>
                 </motion.a>
               );
             })}
@@ -204,7 +209,11 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
                   onClick={handleEmailCopy}
                   className="px-5 py-2 w-50 h-30 flex flex-col items-center justify-center gap-2 bg-white/5 border rounded-2xl text-white/50 duration-100 hover:bg-gold-700/10 hover:border-gold-700/30 hover:text-gold-700 cursor-pointer"
                   aria-label="Copy email"
-                  whileHover={{ scale: 1.05 }}>
+                  whileHover={{ scale: 1.05 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{once: true}}
+                  transition={{ duration: 0.2, delay: 1 }}>
                   <EmailIconComponent className="w-8 h-8" />
                   <AnimatePresence mode="wait">
                     <motion.span 
