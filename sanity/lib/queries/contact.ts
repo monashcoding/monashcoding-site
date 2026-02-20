@@ -5,8 +5,6 @@ export const contactPageQuery = groq`
     pageTitle,
     pageSubtitle,
     email,
-    discordLink,
-    discordLabel,
     location,
     locationMapLink
   }

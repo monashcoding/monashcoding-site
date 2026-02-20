@@ -28,22 +28,6 @@ export const contactPage = defineType({
       initialValue: 'hello@monashcoding.com',
     }),
     defineField({
-      name: 'discordLink',
-      title: 'Discord Link',
-      type: 'url',
-      validation: (Rule) =>
-        Rule.uri({
-          scheme: ['http', 'https'],
-        }),
-      initialValue: 'https://discord.gg/monashcoding',
-    }),
-    defineField({
-      name: 'discordLabel',
-      title: 'Discord Label',
-      type: 'string',
-      initialValue: 'Join our community',
-    }),
-    defineField({
       name: 'location',
       title: 'Location',
       type: 'string',

@@ -16,6 +16,7 @@ export const SOCIAL_PLATFORMS = [
   { title: "YouTube", value: "youtube" },
   { title: "TikTok", value: "tiktok" },
   { title: "Website", value: "website" },
+  { title: "Email", value: "email" },
 ] as const;
 
 export type SocialPlatform = (typeof SOCIAL_PLATFORMS)[number]["value"];
@@ -101,6 +102,14 @@ function WebsiteIcon({ size = 24, className }: IconProps) {
   );
 }
 
+function EmailIcon({ size = 24, className }: IconProps) {
+  return (
+    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+    </svg>
+  );
+}
+
 // --- Platform-to-icon mapping ---
 export const PLATFORM_ICONS: Record<SocialPlatform, React.FC<IconProps>> = {
   instagram: InstagramIcon,
@@ -112,6 +121,7 @@ export const PLATFORM_ICONS: Record<SocialPlatform, React.FC<IconProps>> = {
   youtube: YouTubeIcon,
   tiktok: TikTokIcon,
   website: WebsiteIcon,
+  email: EmailIcon,
 };
 
 // --- Human-readable labels ---
@@ -125,4 +135,6 @@ export const PLATFORM_LABELS: Record<SocialPlatform, string> = {
   youtube: "YouTube",
   tiktok: "TikTok",
   website: "Website",
+  email: "Email",
 };
+

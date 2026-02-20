@@ -45,6 +45,13 @@ export const socialLinks = defineType({
                   allowRelative: true,
                 }),
             }),
+            defineField({
+              name: 'description',
+              title: 'Description',
+              type: 'string',
+              description: 'Optional short label or tagline shown with this link.',
+              validation: (Rule) => Rule.max(80),
+            }),
           ],
           preview: {
             select: {

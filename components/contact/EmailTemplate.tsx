@@ -3,11 +3,10 @@ import * as React from 'react';
 export interface EmailTemplateProps {
   name: string;
   emailAddress: string;
-  subject?: string;
   message: string;
 }
 
-export function EmailTemplate({ name, emailAddress, subject, message }: EmailTemplateProps) {
+export function EmailTemplate({ name, emailAddress, message }: EmailTemplateProps) {
   return (
     <div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f8f7f4', padding: '0', margin: '0' }}>
       {/* Main Container */}
@@ -113,30 +112,6 @@ export function EmailTemplate({ name, emailAddress, subject, message }: EmailTem
                             {emailAddress}
                           </a>
                         </div>
-
-                        {/* Subject (if provided) */}
-                        {subject && (
-                          <div>
-                            <span style={{
-                              display: 'block',
-                              color: '#b8860b',
-                              fontSize: '12px',
-                              fontWeight: '700',
-                              textTransform: 'uppercase',
-                              letterSpacing: '1px',
-                              marginBottom: '4px'
-                            }}>
-                              Subject
-                            </span>
-                            <span style={{
-                              color: '#1a1a1a',
-                              fontSize: '14px',
-                              fontWeight: '600'
-                            }}>
-                              {subject}
-                            </span>
-                          </div>
-                        )}
                       </div>
 
                       {/* Message Section */}

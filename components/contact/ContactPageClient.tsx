@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { RefObject, useRef, useState } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { ContactPageData, SocialLink } from "@/lib/sanity/types";
 import { PLATFORM_ICONS, PLATFORM_LABELS } from "@/lib/socialPlatforms";
@@ -22,16 +22,23 @@ interface ContactPageClientProps {
   socialLinks: SocialLink[] | null;
 }
 
+
 export default function ContactPageClient({ data, socialLinks: socialLinksProp }: ContactPageClientProps) {
+  const [emailCopied, setEmailCopied] = useState(false);
+
   // Use Sanity data or fallbacks
   const pageTitle = data?.pageTitle || "Get in Touch";
   const pageSubtitle = data?.pageSubtitle || "Have a question or want to collaborate? We'd love to hear from you.";
   const email = data?.email || "hello@monashcoding.com";
-  const discordLink = data?.discordLink || "https://discord.gg/px8UcXcpeC";
-  const discordLabel = data?.discordLabel || "Join our community";
   const location = data?.location || "Monash University, Clayton VIC";
   const locationMapLink = data?.locationMapLink || "https://maps.google.com/?q=Monash+University+Clayton";
   const socialLinks = socialLinksProp || defaultSocialLinks;
+
+  const handleEmailCopy = () => {
+    navigator.clipboard.writeText(email);
+    setEmailCopied(true);
+    setTimeout(() => setEmailCopied(false), 2000);
+  };
 
 
   // Motion variants for the heading animation
@@ -96,90 +103,138 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
  * - Use rem for min/max to respect user font preferences
  */
   return (
-    <RibbonAwareSection as="main" backgroundClassName="" contentClassName="min-h-screen flex flex-col items-center justify-center" >
+    <main className="flex flex-col">
 
         {/* Section 1 div at the top of the page */}
         <div className="w-full text-center bg-background h-[30vh] flex px-24 py-8">
-          {/* Box inside */}
-          <motion.div
-            className="w-full bg-gold-700 flex items-center justify-center mt-16 rounded-3xl"
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            {/* Heading text*/}
-            <motion.h1
-              variants={headingAnimations}
-              initial="hidden"
-              animate="visible"
-              className="text-[clamp(2.5rem,4vw,8rem)] font-extrabold"
+            {/* Box inside */}
+            <motion.div
+              className="w-full bg-gold-700 flex items-center justify-center mt-16 rounded-3xl"
+              initial={{ opacity: 0, y: -50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
             >
-              {/* Individual characters bouncing. This is inheriting the animations from the parent container. Thus doing "hidden" and "visible" */}
-              {Array.from(pageTitle).map((char, i) => (
-                <motion.span 
-                  key={i} 
-                  variants={wordOrCharAnimations} 
-                  className="inline-block whitespace-pre text-background" // Preserve spaces between words for bounciness
-                  >
-                  {char}
-                </motion.span>
-              ))}
-            </motion.h1>
-          </motion.div>
+              {/* Heading text*/}
+              <motion.h1
+                variants={headingAnimations}
+                initial="hidden"
+                animate="visible"
+                className="text-[clamp(2.5rem,4vw,8rem)] font-extrabold"
+              >
+                {/* Individual characters bouncing. This is inheriting the animations from the parent container. Thus doing "hidden" and "visible" */}
+                {Array.from(pageTitle).map((char, i) => (
+                  <motion.span 
+                    key={i} 
+                    variants={wordOrCharAnimations} 
+                    className="inline-block whitespace-pre text-background" // Preserve spaces between words for bounciness
+                    >
+                    {char}
+                  </motion.span>
+                ))}
+              </motion.h1>
+            </motion.div>
         </div>
 
-        {/* Section 2 div */}
-        <div className="bg-blue w-full flex items-center justify-center px-48 py-8">
-          {/* Contact form component */}
-          {/* <ContactForm  
-          /> */}
-
-          {/* Form and newsletter section*/}
-          <div className="w-full flex flex-col gap-12 md:flex-row my-12 px-[5vw] h-[30vh]">
+        {/* Section 2 div - form and newsletter*/}
+        <div className="bg-blue w-full flex items-center justify-center px-16 md:px-32 lg:px-36 py-8">
+          {/* Form and newsletter horizontal section */}
+          <div className="w-full flex flex-col gap-12 lg:flex-row my-12 px-[5vw]">
             {/* Left side - Form */}
-            <motion.div className="md:flex-[1_1_40%] bg-white rounded-4xl" > 
+            <motion.div className="flex-1 bg-white rounded-4xl  overflow-y-auto" > 
+                <ContactForm/>
             </motion.div>
 
             {/* Right side - Newsletter*/}
             {/* TODO make sanity and fallbacks for this */}
-            <motion.div className="md:flex-[1_2_10%] bg-white rounded-4xl text-center p-16" >
+            <motion.div className="flex-1  bg-white rounded-4xl text-center px-12 py-8 flex flex-col justify-evenly overflow-y-auto max-h-[30vh]" >
               <motion.h2 className="text-2xl font-bold text-gray-800">
                 Join our Newsletter!
               </motion.h2>
 
-              <motion.p className="mt-4 text-gray-600">
+              <motion.p className=" text-gray-600">
                 Keep up with the latest updates throughout the semester on our events and exclusive member perks!
               </motion.p>
 
               {/* Email input */}
-              <motion.div className="mt-6 flex justify-center text-background">
+              <motion.div className="flex justify-center text-background">
                 <input 
                   type="email"
                   placeholder="Enter your email"
-                  className="w-full max-w-md px-4 py-2 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold-700/30"
+                  className="w-full max-w-md px-4 py-2 rounded-4xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold-700/30"
                 />
               </motion.div>
 
               {/* Join button  temporary*/}
-              <motion.button 
-                className="mt-4 px-6 py-2 bg-background text-white rounded-3xl hover:bg-gold-800 transition-colors duration-300"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Join Now
-              </motion.button>
-
+              <motion.div className="flex justify-center text-background">
+                <motion.button 
+                  className="flex justify-center w-full max-w-md px-6 py-2 bg-background text-white rounded-3xl  transition-colors duration-300"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Join Now
+                </motion.button>
+              </motion.div>
             </motion.div>
           </div>
-      
-
-
-          
-
         </div>
 
+        {/* Section 3 - Socials */}
+        <motion.div
+          className="bg-background flex flex-col justify-center items-center py-12 gap-6"
+          // initial={{ opacity: 0 }}
+          // whileInView={{ opacity: 1 }}
+          // viewport={{ once: true, amount: 0.5 }}
+          // transition={{ duration: 1, delay: 0.2 }}
+        >
+          <motion.div className="text-base font-semibold text-white text-[clamp(2rem,3vw,6rem)]">
+            Talk to us
+          </motion.div>
 
-        {/* The sections at the bottom. TODO make a component */}
+          <motion.div className="flex justify-center gap-6 flex-wrap">
+            {socialLinks.map((link) => {
+              const IconComponent = PLATFORM_ICONS[link.platform];
+              const label = PLATFORM_LABELS[link.platform] || link.platform;
+              const description = link.description ? `${link.description}` : "";
+              return (
+                <motion.a
+                  key={link._key}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-36 h-30 flex flex-col items-center justify-center gap-2 bg-white/5 border border-white/10 rounded-2xl text-white/50 transition-all duration-300 hover:bg-gold-700/10 hover:border-gold-700/30 hover:text-gold-700 no-underline"
+                  aria-label={label}
+                  whileHover={{ scale: 1.1 }}>
+                  {IconComponent && <IconComponent className="w-8 h-8" />}
+                  <span className="text-xs text-center font-medium capitalize">{label}</span>
+                  <span className="text-xs text-center text-white/50">{description}</span>
+                </motion.a>
+              );
+            })}
+
+            {/* Email copy*/}
+            {(() => {
+              const EmailIconComponent = PLATFORM_ICONS["email" as const];
+              return (
+                <motion.button
+                  onClick={handleEmailCopy}
+                  className="w-32 h-32  flex flex-col items-center justify-center gap-2 bg-white/5 border border-white/10 rounded-2xl text-white/50 transition-all duration-300 hover:bg-gold-700/10 hover:border-gold-700/30 hover:text-gold-700"
+                  aria-label="Copy email"
+                  whileHover={{ scale: 1.1 }}>
+                  <EmailIconComponent className="w-8 h-8" />
+                  <span className="text-xs text-center font-medium capitalize">
+                    {emailCopied ? "Copied!" : "Email"}
+                  </span>
+                </motion.button>
+              );
+            })()}       
+
+
+          </motion.div>
+        </motion.div>
+
+
+
+        {/* The sections at the bottom. TODO make a component
           <div className="flex flex-col gap-6">
             <motion.a
               href={`mailto:${email}`}
@@ -244,39 +299,18 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
               </div>
             </motion.a>
           </div>
-        
+         */}
 
         
         
-        {/* Footer social media section */}
-        <motion.div
-          className="mt-12 pt-12 border-t border-white/10"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.5 }}
-        >
-          <div className="text-base text-white/50 mb-6">Follow us on social media</div>
-          <div className="flex justify-center gap-4">
-            {socialLinks.map((link) => {
-              const IconComponent = PLATFORM_ICONS[link.platform];
-              const label = PLATFORM_LABELS[link.platform] || link.platform;
-              return (
-                <a
-                  key={link._key}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-[50px] h-[50px] bg-white/50 border border-black/10 rounded-2xl flex items-center justify-center text-background/50 transition-all duration-300 hover:bg-gold-700/10 hover:border-gold-700/30 hover:text-gold-700"
-                  aria-label={label}
-                >
-                  {IconComponent ? <IconComponent className="w-5 h-5" /> : label}
-                </a>
-              );
-            })}
-          </div>
-        </motion.div>
+       
 
 
-    </RibbonAwareSection>
+
+
+    </main>
+      
   );
 }
+
+
