@@ -6,6 +6,10 @@ export const contactPageQuery = groq`
     pageSubtitle,
     email,
     location,
-    locationMapLink
+    locationMapLink,
+    bottomImage {
+      ...,
+      asset->
+    }
   }
 `

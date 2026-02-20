@@ -6,6 +6,7 @@ import { ContactPageData, SocialLink } from "@/lib/sanity/types";
 import { PLATFORM_ICONS, PLATFORM_LABELS } from "@/lib/socialPlatforms";
 import { RibbonAwareSection } from "@/components/RibbonAwareSection";
 import ContactForm from "@/components/contact/ContactForm";
+import { set } from "sanity";
 
 // Fallback data
 const defaultSocialLinks: SocialLink[] = [
@@ -29,17 +30,18 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
   // Use Sanity data or fallbacks
   const pageTitle = data?.pageTitle || "Get in Touch";
   const pageSubtitle = data?.pageSubtitle || "Have a question or want to collaborate? We'd love to hear from you.";
-  const email = data?.email || "hello@monashcoding.com";
+  const email = data?.email || "coding@monash.clubs.org";
   const location = data?.location || "Monash University, Clayton VIC";
   const locationMapLink = data?.locationMapLink || "https://maps.google.com/?q=Monash+University+Clayton";
   const socialLinks = socialLinksProp || defaultSocialLinks;
+  const image = data?.bottomImage || null;
 
   const handleEmailCopy = () => {
     navigator.clipboard.writeText(email);
     setEmailCopied(true);
-    setTimeout(() => setEmailCopied(false), 2000);
+    setTimeout(() => setEmailCopied(false), 5000); // Reset after 5 seconds
   };
-
+``
 
   // Motion variants for the heading animation
   const headingAnimations: Variants = {
@@ -140,23 +142,36 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
           {/* Form and newsletter horizontal section */}
           <div className="w-full flex flex-col gap-12 lg:flex-row my-12 px-[5vw]">
             {/* Left side - Form */}
-            <motion.div className="flex-1 bg-white rounded-4xl  overflow-y-auto" > 
+            <motion.div className="flex-2 bg-white rounded-4xl  overflow-y-auto" > 
                 <ContactForm/>
             </motion.div>
 
             {/* Right side - Newsletter*/}
             {/* TODO make sanity and fallbacks for this */}
-            <motion.div className="flex-1  bg-white rounded-4xl text-center px-12 py-8 flex flex-col justify-evenly overflow-y-auto max-h-[30vh]" >
-              <motion.h2 className="text-2xl font-bold text-gray-800">
+            <motion.div className="flex-1  bg-white rounded-4xl text-center px-12 py-8 flex flex-col justify-evenly overflow-hidden max-h-[30vh] gap-4" >
+              <motion.h2 className="text-2xl font-bold text-gray-800"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.15 }}
+              
+              >
                 Join our Newsletter!
               </motion.h2>
 
-              <motion.p className=" text-gray-600">
+              <motion.p className=" text-gray-600"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.15 }}
+              >
                 Keep up with the latest updates throughout the semester on our events and exclusive member perks!
               </motion.p>
 
               {/* Email input */}
-              <motion.div className="flex justify-center text-background">
+              <motion.div className="flex justify-center text-background"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.15 }}
+              >
                 <input 
                   type="email"
                   placeholder="Enter your email"
@@ -165,7 +180,11 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
               </motion.div>
 
               {/* Join button  temporary*/}
-              <motion.div className="flex justify-center text-background">
+              <motion.div className="flex justify-center text-background"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.15 }}
+              >
                 <motion.button 
                   className="flex justify-center w-full max-w-md px-6 py-2 bg-background text-white rounded-3xl  transition-colors duration-300"
                   whileHover={{ scale: 1.05 }}
@@ -201,9 +220,9 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-36 h-30 flex flex-col items-center justify-center gap-2 bg-white/5 border border-white/10 rounded-2xl text-white/50 transition-all duration-300 hover:bg-gold-700/10 hover:border-gold-700/30 hover:text-gold-700 no-underline"
+                  className="w-36 h-30 flex flex-col items-center justify-center gap-2 bg-white/5 border border-white/10 rounded-2xl text-white/50 transition-all  hover:bg-gold-700/10 hover:border-gold-700/30 hover:text-gold-700 no-underline"
                   aria-label={label}
-                  whileHover={{ scale: 1.1 }}>
+                  whileHover={{ scale: 1.05 }}>
                   {IconComponent && <IconComponent className="w-8 h-8" />}
                   <span className="text-xs text-center font-medium capitalize">{label}</span>
                   <span className="text-xs text-center text-white/50">{description}</span>
@@ -217,12 +236,12 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
               return (
                 <motion.button
                   onClick={handleEmailCopy}
-                  className="w-32 h-32  flex flex-col items-center justify-center gap-2 bg-white/5 border border-white/10 rounded-2xl text-white/50 transition-all duration-300 hover:bg-gold-700/10 hover:border-gold-700/30 hover:text-gold-700"
+                  className="px-5 py-2 w-50 h-30 outline-accent outline-1 flex flex-col items-center justify-center gap-2 bg-white/5 border rounded-2xl text-white/50 duration-100 hover:bg-gold-700/10 hover:border-gold-700/30 hover:text-gold-700"
                   aria-label="Copy email"
-                  whileHover={{ scale: 1.1 }}>
+                  whileHover={{ scale: 1.05 }}>
                   <EmailIconComponent className="w-8 h-8" />
-                  <span className="text-xs text-center font-medium capitalize">
-                    {emailCopied ? "Copied!" : "Email"}
+                  <span className="text-xs text-center font-medium">
+                    {emailCopied ? "Copied!" : "Email coding@monashclubs.org"}
                   </span>
                 </motion.button>
               );
@@ -231,6 +250,49 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
 
           </motion.div>
         </motion.div>
+
+        {/* Svg and image*/}
+        <div className="relative w-full mt-2"> 
+            <svg 
+            width="100%" 
+            height="auto" 
+            viewBox="0 0 1546 580" 
+            preserveAspectRatio="none"
+            display= "block"
+            className="absolute inset-0 z-10 w-full pointer-events-none"
+
+            fill="none">
+            <path 
+              d="M1460.78 164.084C1615.72 362.45 1510.76 579.5 1510.76 579.5C1031.18 579.5 259.005 577.851 74.3079 577.851C74.3079 577.851 -91.7598 409.533 74.3079 322.337C281.893 213.342 739.995 325.885 853.369 132.419C966.742 -61.047 1305.84 -34.2831 1460.78 164.084Z" 
+              stroke="#FFE330"
+              strokeWidth="5"
+
+            />
+          </svg>
+
+          {image && (
+            <div className="">
+              <img
+                src={image.asset.url}
+                alt={image.alt || "Contact page bottom image"}
+                className="w-full h-auto block relative z-0"
+              />
+            </div>
+          )}
+        </div>
+        
+        {/* <div className="relative w-full">
+          <svg className="absolute inset-0 z-10 w-full h-auto pointer-events-none" ... >
+            <path d="..." stroke="#FFE330" fill="none" />
+          </svg>
+
+          <img 
+            src={your_exported_png} 
+            className="w-full h-auto block relative z-0" 
+            alt="People in a room"
+          />
+        </div> */}
+                
 
 
 

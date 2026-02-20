@@ -87,7 +87,7 @@ export default function ContactForm() {
     <motion.form
       noValidate
       onSubmit={handleSendEmail}
-      className="p-8 rounded-3xl w-full max-w-2xl mx-auto"
+      className="p-8 rounded-3xl w-full mx-auto"
       initial={{ opacity: 0, x: -50 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.6, delay: 0.15 }}

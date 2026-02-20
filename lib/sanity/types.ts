@@ -226,6 +226,7 @@ export interface ContactPageData {
   email: string
   location: string
   locationMapLink: string
+  bottomImage: SanityImage
 }
 
 // Event types

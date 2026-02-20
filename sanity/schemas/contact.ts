@@ -39,6 +39,13 @@ export const contactPage = defineType({
       type: 'url',
       initialValue: 'https://maps.google.com/?q=Monash+University+Clayton',
     }),
+    // Image
+    defineField({
+      name: 'bottomImage',
+      title: 'Bottom Image',
+      type: 'image',
+      description: 'Image shown at the bottom of the contact page.',
+    }),
   ],
   preview: {
     prepare() {
