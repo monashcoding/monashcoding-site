@@ -110,7 +110,7 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
           {/* Form and newsletter horizontal section */}
           <div className="w-full flex flex-col gap-12 lg:flex-row my-12 px-[5vw] lg:items-center">
             {/* Left side - Form */}
-            <motion.div className="flex-2  rounded-4xl  overflow-y-auto outline-black outline-2  " > 
+            <motion.div className="flex-2  rounded-4xl  overflow-y-auto outline-black outline-2  shadow-lg shadow-accent" > 
                 <ContactForm/>
             </motion.div>
 
@@ -230,7 +230,7 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
         <div className="w-full overflow-hidden"> 
        
           {image && (
-            <div className="absolute z-10 md:mt-10">
+            <div className="z-10 md:mt-10">
               <img
                 src={image.asset.url}
                 alt={image.alt || "Contact page bottom image"}
