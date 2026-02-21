@@ -668,9 +668,6 @@ export function CommunitySection({
           className="mb-8 flex flex-wrap items-end justify-between gap-4"
         >
           <div className="space-y-3">
-            <span className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[0.65rem] font-semibold tracking-[0.15em] uppercase text-white/70">
-              Community channels
-            </span>
             <h2 className="text-[clamp(2.2rem,4.6vw,3.8rem)] font-semibold leading-[1.01] text-foreground">
               {heading}
             </h2>

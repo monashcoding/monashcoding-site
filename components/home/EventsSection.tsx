@@ -159,9 +159,6 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
       >
         <motion.div variants={itemVariants} className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div className="space-y-3">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-3 py-1 text-[0.65rem] font-semibold tracking-[0.16em] uppercase text-white/70">
-              Live updates
-            </span>
             <h2 className="text-[clamp(2.2rem,4.9vw,4rem)] font-semibold leading-[0.98] text-foreground">
               {heading}
             </h2>
