@@ -63,21 +63,16 @@ interface OWeekPageClientProps {
 
 export default function OWeekPageClient({ data }: OWeekPageClientProps) {
   const [currentPage, setCurrentPage] = useState(0);
-  const [fading, setFading] = useState(false);
   const touchStartY = useRef(0);
   const lastScrollTime = useRef(0);
   const totalPages = pageImages.length;
 
   const changePage = useCallback(
     (next: number) => {
-      if (next < 0 || next >= totalPages || next === currentPage || fading) return;
-      setFading(true);
-      setTimeout(() => {
-        setCurrentPage(next);
-        setFading(false);
-      }, 220);
+      if (next < 0 || next >= totalPages || next === currentPage) return;
+      setCurrentPage(next);
     },
-    [currentPage, totalPages, fading],
+    [currentPage, totalPages],
   );
 
   const goNext = useCallback(() => changePage(currentPage + 1), [changePage, currentPage]);
@@ -153,11 +148,11 @@ export default function OWeekPageClient({ data }: OWeekPageClientProps) {
 
       {/* Brochure page */}
       <div
-        className="flex w-full shrink-0 items-center justify-center transition-colors duration-500"
+        className="flex w-full shrink-0 items-center justify-center"
         style={{ backgroundColor: bgColor }}
       >
         <div
-          className={`relative w-full transition-opacity duration-200 ${fading ? "opacity-0" : "opacity-100"}`}
+          className="relative w-full"
           style={{
             maxWidth: "800px",
             maxHeight: "calc(100dvh - 140px)",
