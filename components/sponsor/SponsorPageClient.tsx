@@ -129,8 +129,8 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
 
   return (
     <main className="">
-      {/* SECTION 1: Zooming scroll section */}
-      <ScrollZoomHero title={pageTitle} />
+      {/* SECTION 1: Zooming scroll hero with stats */}
+      <ScrollZoomHero title={pageTitle} subtitle={pageSubtitle} stats={stats} />
 
       {/* SECTION 2: Why Sponsor MAC */}
       <div className="bg-white/90 mt-[-100vh] text-background py-24 px-8"> 
@@ -154,48 +154,6 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
         </div>
       </div>
 
-      {/* SECTION Partner with us section */}
-      <RibbonAwareSection
-        backgroundClassName="bg-background"
-        contentClassName="py-5 px-8 pb-20 text-center max-w-[1400px] mx-auto " // Negative margin to pull up over the hero
-      >
-
-        {/* H */}
-        <motion.h1
-          className="text-[clamp(3rem,6vw,5rem)] font-extrabold text-foreground mb-4"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          Our Numbers
-        </motion.h1>
-
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-8">
-          {stats.map((stat, index) => (
-            <motion.div
-              key={stat._key}
-              className="text-center p-8 bg-white/5 border border-white/10 rounded-3xl"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-            >
-              <div className="text-5xl font-extrabold text-accent mb-2">{stat.value}</div>
-              <div className="text-white/60">{stat.label}</div>
-            </motion.div>
-          ))}
-        </div>
-
-        <motion.p
-          className="text-xl text-white/60 max-w-[700px] mx-auto leading-relaxed"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-        >
-          {pageSubtitle}
-        </motion.p>
-      </RibbonAwareSection>
-      
       {/* 2025 Sponsors Section */}
       <SponsorLogosGrid title={sponsorsTitle} sponsors={sponsors} />
 

@@ -6,11 +6,15 @@ export const sponsorPage = defineType({
   title: 'Sponsor Page',
   type: 'document',
   icon: CreditCardIcon,
+  fieldsets: [
+    { name: 'hero', title: 'Hero Section', options: { collapsible: true } },
+  ],
   fields: [
     defineField({
       name: 'pageTitle',
       title: 'Page Title',
       type: 'string',
+      fieldset: 'hero',
       initialValue: 'Partner With Us',
     }),
     defineField({
@@ -18,7 +22,41 @@ export const sponsorPage = defineType({
       title: 'Page Subtitle',
       type: 'text',
       rows: 2,
+      fieldset: 'hero',
       initialValue: 'Join leading tech companies in supporting the next generation of developers. Your partnership helps us create impactful events and opportunities for students.',
+    }),
+    defineField({
+      name: 'stats',
+      title: 'Stats',
+      description: 'Key statistics displayed in the hero section',
+      type: 'array',
+      fieldset: 'hero',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'value',
+              title: 'Value',
+              description: 'e.g., "2,000+", "50+", "95%"',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'label',
+              title: 'Label',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+          preview: {
+            select: {
+              title: 'value',
+              subtitle: 'label',
+            },
+          },
+        }),
+      ],
     }),
     defineField({
       name: 'reasons',
@@ -65,38 +103,6 @@ export const sponsorPage = defineType({
       ],
     }),
 
-    defineField({
-      name: 'stats',
-      title: 'Stats',
-      description: 'Key statistics to showcase',
-      type: 'array',
-      of: [
-        defineArrayMember({
-          type: 'object',
-          fields: [
-            defineField({
-              name: 'value',
-              title: 'Value',
-              description: 'e.g., "2,000+", "50+", "95%"',
-              type: 'string',
-              validation: (Rule) => Rule.required(),
-            }),
-            defineField({
-              name: 'label',
-              title: 'Label',
-              type: 'string',
-              validation: (Rule) => Rule.required(),
-            }),
-          ],
-          preview: {
-            select: {
-              title: 'value',
-              subtitle: 'label',
-            },
-          },
-        }),
-      ],
-    }),
      defineField({
       name: 'benefits',
       title: 'Benefits',
