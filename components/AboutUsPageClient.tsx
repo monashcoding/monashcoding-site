@@ -3,9 +3,11 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Image, { ImageProps } from 'next/image'
+import { PortableText, PortableTextComponents } from '@portabletext/react'
 import { AboutUsPageData } from '@/lib/sanity/types'
 import { urlFor } from '@/sanity/lib/image'
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
+import { blocksToTextAndBoldRanges, ptBlock, toPortableTextBlocks } from '@/lib/sanity/portableText'
 
 function FadeInImage({ className, ...props }: ImageProps) {
   const [loaded, setLoaded] = useState(false)
@@ -20,11 +22,34 @@ function FadeInImage({ className, ...props }: ImageProps) {
 
 const defaultData: AboutUsPageData = {
   pageTitle: 'About MAC',
-  pageSubtitle:
-    'Monash Association of Coding (MAC) is the **largest student-run computing club** at **Monash University,** with over 1,500 current members and an online presence that extends **across the globe**.',
+  pageSubtitle: [
+    ptBlock(
+      'Monash Association of Coding (MAC) is the ',
+      ['largest student-run computing club', 'strong'],
+      ' at ',
+      ['Monash University,', 'strong'],
+      ' with over 1,500 current members and an online presence that extends ',
+      ['across the globe', 'strong'],
+      '.',
+    ),
+  ],
   missionTitle: 'Our Mission',
-  missionBody:
-    'We strive to **__upskill students__** through high-quality **events, workshops and hackathons**, spanning both technical and professional domains.\n\nThrough our impact, we aim to make coding enjoyable and accessible to all, offering students **real-world experience** and **insight into the tech industry**.',
+  missionBody: [
+    ptBlock(
+      'We strive to ',
+      ['upskill students', 'strong', 'underline'],
+      ' through high-quality ',
+      ['events, workshops and hackathons', 'strong'],
+      ', spanning both technical and professional domains.',
+    ),
+    ptBlock(
+      'Through our impact, we aim to make coding enjoyable and accessible to all, offering students ',
+      ['real-world experience', 'strong'],
+      ' and ',
+      ['insight into the tech industry', 'strong'],
+      '.',
+    ),
+  ],
   values: [
     { _key: '1', title: 'Share your success with others', description: '' },
     { _key: '2', title: 'Make it happen', description: '' },
@@ -36,48 +61,59 @@ const defaultData: AboutUsPageData = {
     {
       _key: '1',
       year: '2019',
-      summary:
-        'MAC is **founded by a group of friends** who organised mock technical interviews.',
+      summary: [ptBlock('MAC is ', ['founded by a group of friends', 'strong'], ' who organised mock technical interviews.')],
     },
     {
       _key: '2',
       year: '2020',
-      summary:
-        "Awarded **'Most Outstanding New Club'** by Monash Clubs & Societies.",
+      summary: [ptBlock("Awarded '", ["'Most Outstanding New Club'", 'strong'], "' by Monash Clubs & Societies.")],
     },
     {
       _key: '3',
       year: '2021',
-      summary:
-        "Held MAC's first hackathon with **200+ participants**.",
+      summary: [ptBlock("Held MAC's first hackathon with ", ['200+ participants', 'strong'], '.')],
     },
     {
       _key: '4',
       year: '2022',
-      summary:
-        "Launched our **new annual flagship hackathon** called 'MACathon'.",
+      summary: [ptBlock('Launched our ', ['new annual flagship hackathon', 'strong'], " called 'MACathon'.")],
     },
     {
       _key: '5',
       year: '2023',
-      summary:
-        'Hosted our biggest networking night yet with **over 175 attendees**.',
+      summary: [ptBlock('Hosted our biggest networking night yet with ', ['over 175 attendees', 'strong'], '.')],
     },
     {
       _key: '6',
       year: '2024',
-      summary:
-        "Awarded '**Outstanding Marketing Campaign**' and '**Best Club in Monash**' by Monash Clubs & Societies.",
+      summary: [ptBlock("Awarded '", ['Outstanding Marketing Campaign', 'strong'], "' and '", ['Best Club in Monash', 'strong'], "' by Monash Clubs & Societies.")],
     },
     {
       _key: '7',
       year: '2025',
-      summary:
-        "Crowned '**Most Popular Club Event**' at the Monash Awards Night for the MAC x UNIHACK Hackathon with **over 650 participants**.",
+      summary: [ptBlock("Crowned '", ['Most Popular Club Event', 'strong'], "' at the Monash Awards Night for the MAC x UNIHACK Hackathon with ", ['over 650 participants', 'strong'], '.')],
     },
   ],
-  whereAreWeNow:
-    "MAC's exponential growth has led us to become **one of Australia's __leading computing societies__.**\n\nWe unite **over 1500 enthusiastic members** and a **tight-knit committee of over 60 passionate students** in technology. We endeavour to equip our community with professional skills, industry insights and connections with ambitious individuals.\n\nThrough weekly technical events, hackathons and networking nights, totalling **2000+ attendees**, we empower our students to thrive holistically in a forever-evolving tech space.",
+  whereAreWeNow: [
+    ptBlock(
+      "MAC's exponential growth has led us to become ",
+      ["one of Australia's ", 'strong'],
+      ['leading computing societies', 'strong', 'underline'],
+      ['.', 'strong'],
+    ),
+    ptBlock(
+      'We unite ',
+      ['over 1500 enthusiastic members', 'strong'],
+      ' and a ',
+      ['tight-knit committee of over 60 passionate students', 'strong'],
+      ' in technology. We endeavour to equip our community with professional skills, industry insights and connections with ambitious individuals.',
+    ),
+    ptBlock(
+      'Through weekly technical events, hackathons and networking nights, totalling ',
+      ['2000+ attendees', 'strong'],
+      ', we empower our students to thrive holistically in a forever-evolving tech space.',
+    ),
+  ],
   stats: [
     { _key: '1', value: '1,500+', label: 'Members' },
     { _key: '2', value: '60+', label: 'Committee members' },
@@ -108,17 +144,16 @@ interface AboutUsPageClientProps {
 }
 
 /** Purple highlight with slide-over wipe animation */
-function HighlightReveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+function HighlightReveal({ children }: { children: React.ReactNode }) {
   return (
     <span className="relative inline-block">
-      {/* Purple background that slides in from left */}
       <motion.span
         className="absolute inset-x-[-4px] inset-y-[-2px] bg-blue"
         initial={{ clipPath: 'inset(0 100% 0 0)' }}
-        animate={{ clipPath: 'inset(0 0% 0 0)' }}
+        whileInView={{ clipPath: 'inset(0 0% 0 0)' }}
+        viewport={{ once: true }}
         transition={{
           duration: 0.6,
-          delay,
           ease: [0.22, 1, 0.36, 1],
         }}
       />
@@ -127,28 +162,9 @@ function HighlightReveal({ children, delay = 0 }: { children: React.ReactNode; d
   )
 }
 
-/** Render **bold** markdown segments with purple highlight + slide animation, with __underline__ support */
-function renderHighlight(text: string) {
-  const parts = text.split(/\*\*(.+?)\*\*/g)
-  let highlightIndex = 0
-  return parts.map((part, i) => {
-    if (i % 2 === 1) {
-      const delay = 0.2 + highlightIndex * 0.2
-      highlightIndex++
-      return (
-        <HighlightReveal key={i} delay={delay}>
-          {renderUnderline(part, i)}
-        </HighlightReveal>
-      )
-    }
-    return <span key={i}>{renderUnderline(part, i)}</span>
-  })
-}
-
 /** Handwritten curved underline stroke (matches the hero "MAC" underline) */
 function HandwrittenUnderline({ children }: { children: React.ReactNode }) {
   const textLen = typeof children === 'string' ? children.length : 20
-  // Shorter text = more tilt, longer text = subtler tilt
   const rotation = -(Math.min(3, Math.max(0.5, 4 - textLen * 0.12)))
 
   return (
@@ -184,61 +200,49 @@ function HandwrittenUnderline({ children }: { children: React.ReactNode }) {
   )
 }
 
-/** Parse __text__ patterns and wrap with HandwrittenUnderline */
-function renderUnderline(text: string, keyPrefix: string | number = ''): React.ReactNode[] {
-  const parts = text.split(/__(.+?)__/g)
-  if (parts.length === 1) return [text]
-  return parts.map((part, i) =>
-    i % 2 === 1 ? (
-      <HandwrittenUnderline key={`${keyPrefix}-u${i}`}>{part}</HandwrittenUnderline>
-    ) : (
-      <span key={`${keyPrefix}-t${i}`}>{part}</span>
-    )
-  )
+/** Portable Text components: strong = purple highlight wipe, underline = handwritten SVG */
+const aboutUsHighlightComponents: PortableTextComponents = {
+  marks: {
+    strong: ({ children }) => <HighlightReveal>{children}</HighlightReveal>,
+    underline: ({ children }) => <HandwrittenUnderline>{children}</HandwrittenUnderline>,
+    em: ({ children }) => <em>{children}</em>,
+  },
+  block: {
+    normal: ({ children }) => <p>{children}</p>,
+  },
 }
 
-/** Render **bold** markdown segments, with __underline__ support */
-function renderBold(text: string) {
-  const parts = text.split(/\*\*(.+?)\*\*/g)
-  return parts.map((part, i) =>
-    i % 2 === 1 ? (
-      <strong key={i} className="font-bold text-white">
-        {renderUnderline(part, i)}
-      </strong>
-    ) : (
-      <span key={i}>{renderUnderline(part, i)}</span>
-    )
-  )
+/** Portable Text components: strong = plain bold, underline = handwritten SVG */
+const aboutUsBoldComponents: PortableTextComponents = {
+  marks: {
+    strong: ({ children }) => <strong className="font-bold text-white">{children}</strong>,
+    underline: ({ children }) => <HandwrittenUnderline>{children}</HandwrittenUnderline>,
+    em: ({ children }) => <em>{children}</em>,
+  },
+  block: {
+    normal: ({ children }) => <p>{children}</p>,
+  },
 }
 
 /** Fast typewriter reveal - each character appears sequentially.
- *  Supports **bold** markdown which renders with a blue highlight. */
+ *  Bold ranges are provided directly via the boldRanges prop. */
 function TypewriterText({
   text,
+  boldRanges: externalBoldRanges,
   charDelay = 0.018,
   startDelay = 0,
   showCursor = false,
   highlightBold = true,
 }: {
   text: string
+  boldRanges?: [number, number][]
   charDelay?: number
   startDelay?: number
   showCursor?: boolean
   highlightBold?: boolean
 }) {
-  // Parse **bold** ranges, stripping markers from rendered text
-  const boldRanges: [number, number][] = []
-  let renderedText = ''
-  for (const part of text.split(/(\*\*.+?\*\*)/g)) {
-    if (part.startsWith('**') && part.endsWith('**')) {
-      const content = part.slice(2, -2)
-      boldRanges.push([renderedText.length, renderedText.length + content.length])
-      renderedText += content
-    } else {
-      renderedText += part
-    }
-  }
-  const isBold = (i: number) => boldRanges.some(([s, e]) => i >= s && i < e)
+  const renderedText = text
+  const isBold = (i: number) => (externalBoldRanges ?? []).some(([s, e]) => i >= s && i < e)
 
   const totalTypingTime = renderedText.length * charDelay
   const blinkDuration = 0.8
@@ -325,7 +329,19 @@ function TypewriterText({
 }
 
 export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
-  const page = data ?? defaultData
+  const raw = data ?? defaultData
+
+  // Normalize legacy string fields to Portable Text blocks
+  const page = {
+    ...raw,
+    pageSubtitle: toPortableTextBlocks(raw.pageSubtitle),
+    missionBody: toPortableTextBlocks(raw.missionBody),
+    whereAreWeNow: toPortableTextBlocks(raw.whereAreWeNow),
+    journey: raw.journey.map((j) => ({
+      ...j,
+      summary: toPortableTextBlocks(j.summary),
+    })),
+  }
 
   // Split journey: all except last go left, last goes right
   const leftYears = page.journey.slice(0, -1)
@@ -395,12 +411,12 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
               </span>
             </motion.h1>
 
-            <motion.p
+            <motion.div
               variants={itemVariants}
               className="mx-auto mt-6 max-w-[732px] text-[clamp(1rem,2.5vw,24px)] leading-normal text-white"
             >
-              {renderHighlight(page.pageSubtitle)}
-            </motion.p>
+              <PortableText value={page.pageSubtitle} components={aboutUsHighlightComponents} />
+            </motion.div>
           </motion.div>
         </div>
       </RibbonAwareSection>
@@ -427,15 +443,8 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
               <h2 className="text-[clamp(2.5rem,5vw,4rem)] font-semibold text-accent">
                 {page.missionTitle}
               </h2>
-              <div className="mt-6 space-y-6">
-                {page.missionBody.split('\n\n').map((paragraph, i) => (
-                  <p
-                    key={i}
-                    className="text-[clamp(1rem,2.5vw,24px)] leading-normal text-white"
-                  >
-                    {renderBold(paragraph)}
-                  </p>
-                ))}
+              <div className="mt-6 space-y-6 text-[clamp(1rem,2.5vw,24px)] leading-normal text-white">
+                <PortableText value={page.missionBody} components={aboutUsBoldComponents} />
               </div>
             </motion.div>
 
@@ -572,38 +581,48 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
             <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr]">
               {/* Left column - year milestones */}
               <div className="space-y-0">
-                {leftYears.map((j, index) => (
-                  <motion.div
-                    key={j._key}
-                    className="py-4"
-                    variants={{ hidden: {}, show: {} }}
-                  >
-                    <h3 className="text-[clamp(2rem,3.5vw,3rem)] font-semibold leading-none text-foreground">
-                      <TypewriterText text={j.year} startDelay={index * 0.1} />
-                    </h3>
-                    <p className="mt-2 text-[clamp(1rem,2vw,20px)] leading-normal text-[#9a9a9a]">
-                      <TypewriterText text={`> ${j.summary}`} startDelay={index * 0.1 + 0.15} showCursor highlightBold={false} />
-                    </p>
-                  </motion.div>
-                ))}
+                {leftYears.map((j, index) => {
+                  const { text: summaryText, boldRanges } = blocksToTextAndBoldRanges(j.summary)
+                  const prefixed = `> ${summaryText}`
+                  const offsetRanges = boldRanges.map(([s, e]) => [s + 2, e + 2] as [number, number])
+                  return (
+                    <motion.div
+                      key={j._key}
+                      className="py-4"
+                      variants={{ hidden: {}, show: {} }}
+                    >
+                      <h3 className="text-[clamp(2rem,3.5vw,3rem)] font-semibold leading-none text-foreground">
+                        <TypewriterText text={j.year} startDelay={index * 0.1} />
+                      </h3>
+                      <p className="mt-2 text-[clamp(1rem,2vw,20px)] leading-normal text-[#9a9a9a]">
+                        <TypewriterText text={prefixed} boldRanges={offsetRanges} startDelay={index * 0.1 + 0.15} showCursor highlightBold={false} />
+                      </p>
+                    </motion.div>
+                  )
+                })}
               </div>
 
               {/* Right column - latest year + image */}
               <div className="space-y-6">
-                {lastYear && (
-                  <motion.div
-                    initial="hidden"
-                    whileInView="show"
-                    viewport={{ once: true, amount: 0.8 }}
-                  >
-                    <h3 className="text-[clamp(2rem,3.5vw,3rem)] font-semibold leading-none text-foreground">
-                      <TypewriterText text={lastYear.year} />
-                    </h3>
-                    <p className="mt-2 text-[clamp(1rem,2vw,20px)] leading-normal text-[#9a9a9a]">
-                      <TypewriterText text={`> ${lastYear.summary}`} startDelay={0.15} showCursor highlightBold={false} />
-                    </p>
-                  </motion.div>
-                )}
+                {lastYear && (() => {
+                  const { text: lastText, boldRanges: lastBold } = blocksToTextAndBoldRanges(lastYear.summary)
+                  const prefixed = `> ${lastText}`
+                  const offsetRanges = lastBold.map(([s, e]) => [s + 2, e + 2] as [number, number])
+                  return (
+                    <motion.div
+                      initial="hidden"
+                      whileInView="show"
+                      viewport={{ once: true, amount: 0.8 }}
+                    >
+                      <h3 className="text-[clamp(2rem,3.5vw,3rem)] font-semibold leading-none text-foreground">
+                        <TypewriterText text={lastYear.year} />
+                      </h3>
+                      <p className="mt-2 text-[clamp(1rem,2vw,20px)] leading-normal text-[#9a9a9a]">
+                        <TypewriterText text={prefixed} boldRanges={offsetRanges} startDelay={0.15} showCursor highlightBold={false} />
+                      </p>
+                    </motion.div>
+                  )
+                })()}
 
                 {/* Journey image */}
                 {page.journeyImage?.asset?.url && (
@@ -627,7 +646,7 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
             </div>
 
             {/* Where are we now? */}
-            {page.whereAreWeNow && (
+            {page.whereAreWeNow && page.whereAreWeNow.length > 0 && (
               <motion.div
                 variants={itemVariants}
                 className="mt-16 rounded-[2.5rem] bg-accent/20 px-8 py-10 md:px-14 md:py-12"
@@ -635,15 +654,8 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
                 <h3 className="text-[clamp(1.6rem,3vw,2rem)] font-semibold text-accent">
                   Where are we now?
                 </h3>
-                <div className="mt-4 space-y-4">
-                  {page.whereAreWeNow.split('\n\n').map((paragraph, i) => (
-                    <p
-                      key={i}
-                      className="text-[clamp(1rem,2vw,20px)] leading-normal text-white"
-                    >
-                      {renderHighlight(paragraph)}
-                    </p>
-                  ))}
+                <div className="mt-4 space-y-4 text-[clamp(1rem,2vw,20px)] leading-normal text-white">
+                  <PortableText value={page.whereAreWeNow} components={aboutUsHighlightComponents} />
                 </div>
               </motion.div>
             )}

@@ -378,20 +378,20 @@ export interface AboutUsStat {
 export interface AboutUsJourneyYear {
   _key: string
   year: string
-  summary: string
+  summary: string | PortableTextBlock[]
 }
 
 export interface AboutUsPageData {
   pageTitle: string
-  pageSubtitle: string
+  pageSubtitle: string | PortableTextBlock[]
   heroImage?: SanityImage
   missionTitle: string
-  missionBody: string
+  missionBody: string | PortableTextBlock[]
   missionImage?: SanityImage
   values: AboutUsValue[]
   journey: AboutUsJourneyYear[]
   journeyImage?: SanityImage
-  whereAreWeNow: string
+  whereAreWeNow: string | PortableTextBlock[]
   stats: AboutUsStat[]
 }
 
