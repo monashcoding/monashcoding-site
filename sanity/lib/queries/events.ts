@@ -15,7 +15,7 @@ export const upcomingEventsQuery = groq`
     date,
     endDate,
     location,
-    links[] { _key, label, url },
+    links[] { _key, label, linkType, url },
     tag,
     isPinned,
     hideDate
@@ -37,7 +37,7 @@ export const eventBySlugQuery = groq`
     date,
     endDate,
     location,
-    links[] { _key, label, url },
+    links[] { _key, label, linkType, url },
     tag,
     isPinned,
     hideDate,

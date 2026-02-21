@@ -242,7 +242,8 @@ export type EventTag = 'event' | 'hackathon' | 'social' | 'recruitment'
 export interface EventLink {
   _key: string
   label: string
-  url: string
+  linkType: 'url' | 'emailReminder'
+  url?: string
 }
 
 export interface EventDocument {
