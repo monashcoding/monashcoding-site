@@ -71,12 +71,18 @@ export default async function Home() {
   const communitySection = homepageData?.sections?.find(
     (s) => s._type === 'communitySection'
   )
-  const instagramUrls =
+  const reelEntries =
     communitySection && 'instagramReels' in communitySection
-      ? (communitySection.instagramReels ?? []).map((item) => item.url)
+      ? (communitySection.instagramReels ?? [])
       : []
-  const instagramReels =
+  const instagramUrls = reelEntries.map((item) => item.url)
+  const fetchedReels =
     instagramUrls.length > 0 ? await fetchInstagramReels(instagramUrls) : []
+  // Merge the pinned flag from Sanity into the fetched reel data
+  const instagramReels = fetchedReels.map((reel) => {
+    const entry = reelEntries.find((e) => e.url === reel.url)
+    return { ...reel, pinned: entry?.pinned ?? false }
+  })
 
   return (
     <main className="bg-background">
