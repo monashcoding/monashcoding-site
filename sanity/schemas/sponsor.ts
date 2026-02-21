@@ -11,6 +11,22 @@ export const sponsorPage = defineType({
   ],
   fields: [
     defineField({
+      name: 'heroImage',
+      title: 'Hero Background Image',
+      type: 'image',
+      fieldset: 'hero',
+      options: {
+        hotspot: true,
+      },
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alt Text',
+          type: 'string',
+        }),
+      ],
+    }),
+    defineField({
       name: 'pageTitle',
       title: 'Page Title',
       type: 'string',

@@ -6,6 +6,7 @@ import { SponsorPageData, Stat, SponsorTier, Benefit } from "@/lib/sanity/types"
 import { RibbonAwareSection } from "@/components/RibbonAwareSection";
 import { SponsorLogosGrid } from "@/components/sponsor/SponsorLogosGrid";
 import ScrollZoomHero  from "@/components/sponsor/SponsorHeroSectionTop";
+import { urlFor } from "@/sanity/lib/image";
 
 // Fallback data
 const defaultStats: Stat[] = [
@@ -130,7 +131,13 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
   return (
     <main className="">
       {/* SECTION 1: Zooming scroll hero with stats */}
-      <ScrollZoomHero title={pageTitle} subtitle={pageSubtitle} stats={stats} />
+      <ScrollZoomHero
+        title={pageTitle}
+        subtitle={pageSubtitle}
+        stats={stats}
+        heroImageUrl={data?.heroImage ? urlFor(data.heroImage).width(2072).quality(80).url() : undefined}
+        heroImageAlt={data?.heroImage?.alt}
+      />
 
       {/* SECTION 2: Why Sponsor MAC */}
       <div className="bg-white/90 mt-[-100vh] text-background py-24 px-8"> 

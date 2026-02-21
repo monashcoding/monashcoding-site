@@ -8,12 +8,16 @@ interface ScrollZoomHeroProps {
   title?: string;
   subtitle?: string;
   stats?: Stat[];
+  heroImageUrl?: string;
+  heroImageAlt?: string;
 }
 
 export default function ScrollZoomHero({
   title = "Partner with Us",
   subtitle,
   stats = [],
+  heroImageUrl,
+  heroImageAlt = "Hero Background",
 }: ScrollZoomHeroProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -37,8 +41,8 @@ export default function ScrollZoomHero({
           className="absolute inset-0 w-full h-full"
         >
           <img
-            src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop"
-            alt="Hero Background"
+            src={heroImageUrl || "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop"}
+            alt={heroImageAlt}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-black/30" />

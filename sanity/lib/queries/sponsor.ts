@@ -2,6 +2,12 @@ import { groq } from 'next-sanity'
 
 export const sponsorPageQuery = groq`
   *[_type == "sponsorPage"][0] {
+    heroImage {
+      asset->,
+      alt,
+      hotspot,
+      crop
+    },
     pageTitle,
     pageSubtitle,
     reasons[] {
