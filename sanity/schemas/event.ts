@@ -61,11 +61,34 @@ export const event = defineType({
       type: 'string',
     }),
     defineField({
-      name: 'signupLink',
-      title: 'Signup / RSVP Link',
-      type: 'url',
-      validation: (Rule) =>
-        Rule.uri({ scheme: ['http', 'https'], allowRelative: false }),
+      name: 'links',
+      title: 'Action Links',
+      description: 'Buttons shown on the event page (e.g. Sign Up, Learn More)',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'eventLink',
+          fields: [
+            defineField({
+              name: 'label',
+              title: 'Button Label',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'url',
+              title: 'URL',
+              type: 'url',
+              validation: (Rule) =>
+                Rule.required().uri({ scheme: ['http', 'https'], allowRelative: true }),
+            }),
+          ],
+          preview: {
+            select: { title: 'label', subtitle: 'url' },
+          },
+        }),
+      ],
     }),
     defineField({
       name: 'tag',
@@ -87,6 +110,13 @@ export const event = defineType({
       title: 'Pinned / Featured',
       description:
         'Pinned events appear larger and more prominent on the homepage',
+      type: 'boolean',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'hideDate',
+      title: 'Hide Date',
+      description: 'Hide the date from displaying on the event card and page',
       type: 'boolean',
       initialValue: false,
     }),

@@ -232,6 +232,12 @@ export interface ContactPageData {
 // Event types
 export type EventTag = 'event' | 'hackathon' | 'social' | 'recruitment'
 
+export interface EventLink {
+  _key: string
+  label: string
+  url: string
+}
+
 export interface EventDocument {
   _id: string
   title: string
@@ -241,9 +247,10 @@ export interface EventDocument {
   date: string
   endDate?: string
   location?: string
-  signupLink?: string
+  links?: EventLink[]
   tag: EventTag
   isPinned: boolean
+  hideDate?: boolean
   body?: PortableTextBlock[]
 }
 

@@ -15,9 +15,10 @@ export const upcomingEventsQuery = groq`
     date,
     endDate,
     location,
-    signupLink,
+    links[] { _key, label, url },
     tag,
-    isPinned
+    isPinned,
+    hideDate
   }
 `
 
@@ -36,9 +37,10 @@ export const eventBySlugQuery = groq`
     date,
     endDate,
     location,
-    signupLink,
+    links[] { _key, label, url },
     tag,
     isPinned,
+    hideDate,
     body[] {
       ...,
       _type == "image" => {
