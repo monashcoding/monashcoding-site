@@ -207,7 +207,7 @@ export default function CommitteePageClient({
       >
         {/* Filter Tabs */}
           <div className="relative mx-auto mb-12 flex justify-center">
-            <div className="inline-flex flex-wrap justify-center gap-2 rounded-2xl bg-[#252525] p-3">
+            <div className="inline-flex flex-wrap justify-center gap-2 rounded-2xl bg-[#1e1e1e] p-3">
               <button
                 onClick={() => handleTabClick('all')}
                 className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 ${
@@ -255,6 +255,7 @@ export default function CommitteePageClient({
                   className="grid gap-6"
                   style={{
                     gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                    gridAutoRows: '1fr',
                   }}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -264,7 +265,7 @@ export default function CommitteePageClient({
                   {Array.from({ length: 8 }).map((_, i) => (
                     <div
                       key={i}
-                      className="animate-pulse overflow-hidden rounded-2xl border border-white/10 bg-card"
+                      className="flex flex-col animate-pulse overflow-hidden rounded-2xl bg-card"
                     >
                       <div className="aspect-square bg-white/5" />
                       <div className="space-y-2 p-4">
@@ -288,13 +289,14 @@ export default function CommitteePageClient({
                       className="grid gap-6"
                       style={{
                         gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                        gridAutoRows: '1fr',
                       }}
                     >
                       {displayedMembers.map((member) => (
                         <div
                           key={member._id}
                           onClick={() => setSelectedMember(member)}
-                          className="group cursor-pointer overflow-hidden rounded-2xl bg-card border border-white/10 transition-colors duration-200"
+                          className="group flex flex-col cursor-pointer overflow-hidden rounded-2xl bg-card transition-colors duration-200"
                         >
                           {/* Photo */}
                           <div className="relative aspect-square overflow-hidden">
@@ -318,7 +320,7 @@ export default function CommitteePageClient({
                             )}
                           </div>
                           {/* Info */}
-                          <div className="p-4">
+                          <div className="flex-1 rounded-b-2xl bg-[#1e1e1e] p-4">
                             <h3 className="text-lg font-semibold text-foreground">{member.name}</h3>
                             <p className="text-sm text-[#d4a900]">{member.role}</p>
                             <p className="mt-1 text-xs text-foreground/50">
@@ -335,6 +337,7 @@ export default function CommitteePageClient({
                         className="grid gap-6"
                         style={{
                           gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                          gridAutoRows: '1fr',
                         }}
                       >
                         {displayedMembers.map((member) => (
@@ -345,7 +348,7 @@ export default function CommitteePageClient({
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.25, ease: 'easeOut' }}
                             onClick={() => setSelectedMember(member)}
-                            className="group cursor-pointer overflow-hidden rounded-2xl bg-card border border-white/10 transition-all duration-300 hover:-translate-y-1"
+                            className="group flex flex-col cursor-pointer overflow-hidden rounded-2xl bg-card transition-all duration-300 hover:-translate-y-1"
                           >
                             {/* Photo */}
                             <div className="relative aspect-square overflow-hidden">
@@ -368,7 +371,7 @@ export default function CommitteePageClient({
                               )}
                             </div>
                             {/* Info */}
-                            <div className="p-4">
+                            <div className="flex-1 rounded-b-2xl bg-[#1e1e1e] p-4">
                               <h3 className="text-lg font-semibold text-foreground">{member.name}</h3>
                               <p className="text-sm text-[#d4a900]">{member.role}</p>
                               <p className="mt-1 text-xs text-foreground/50">
