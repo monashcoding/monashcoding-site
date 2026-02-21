@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { OWeekPageData } from "@/lib/sanity/types";
 
-// ── Page data (2026 pamphlet) ────────────────────────────────────────
+// Page data (2026 pamphlet)
 const pageImages = [
   { src: "/oweek/page-1-cover.webp", alt: "Cover – Welcome to 2026 MAC!", w: 1600, h: 2263 },
   { src: "/oweek/page-2-about.webp", alt: "About Us – Monash Association of Coding", w: 1600, h: 2263 },
@@ -46,7 +46,7 @@ const qrOverlays: Record<number, { top: string; left: string; width: string; hei
   ],
 };
 
-// ── Main Component ───────────────────────────────────────────────────
+// Main Component
 interface OWeekPageClientProps {
   data: OWeekPageData | null;
 }

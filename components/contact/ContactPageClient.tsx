@@ -235,16 +235,27 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
           </motion.div>
         </motion.div>
 
-        {/* Svg and image*/}
-        <div className="w-full overflow-hidden"> 
-       
+        {/* Bottom image - clipped to variant-3 blob */}
+        <div className="w-full -mb-24">
           {image && (
-            <div className="z-10 md:mt-10">
-              <img
-                src={image.asset.url}
-                alt={image.alt || "Contact page bottom image"}
-                className="w-full h-auto block"
-              />
+            <div className="relative aspect-1440/580 w-full md:mt-10">
+              <svg className="absolute" width="0" height="0">
+                <defs>
+                  <clipPath id="blob-contact" clipPathUnits="objectBoundingBox">
+                    <path transform={`scale(${1/1440}, ${1/580})`} d="M1391.28 164.084C1546.22 362.45 1441.26 579.5 1441.26 579.5C961.682 579.5 189.505 577.851 4.80788 577.851C4.80788 577.851 -161.26 409.533 4.80788 322.337C212.393 213.342 670.495 325.885 783.869 132.419C897.242 -61.047 1236.34 -34.2831 1391.28 164.084Z" />
+                  </clipPath>
+                </defs>
+              </svg>
+              <div className="absolute inset-0" style={{ clipPath: 'url(#blob-contact)' }}>
+                <img
+                  src={image.asset.url}
+                  alt={image.alt || "Contact page bottom image"}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1440 580" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1391.28 164.084C1546.22 362.45 1441.26 579.5 1441.26 579.5C961.682 579.5 189.505 577.851 4.80788 577.851C4.80788 577.851 -161.26 409.533 4.80788 322.337C212.393 213.342 670.495 325.885 783.869 132.419C897.242 -61.047 1236.34 -34.2831 1391.28 164.084Z" stroke="yellow" vectorEffect="non-scaling-stroke" strokeWidth="2" />
+              </svg>
             </div>
           )}
         </div>

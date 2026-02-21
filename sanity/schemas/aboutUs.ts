@@ -1,5 +1,9 @@
 import { defineType, defineField, defineArrayMember } from 'sanity'
-import { UsersIcon } from '@sanity/icons'
+import { UsersIcon, HighlightIcon } from '@sanity/icons'
+import { type PropsWithChildren, createElement } from 'react'
+
+const HighlightDecorator = ({ children }: PropsWithChildren) =>
+  createElement('span', { style: { backgroundColor: '#f5e642', color: '#000000', fontWeight: 'bold', padding: '0 2px' } }, children)
 
 export const aboutUsPage = defineType({
   name: 'aboutUsPage',
@@ -16,10 +20,29 @@ export const aboutUsPage = defineType({
     defineField({
       name: 'pageSubtitle',
       title: 'Page Subtitle / Intro',
-      type: 'text',
-      rows: 4,
-      initialValue:
-        'Monash Association of Coding (MAC) is the largest student-run computing club at Monash University, with over 1,500 current members and an online presence that extends across the globe.',
+      type: 'array',
+      of: [
+        {
+          type: 'block',
+          styles: [{ title: 'Normal', value: 'normal' }],
+          lists: [],
+          marks: {
+            decorators: [
+              { title: 'Highlight', value: 'highlight', icon: HighlightIcon, component: HighlightDecorator },
+              { title: 'Strong', value: 'strong' },
+              { title: 'Emphasis', value: 'em' },
+              { title: 'Underline', value: 'underline' },
+            ],
+            annotations: [],
+          },
+        },
+      ],
+    }),
+    defineField({
+      name: 'heroImage',
+      title: 'Hero Background Image',
+      type: 'image',
+      options: { hotspot: true },
     }),
     defineField({
       name: 'missionTitle',
@@ -30,10 +53,29 @@ export const aboutUsPage = defineType({
     defineField({
       name: 'missionBody',
       title: 'Mission Body',
-      type: 'text',
-      rows: 6,
-      initialValue:
-        'We strive to upskill students through high-quality events, workshops and hackathons, spanning both technical and professional domains.\n\nThrough our impact, we aim to make coding enjoyable and accessible to all, offering students real-world experience and insight into the tech industry.',
+      type: 'array',
+      of: [
+        {
+          type: 'block',
+          styles: [{ title: 'Normal', value: 'normal' }],
+          lists: [],
+          marks: {
+            decorators: [
+              { title: 'Highlight', value: 'highlight', icon: HighlightIcon, component: HighlightDecorator },
+              { title: 'Strong', value: 'strong' },
+              { title: 'Emphasis', value: 'em' },
+              { title: 'Underline', value: 'underline' },
+            ],
+            annotations: [],
+          },
+        },
+      ],
+    }),
+    defineField({
+      name: 'missionImage',
+      title: 'Mission Section Image',
+      type: 'image',
+      options: { hotspot: true },
     }),
     defineField({
       name: 'values',
@@ -83,8 +125,22 @@ export const aboutUsPage = defineType({
             defineField({
               name: 'summary',
               title: 'Summary',
-              type: 'text',
-              rows: 4,
+              type: 'array',
+              of: [
+                {
+                  type: 'block',
+                  styles: [{ title: 'Normal', value: 'normal' }],
+                  lists: [],
+                  marks: {
+                    decorators: [
+                      { title: 'Highlight', value: 'highlight', icon: HighlightIcon, component: HighlightDecorator },
+                      { title: 'Strong', value: 'strong' },
+                      { title: 'Emphasis', value: 'em' },
+                    ],
+                    annotations: [],
+                  },
+                },
+              ],
             }),
           ],
           preview: {
@@ -94,12 +150,31 @@ export const aboutUsPage = defineType({
       ],
     }),
     defineField({
+      name: 'journeyImage',
+      title: 'Journey Section Image',
+      type: 'image',
+      options: { hotspot: true },
+    }),
+    defineField({
       name: 'whereAreWeNow',
       title: 'Where Are We Now?',
-      type: 'text',
-      rows: 6,
-      initialValue:
-        "MAC's exponential growth has led us to become one of Australia's leading computing societies.\n\nWe unite over 1500 enthusiastic members and a tight-knit committee of over 60 passionate students in technology. We endeavour to equip our community with professional skills, industry insights and connections with ambitious individuals.\n\nThrough weekly technical events, hackathons and networking nights, totalling 2000+ attendees, we empower our students to thrive holistically in a forever-evolving tech space.",
+      type: 'array',
+      of: [
+        {
+          type: 'block',
+          styles: [{ title: 'Normal', value: 'normal' }],
+          lists: [],
+          marks: {
+            decorators: [
+              { title: 'Highlight', value: 'highlight', icon: HighlightIcon, component: HighlightDecorator },
+              { title: 'Strong', value: 'strong' },
+              { title: 'Emphasis', value: 'em' },
+              { title: 'Underline', value: 'underline' },
+            ],
+            annotations: [],
+          },
+        },
+      ],
     }),
     defineField({
       name: 'stats',
