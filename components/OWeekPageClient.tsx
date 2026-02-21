@@ -38,13 +38,13 @@ const pageBgColors = [
 // Page 8 (index 7): 4 QR codes for socials
 const qrOverlays: Record<number, { top: string; left: string; width: string; height: string; url: string; label: string }[]> = {
   2: [
-    { top: "69.5%", left: "65.3%", width: "25%", height: "18%", url: "https://clubs.msa.monash.edu/organisation/7489/", label: "Join" },
+    { top: "69.5%", left: "64.8%", width: "26%", height: "18%", url: "https://clubs.msa.monash.edu/organisation/7489/", label: "Join" },
   ],
   7: [
-    { top: "76.5%", left: "9.9%", width: "16.2%", height: "11.8%", url: "https://instagram.com/monashcoding", label: "Instagram" },
-    { top: "76.5%", left: "31%", width: "16.2%", height: "11.8%", url: "https://facebook.com/monashcoding", label: "Facebook" },
-    { top: "76.5%", left: "52.5%", width: "16.2%", height: "11.8%", url: "https://discord.gg/2zB6ydCkA5", label: "Discord" },
-    { top: "76.5%", left: "74%", width: "16.2%", height: "11.8%", url: "https://linkedin.com/company/monashcoding", label: "LinkedIn" },
+    { top: "76.5%", left: "9%", width: "18%", height: "11.8%", url: "https://instagram.com/monashcoding", label: "Instagram" },
+    { top: "76.5%", left: "30.5%", width: "18%", height: "11.8%", url: "https://facebook.com/monashcoding", label: "Facebook" },
+    { top: "76.5%", left: "52%", width: "18%", height: "11.8%", url: "https://discord.gg/2zB6ydCkA5", label: "Discord" },
+    { top: "76.5%", left: "73.5%", width: "18%", height: "11.8%", url: "https://linkedin.com/company/monashcoding", label: "LinkedIn" },
   ],
 };
 
@@ -76,7 +76,7 @@ export default function OWeekPageClient({ data }: OWeekPageClientProps) {
             <div
               className="pointer-events-none absolute bottom-0 left-0 right-0 h-[14%]"
               style={{
-                background: `linear-gradient(to bottom, transparent 0%, ${pageBgColors[idx + 1]}10 25%, ${pageBgColors[idx + 1]}50 50%, ${pageBgColors[idx + 1]}BB 75%, ${pageBgColors[idx + 1]} 100%)`,
+                background: `linear-gradient(to bottom, transparent 0%, ${pageBgColors[idx + 1]}08 25%, ${pageBgColors[idx + 1]}30 50%,   ${pageBgColors[idx + 1]}80 75%, ${pageBgColors[idx + 1]} 100%)`,
               }}
             />
           )}
@@ -86,7 +86,7 @@ export default function OWeekPageClient({ data }: OWeekPageClientProps) {
             <div
               className="pointer-events-none absolute left-0 right-0 top-0 h-[10%]"
               style={{
-                background: `linear-gradient(to bottom, ${pageBgColors[idx]} 0%, ${pageBgColors[idx]}BB 30%, ${pageBgColors[idx]}50 55%, ${pageBgColors[idx]}10 80%, transparent 100%)`,
+                background: `linear-gradient(to bottom, ${pageBgColors[idx]} 0%, ${pageBgColors[idx]}80 30%, ${pageBgColors[idx]}30 55%, ${pageBgColors[idx]}08 80%, transparent 100%)`,
               }}
             />
           )}
@@ -106,7 +106,7 @@ export default function OWeekPageClient({ data }: OWeekPageClientProps) {
                 height: overlay.height,
               }}
             >
-              <span className="px-2 text-center text-sm font-bold leading-tight text-background">
+               <span className="px-2 text-center text-xs font-bold leading-tight text-background">
                 {overlay.label}
                 <svg className="ml-1 -mt-0.5 inline-block h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
