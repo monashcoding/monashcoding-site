@@ -335,10 +335,6 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
                           fill
                           className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
                         />
-                        <span
-                          aria-hidden
-                          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100 bg-[linear-gradient(155deg,rgba(87,87,210,0.25)_0%,rgba(87,87,210,0.08)_45%,transparent_100%)]"
-                        />
                       </div>
                     ) : (
                       <div className="h-[200px] w-[200px] bg-white/5 md:h-[294px] md:w-[294px]" />
@@ -366,10 +362,6 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
                             alt={value.title}
                             fill
                             className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
-                          />
-                          <span
-                            aria-hidden
-                            className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100 bg-[linear-gradient(155deg,rgba(87,87,210,0.25)_0%,rgba(87,87,210,0.08)_45%,transparent_100%)]"
                           />
                         </div>
                       ) : (
