@@ -28,9 +28,9 @@ export default function ScrollZoomHero({ title = "Partner with Us" }: ScrollZoom
   const textOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   return (
-    <div ref={containerRef} className="relative h-[150vh]">
-      
-      <div className="absolute inset-0 h-screen overflow-hidden">
+    <div ref={containerRef} className="relative h-[200vh]">
+
+      <div className="sticky top-0 h-screen overflow-hidden">
         
         {/* Background Image: No opacity prop here anymore */}
         <motion.div

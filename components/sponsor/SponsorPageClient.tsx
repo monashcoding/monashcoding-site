@@ -55,6 +55,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
   const stats = data?.stats || defaultStats;
   const benefits = data?.benefits || defaultBenefits;
   const pageTitle = data?.pageTitle || "Partner With Us";
+  const reasons = data?.reasons || [];
   const pageSubtitle = data?.pageSubtitle || "Join leading tech companies in supporting the next generation of developers. Your partnership helps us create impactful events and opportunities for students.";
   const benefitsTitle = data?.benefitsTitle || "Why Partner With MAC?";
   const sponsorsTitle = data?.sponsorsTitle || "Our Sponsors";
@@ -91,7 +92,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
     const response = await fetch("/api/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
+      body: JSON.stringify({ ...formData, type: 'sponsor' }),
     });
 
     if (!response.ok) {
@@ -127,14 +128,36 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
 
 
   return (
-    <main className="min-h-screen">
-      {/* Zooming scroll section */}
+    <main className="">
+      {/* SECTION 1: Zooming scroll section */}
       <ScrollZoomHero title={pageTitle} />
 
-      {/* Partner with us section */}
+      {/* SECTION 2: Why Sponsor MAC */}
+      <div className="bg-white/90 mt-[-100vh] text-background py-24 px-8"> 
+        <div className="w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12"> 
+        
+          <div className="flex flex-col justify-center">
+            <h2 className="text-4xl font-bold mb-6">Why Sponsor MAC?</h2>
+            <p className="text-lg">Partner with us to reach talented students.</p>
+          </div>
+
+          <div className="flex flex-col justify-center">
+            <div className="space-y-4">
+              {reasons.map((reason) => (
+                <div key={reason._key} className="p-6 bg-background rounded-2xl">
+                  <h3 className="text-xl text-white font-semibold mb-2">{reason.title}</h3>
+                  <p className="text-white">{reason.description}</p>
+                </div>
+              ))} 
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* SECTION Partner with us section */}
       <RibbonAwareSection
         backgroundClassName="bg-background"
-        contentClassName="py-5 px-8 pb-24 text-center max-w-[1400px] mx-auto mt-[-40vh]" // Negative margin to pull up over the hero
+        contentClassName="py-5 px-8 pb-20 text-center max-w-[1400px] mx-auto " // Negative margin to pull up over the hero
       >
 
         {/* H */}
@@ -176,13 +199,6 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
       {/* 2025 Sponsors Section */}
       <SponsorLogosGrid title={sponsorsTitle} sponsors={sponsors} />
 
-      {/* Stats Section */}
-      {/* <RibbonAwareSection
-        backgroundClassName="bg-accent/5"
-        contentClassName="py-12 px-8 max-w-[1400px] mx-auto"
-      >
-        
-      </RibbonAwareSection> */}
 
       {/* Benefits Section/ Why partner with us */}
       <RibbonAwareSection

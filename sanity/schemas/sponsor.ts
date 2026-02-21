@@ -21,6 +21,51 @@ export const sponsorPage = defineType({
       initialValue: 'Join leading tech companies in supporting the next generation of developers. Your partnership helps us create impactful events and opportunities for students.',
     }),
     defineField({
+      name: 'reasons',
+      title: 'Why Sponsor Reasons',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'title',
+              title: 'Reason Title',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'description',
+              title: 'Reason Description',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+          preview: {
+            select: {
+              title: 'title',
+              subtitle: 'description',
+            },
+          },
+        }),
+      ],
+      initialValue: [
+        {
+          title: 'Boost Recognitions',
+          description: "Make your brand known by partnering with Monash University's largest tech student society with 1600+ members reaching a wide range of communities locally and internationally.",
+        },
+        {
+          title: 'Audience Reach',
+          description: 'Our platform boasts a diverse and engaged audience, spanning various demographics and interests. Through our social channels, events and collaborations, we consistently reach millions of active users each month.',
+        },
+        {
+          title: 'Social Media Exposure',
+          description: 'As of 2025 we have reached over 230 million views through our social media, and we are still continuing to grow!',
+        },
+      ],
+    }),
+
+    defineField({
       name: 'stats',
       title: 'Stats',
       description: 'Key statistics to showcase',
@@ -52,77 +97,7 @@ export const sponsorPage = defineType({
         }),
       ],
     }),
-    defineField({
-      name: 'tiersTitle',
-      title: 'Tiers Section Title',
-      type: 'string',
-      initialValue: 'Sponsorship Tiers',
-    }),
-    defineField({
-      name: 'tiersSubtitle',
-      title: 'Tiers Section Subtitle',
-      type: 'string',
-      initialValue: 'Choose a partnership level that aligns with your goals and budget',
-    }),
-    defineField({
-      name: 'tiers',
-      title: 'Sponsorship Tiers',
-      type: 'array',
-      of: [
-        defineArrayMember({
-          type: 'object',
-          fields: [
-            defineField({
-              name: 'name',
-              title: 'Tier Name',
-              type: 'string',
-              validation: (Rule) => Rule.required(),
-            }),
-            defineField({
-              name: 'price',
-              title: 'Price',
-              description: 'e.g., "$500", "$1,500", "Custom"',
-              type: 'string',
-              validation: (Rule) => Rule.required(),
-            }),
-            defineField({
-              name: 'featured',
-              title: 'Featured',
-              description: 'Highlight this tier as "Most Popular"',
-              type: 'boolean',
-              initialValue: false,
-            }),
-            defineField({
-              name: 'features',
-              title: 'Features',
-              type: 'array',
-              of: [defineArrayMember({ type: 'string' })],
-              validation: (Rule) => Rule.min(1),
-            }),
-          ],
-          preview: {
-            select: {
-              title: 'name',
-              subtitle: 'price',
-              featured: 'featured',
-            },
-            prepare({ title, subtitle, featured }) {
-              return {
-                title: featured ? `⭐ ${title}` : title,
-                subtitle,
-              }
-            },
-          },
-        }),
-      ],
-    }),
-    defineField({
-      name: 'benefitsTitle',
-      title: 'Benefits Section Title',
-      type: 'string',
-      initialValue: 'Why Partner With MAC?',
-    }),
-    defineField({
+     defineField({
       name: 'benefits',
       title: 'Benefits',
       type: 'array',

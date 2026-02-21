@@ -211,10 +211,8 @@ export interface Benefit {
 export interface SponsorPageData {
   pageTitle: string
   pageSubtitle: string
+  reasons: string[]
   stats: Stat[]
-  tiersTitle: string
-  tiersSubtitle: string
-  tiers: SponsorTier[]
   benefitsTitle: string
   benefits: Benefit[]
   sponsorsTitle: string

@@ -4,19 +4,15 @@ export const sponsorPageQuery = groq`
   *[_type == "sponsorPage"][0] {
     pageTitle,
     pageSubtitle,
+    reasons[] {
+      _key,
+      title,
+      description
+    },
     stats[] {
       _key,
       value,
       label
-    },
-    tiersTitle,
-    tiersSubtitle,
-    tiers[] {
-      _key,
-      name,
-      price,
-      featured,
-      features
     },
     benefitsTitle,
     benefits[] {
