@@ -168,20 +168,20 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
 
   return (
     <>
-      {/* ── Hero ── */}
+      {/* Hero */}
       <RibbonAwareSection
         backgroundClassName="bg-background"
         className="overflow-hidden"
         contentClassName="relative"
       >
-        <div className="relative min-h-[680px] flex items-center justify-center">
+        <div className="relative min-h-screen flex items-center justify-center">
           {/* Background image with gradient overlays */}
           {page.heroImage?.asset?.url && (
             <Image
-              src={urlFor(page.heroImage).width(1440).height(778).fit('crop').url()}
+              src={urlFor(page.heroImage).width(1440).height(900).fit('crop').url()}
               alt=""
               fill
-              className="object-cover opacity-40"
+              className="object-cover object-center opacity-40"
               priority
             />
           )}
@@ -253,52 +253,44 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
           viewport={{ once: true, amount: 0.2 }}
           variants={containerVariants}
         >
-          {/* MAC chevron decorative element */}
-          <div className="pointer-events-none absolute left-0 top-0 hidden h-full w-[464px] lg:block">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/about/mac-chevron.svg"
-              alt=""
-              className="h-full w-full object-contain object-left-top"
-            />
-          </div>
-
-          {/* Text content — centered right of chevron */}
-          <motion.div
-            variants={itemVariants}
-            className="relative z-10 mx-auto text-center lg:ml-auto lg:mr-0 lg:max-w-[694px]"
-          >
-            <h2 className="text-[clamp(2.5rem,5vw,4rem)] font-semibold text-accent">
-              {page.missionTitle}
-            </h2>
-            <div className="mt-6 space-y-6">
-              {page.missionBody.split('\n\n').map((paragraph, i) => (
-                <p
-                  key={i}
-                  className="text-[clamp(1rem,2.5vw,24px)] leading-normal text-white"
-                >
-                  {renderBold(paragraph)}
-                </p>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Mission image — offset to the right */}
-          {page.missionImage?.asset?.url && (
+<div className="lg:grid lg:grid-cols-2 lg:items-center lg:gap-12">
+            {/* Text content */}
             <motion.div
               variants={itemVariants}
-              className="mt-10 ml-auto w-full max-w-[720px] lg:mt-16 lg:mr-[-2rem]"
+              className="relative z-10 mx-auto text-center lg:mx-0 lg:text-left"
             >
-              <div className="relative aspect-[876/650] w-full">
-                <FadeInImage
-                  src={urlFor(page.missionImage).width(1440).height(1070).fit('crop').url()}
-                  alt="MAC mission"
-                  fill
-                  className="object-cover"
-                />
+              <h2 className="text-[clamp(2.5rem,5vw,4rem)] font-semibold text-accent">
+                {page.missionTitle}
+              </h2>
+              <div className="mt-6 space-y-6">
+                {page.missionBody.split('\n\n').map((paragraph, i) => (
+                  <p
+                    key={i}
+                    className="text-[clamp(1rem,2.5vw,24px)] leading-normal text-white"
+                  >
+                    {renderBold(paragraph)}
+                  </p>
+                ))}
               </div>
             </motion.div>
-          )}
+
+            {/* Mission image */}
+            {page.missionImage?.asset?.url && (
+              <motion.div
+                variants={itemVariants}
+                className="mt-10 w-full lg:mt-0"
+              >
+                <div className="relative aspect-[876/650] w-full">
+                  <FadeInImage
+                    src={urlFor(page.missionImage).width(1440).height(1070).fit('crop').url()}
+                    alt="MAC mission"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              </motion.div>
+            )}
+          </div>
         </motion.div>
       </RibbonAwareSection>
 
