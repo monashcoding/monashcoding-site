@@ -21,11 +21,20 @@ export const contactPage = defineType({
       initialValue: "Have a question or want to collaborate? We'd love to hear from you.",
     }),
     defineField({
-      name: 'email',
-      title: 'Email Address',
+      name: 'senderEmail',
+      title: 'Sender Email (From)',
       type: 'string',
+      description: 'The "from" address for contact form emails. Must be a verified domain in Resend.',
       validation: (Rule) => Rule.email(),
-      initialValue: 'hello@monashcoding.com',
+      initialValue: 'noreply@monashcoding.com',
+    }),
+    defineField({
+      name: 'recipientEmail',
+      title: 'Recipient Email (To)',
+      type: 'string',
+      description: 'The email address that receives contact form submissions.',
+      validation: (Rule) => Rule.email(),
+      initialValue: 'projects@monashcoding.com',
     }),
     defineField({
       name: 'location',
