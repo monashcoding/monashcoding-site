@@ -9,7 +9,6 @@ import { Hero } from '@/components/hero/Hero'
 import { HomeContent } from '@/components/HomeContent'
 import { QuickLinksSection } from '@/components/home/QuickLinksSection'
 import { fetchYouTubeVideos } from '@/lib/youtube/feed'
-import { fetchInstagramReels } from '@/lib/instagram/feed'
 
 async function getHeroData(): Promise<HeroData | null> {
   try {
@@ -67,23 +66,6 @@ export default async function Home() {
       : 6
   const limitedEvents = events.slice(0, maxEvents)
 
-  // Fetch Instagram reel metadata from URLs configured in the communitySection
-  const communitySection = homepageData?.sections?.find(
-    (s) => s._type === 'communitySection'
-  )
-  const reelEntries =
-    communitySection && 'instagramReels' in communitySection
-      ? (communitySection.instagramReels ?? [])
-      : []
-  const instagramUrls = reelEntries.map((item) => item.url)
-  const fetchedReels =
-    instagramUrls.length > 0 ? await fetchInstagramReels(instagramUrls) : []
-  // Merge the pinned flag from Sanity into the fetched reel data
-  const instagramReels = fetchedReels.map((reel) => {
-    const entry = reelEntries.find((e) => e.url === reel.url)
-    return { ...reel, pinned: entry?.pinned ?? false }
-  })
-
   return (
     <main className="bg-background">
       <Hero data={heroData} />
@@ -93,7 +75,6 @@ export default async function Home() {
         events={limitedEvents}
         socialLinks={socialLinksData?.links || []}
         youtubeVideos={youtubeVideos}
-        instagramReels={instagramReels}
       />
     </main>
   )

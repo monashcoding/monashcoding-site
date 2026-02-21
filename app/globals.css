@@ -124,6 +124,22 @@
   transform: translate(30%, -50%) rotate(-85.4deg);
 }
 
+/* Reel card entrance */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-fade-in-up {
+  animation: fade-in-up 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .quick-link-card,
   .quick-link-title {

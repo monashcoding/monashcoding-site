@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useRef, useEffect } from 'react'
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
 import { CommunitySectionData, SocialLink } from '@/lib/sanity/types'
@@ -466,11 +466,12 @@ const itemVariants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 }
 
+const REELS_PER_PAGE = 12
+
 interface CommunitySectionProps {
   data?: CommunitySectionData
   socialLinks?: SocialLink[]
   youtubeVideos?: YouTubeVideo[]
-  instagramReels?: InstagramReel[]
 }
 
 interface CommunityTile {
@@ -485,17 +486,62 @@ export function CommunitySection({
   data,
   socialLinks = [],
   youtubeVideos = [],
-  instagramReels = [],
 }: CommunitySectionProps) {
   const heading = data?.heading ?? 'Our Community'
   const subheading = data?.subheading ?? 'Connect with us on social media'
   const allowedPlatforms = data?.platforms ?? DEFAULT_PLATFORMS
 
-  const sortedReels = useMemo(
-    () => [...instagramReels].reverse().sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0)),
-    [instagramReels]
-  )
-  const hasReels = sortedReels.length > 0
+  // Instagram reels - fetched client-side in batches from Sanity entries
+  const reelEntries = useMemo(() => {
+    const entries = data?.instagramReels ?? []
+    return [...entries].reverse().sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0))
+  }, [data?.instagramReels])
+
+  const [loadedReels, setLoadedReels] = useState<InstagramReel[]>([])
+  const [reelsLoading, setReelsLoading] = useState(false)
+  const [fetchedUpTo, setFetchedUpTo] = useState(0)
+  const loadingRef = useRef(false)
+
+  const hasMoreReels = fetchedUpTo < reelEntries.length
+  const hasReels = reelEntries.length > 0
+
+  const loadReels = useCallback(async (startFrom: number) => {
+    if (loadingRef.current) return
+    if (startFrom >= reelEntries.length) return
+    loadingRef.current = true
+    setReelsLoading(true)
+
+    const nextEnd = Math.min(startFrom + REELS_PER_PAGE, reelEntries.length)
+    const nextBatch = reelEntries.slice(startFrom, nextEnd)
+    setFetchedUpTo(nextEnd)
+
+    try {
+      const res = await fetch('/api/instagram', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ urls: nextBatch.map((e) => e.url) }),
+      })
+      const { reels } = (await res.json()) as { reels: InstagramReel[] }
+      const merged = reels.map((reel) => {
+        const entry = nextBatch.find((e) => e.url === reel.url)
+        return { ...reel, pinned: entry?.pinned ?? false }
+      })
+      setLoadedReels((prev) => [...prev, ...merged])
+    } catch {
+      // Silently skip failed batch
+    }
+    loadingRef.current = false
+    setReelsLoading(false)
+  }, [reelEntries])
+
+  // Load first batch on mount
+  const mountedRef = useRef(false)
+  useEffect(() => {
+    if (reelEntries.length > 0 && !mountedRef.current) {
+      mountedRef.current = true
+      loadReels(0)
+    }
+  }, [reelEntries, loadReels])
   const hasVideos = youtubeVideos.length > 0
   const [socialsOpen, setSocialsOpen] = useState(true)
   const [reelsOpen, setReelsOpen] = useState(true)
@@ -632,18 +678,31 @@ export function CommunitySection({
             transition={{ duration: 0.3 }}
           >
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-              {sortedReels.map((reel, index) => (
-                <motion.div
-                  key={reel.shortcode}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.2 }}
-                  transition={{ duration: 0.42, delay: index * 0.04, ease: [0.22, 1, 0.36, 1] }}
-                >
+              {loadedReels.map((reel) => (
+                <div key={reel.shortcode} className="animate-fade-in-up">
                   <InstagramReelCard reel={reel} />
-                </motion.div>
+                </div>
               ))}
             </div>
+            {hasMoreReels && (
+              <button
+                onClick={() => loadReels(fetchedUpTo)}
+                disabled={reelsLoading}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/3 py-3 text-xs font-semibold tracking-[0.12em] uppercase text-white/60 transition-colors hover:border-accent hover:text-accent disabled:pointer-events-none disabled:opacity-60"
+              >
+                {reelsLoading ? (
+                  <>
+                    <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Loading...
+                  </>
+                ) : (
+                  'Load more reels'
+                )}
+              </button>
+            )}
           </motion.div>
         )}
 
@@ -710,19 +769,31 @@ export function CommunitySection({
           onToggle={() => setReelsOpen((v) => !v)}
         >
           <div className="grid grid-cols-4 gap-4">
-            {sortedReels.map((reel, index) => (
-              <motion.div
-                key={reel.shortcode}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.42, delay: index * 0.04, ease: [0.22, 1, 0.36, 1] }}
-                whileHover={{ y: -4 }}
-              >
+            {loadedReels.map((reel) => (
+              <div key={reel.shortcode} className="animate-fade-in-up transition-transform duration-300 hover:-translate-y-1">
                 <InstagramReelCard reel={reel} />
-              </motion.div>
+              </div>
             ))}
           </div>
+          {hasMoreReels && (
+            <button
+              onClick={() => loadReels(fetchedUpTo)}
+              disabled={reelsLoading}
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/3 py-3 text-xs font-semibold tracking-[0.12em] uppercase text-white/60 transition-colors hover:border-accent hover:text-accent disabled:pointer-events-none disabled:opacity-60"
+            >
+              {reelsLoading ? (
+                <>
+                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  Loading...
+                </>
+              ) : (
+                'Load more reels'
+              )}
+            </button>
+          )}
         </CollapsiblePanel>
       )}
 
