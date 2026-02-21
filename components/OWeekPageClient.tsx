@@ -15,6 +15,7 @@ const pageImages = [
   { src: "/oweek/page-8-touch.webp", alt: "Let's Keep in Touch – Socials", w: 1600, h: 2263 },
   { src: "/oweek/page-9-schedule.webp", alt: "Semester 1 Schedule", w: 1600, h: 2263 },
   { src: "/oweek/page-10-close.webp", alt: "Closing – 2026 MAC", w: 1600, h: 2263 },
+  { src: "/oweek/page-10-close.webp", alt: "Closing – 2026 MAC", w: 1600, h: 2263 },
 ];
 
 // Edge colors for smooth fade transitions between pages
@@ -28,6 +29,9 @@ const pageBgColors = [
   "#4a7a3c", // 7 not waste uni – green
   "#252525", // 8 keep in touch – dark
   "#2a2a2a", // 9 schedule – dark
+  "#FFFFFF", // 10 closing – white
+  // "#fdf8e8", // 10 closing – warm cream
+
   "#FFFFFF", // 10 closing – white
   // "#fdf8e8", // 10 closing – warm cream
 
