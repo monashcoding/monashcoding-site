@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { useEffect, useState } from "react";
-import { SponsorPageData, Stat, SponsorTier, Benefit } from "@/lib/sanity/types";
+import { SponsorPageData, Stat, SponsorTier } from "@/lib/sanity/types";
 import { RibbonAwareSection } from "@/components/RibbonAwareSection";
 import { SponsorLogosGrid } from "@/components/sponsor/SponsorLogosGrid";
 import ScrollZoomHero  from "@/components/sponsor/SponsorHeroSectionTop";
@@ -16,26 +16,6 @@ const defaultStats: Stat[] = [
   { _key: "4", value: "35+", label: "Events Per Year" },
 ];
 
-const defaultBenefits: Benefit[] = [
-  {
-    _key: "1",
-    icon: "🎓",
-    title: "Access Top Talent",
-    description: "Engage with highly motivated students from 7+ disciplines including Computer Science, Data Science, and Software Engineering through workshops and hackathons.",
-  },
-  {
-    _key: "2",
-    icon: "💼",
-    title: "Promote Opportunities",
-    description: "Champion graduate and intern roles through our publications, tailored campaigns, and custom-built job board reaching engaged, career-focused students.",
-  },
-  {
-    _key: "3",
-    icon: "🌟",
-    title: "Strengthen Brand Presence",
-    description: "Align with Monash's largest tech society to build authentic engagement across a global member base and authentic community connections.",
-  },
-];
 
 const cutoutVariants = [
   {
@@ -72,11 +52,11 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   // Use Sanity data or fallbacks
   const stats = data?.stats || defaultStats;
-  const benefits = data?.benefits || defaultBenefits;
+
   const pageTitle = data?.pageTitle || "Partner With Us";
   const reasons = data?.reasons || [];
   const pageSubtitle = data?.pageSubtitle || "Join leading tech companies in supporting the next generation of developers. Your partnership helps us create impactful events and opportunities for students.";
-  const benefitsTitle = data?.benefitsTitle || "Why Partner With MAC?";
+
   const sponsorsTitle = data?.sponsorsTitle || "Our Sponsors";
   const sponsors = data?.sponsors || [];
   const ctaTitle = data?.ctaTitle || "Ready to Partner?";
@@ -223,57 +203,8 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
       <SponsorLogosGrid title={sponsorsTitle} sponsors={sponsors} />
 
 
-      {/* Benefits Section/ Why partner with us */}
-      <RibbonAwareSection
-        backgroundClassName="bg-accent/20"
-        contentClassName="py-24 px-8 max-w-[1200px] mx-auto" // Slightly wider for side-by-side
-      > 
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 ">
-          
-          {/* Left Side: Title & Context */}
-          <div className="lg:col-span-4 lg:sticky lg:top-0 lg:h-[60vh] flex flex-col justify-center self-start" > 
-            <motion.h2
-              className="text-4xl lg:text-5xl font-bold text-foreground mb-6 text-center"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              {benefitsTitle}
-            </motion.h2>
-            
-          </div>
 
-          {/* Right Side: Benefits List */}
-          <div className="lg:col-span-8 gap-12 flex flex-col justify-center">
-            {benefits.map((benefit, index) => (
-              <motion.div
-                key={benefit._key}
-                className="flex gap-6 items-start"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <div className="shrink-0 w-14 h-14 bg-accent/10 rounded-2xl flex items-center justify-center text-2xl border border-accent/20">
-                  {benefit.icon}
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-foreground mb-2">
-                    {benefit.title}
-                  </h3>
-                  <p className="text-white/60 leading-relaxed">
-                    {benefit.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-        </div>
-      </RibbonAwareSection>
-
-      
 
       {/* Contact Section - Become a Sponsor */}
       <RibbonAwareSection
