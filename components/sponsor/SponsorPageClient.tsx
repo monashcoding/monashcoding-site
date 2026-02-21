@@ -138,7 +138,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
       />
 
       {/* SECTION 2: Why Sponsor MAC */}
-      <div className="bg-white/90 mt-[-100vh] py-24 px-8">
+      <div className="bg-background mt-[-100vh] py-24 px-8">
         <div className="w-full mx-auto grid grid-cols-1 lg:grid-cols-[35%_1fr] gap-12 relative">
 
           {/* Curved connector lines from heading to each reason - desktop only */}
@@ -154,8 +154,8 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
           </svg>
 
           <div className="flex flex-col justify-center">
-            <h2 className="text-4xl font-bold mb-6 text-black">Why Sponsor MAC?</h2>
-            <p className="text-lg text-black/70">Partner with us to reach talented students.</p>
+            <h2 className="text-4xl font-bold mb-6 text-foreground">Why Sponsor MAC?</h2>
+            <p className="text-lg text-white/70">Partner with us to reach talented students.</p>
           </div>
 
           <div className="flex flex-col justify-center">
@@ -188,8 +188,8 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
                       </div>
                     )}
                     <div className="flex flex-col justify-center">
-                      <h3 className="text-xl font-semibold mb-2 text-black">{reason.title}</h3>
-                      <p className="text-black/80">{reason.description}</p>
+                      <h3 className="text-xl font-semibold mb-2 text-foreground">{reason.title}</h3>
+                      <p className="text-white/80">{reason.description}</p>
                     </div>
                   </div>
                 );
