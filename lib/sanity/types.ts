@@ -232,7 +232,7 @@ export interface ContactPageData {
 }
 
 // Event types
-export type EventTag = 'event' | 'hackathon' | 'social' | 'recruitment'
+export type EventTag = 'event' | 'hackathon' | 'social' | 'recruitment' | 'industry' | 'archives'
 
 export interface EventLink {
   _key: string
