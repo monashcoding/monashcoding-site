@@ -258,101 +258,6 @@ const communitySectionSchema = defineArrayMember({
   },
 })
 
-const contentItemSchema = {
-  type: 'object' as const,
-  name: 'contentItem',
-  title: 'Content Item',
-  fields: [
-    defineField({
-      name: 'url',
-      title: 'URL',
-      description: 'Instagram Reel URL or YouTube video URL',
-      type: 'url',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'title',
-      title: 'Title',
-      type: 'string',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'platform',
-      title: 'Platform',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Instagram Reel', value: 'instagram' },
-          { title: 'YouTube', value: 'youtube' },
-        ],
-      },
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'year',
-      title: 'Year',
-      type: 'number',
-      validation: (Rule) => Rule.required().min(2019).max(2030),
-    }),
-  ],
-  preview: {
-    select: {
-      title: 'title',
-      platform: 'platform',
-      year: 'year',
-    },
-    prepare({
-      title,
-      platform,
-      year,
-    }: {
-      title?: string
-      platform?: string
-      year?: number
-    }) {
-      return {
-        title: title || 'Untitled',
-        subtitle: `${platform || 'unknown'} — ${year || ''}`,
-      }
-    },
-  },
-}
-
-const contentStreamSectionSchema = defineArrayMember({
-  type: 'object',
-  name: 'contentStreamSection',
-  title: 'Content Stream Section',
-  fields: [
-    defineField({
-      name: 'heading',
-      title: 'Section Heading',
-      type: 'string',
-      initialValue: 'Content',
-    }),
-    defineField({
-      name: 'items',
-      title: 'Content Items',
-      type: 'array',
-      of: [contentItemSchema],
-    }),
-  ],
-  preview: {
-    select: { heading: 'heading', items: 'items' },
-    prepare({
-      heading,
-      items,
-    }: {
-      heading?: string
-      items?: unknown[]
-    }) {
-      return {
-        title: heading || 'Content Stream Section',
-        subtitle: `${items?.length || 0} items`,
-      }
-    },
-  },
-})
-
 export const homepage = defineType({
   name: 'homepage',
   title: 'Homepage',
@@ -374,7 +279,6 @@ export const homepage = defineType({
         sponsorsSectionSchema,
         eventsSectionSchema,
         communitySectionSchema,
-        contentStreamSectionSchema,
         footerSectionSchema,
       ],
     }),

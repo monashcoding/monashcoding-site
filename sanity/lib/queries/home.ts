@@ -64,17 +64,6 @@ export const homepageQuery = groq`
         subheading,
         platforms
       },
-      // Content stream section
-      _type == "contentStreamSection" => {
-        heading,
-        items[] {
-          _key,
-          url,
-          title,
-          platform,
-          year
-        }
-      },
       // Footer section
       _type == "footerSection" => {
         brandName,

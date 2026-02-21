@@ -271,23 +271,6 @@ export interface CommunitySectionData {
   platforms?: SocialPlatform[]
 }
 
-export type ContentPlatform = 'instagram' | 'youtube'
-
-export interface ContentItem {
-  _key: string
-  url: string
-  title: string
-  platform: ContentPlatform
-  year: number
-}
-
-export interface ContentStreamSectionData {
-  _key: string
-  _type: 'contentStreamSection'
-  heading: string
-  items: ContentItem[]
-}
-
 // Homepage Sections
 export interface Sponsor {
   _key: string
@@ -331,7 +314,6 @@ export type HomepageSection =
   | SponsorsSectionData
   | EventsSectionData
   | CommunitySectionData
-  | ContentStreamSectionData
   | FooterSectionData
 
 export interface HomepageData {
