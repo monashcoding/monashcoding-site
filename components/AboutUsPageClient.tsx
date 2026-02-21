@@ -185,7 +185,7 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
               priority
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,var(--color-background)_0%,transparent_25%,transparent_75%,var(--color-background)_100%)]" />
 
           {/* Content */}
           <motion.div
