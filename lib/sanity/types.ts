@@ -212,7 +212,12 @@ export interface SponsorPageData {
   heroImage?: SanityImage
   pageTitle: string
   pageSubtitle: string
-  reasons: string[]
+  reasons: {
+    _key: string
+    title: string
+    description: string
+    image?: SanityImage
+  }[]
   stats: Stat[]
   benefitsTitle: string
   benefits: Benefit[]

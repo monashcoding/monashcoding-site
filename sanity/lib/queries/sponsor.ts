@@ -13,7 +13,13 @@ export const sponsorPageQuery = groq`
     reasons[] {
       _key,
       title,
-      description
+      description,
+      image {
+        asset->,
+        alt,
+        hotspot,
+        crop
+      }
     },
     stats[] {
       _key,

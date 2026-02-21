@@ -140,9 +140,9 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
       />
 
       {/* SECTION 2: Why Sponsor MAC */}
-      <div className="bg-white/90 mt-[-100vh] text-background py-24 px-8"> 
-        <div className="w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12"> 
-        
+      <div className="bg-white/90 mt-[-100vh] text-background py-24 px-8">
+        <div className="w-full mx-auto grid grid-cols-1 lg:grid-cols-[35%_1fr] gap-12">
+
           <div className="flex flex-col justify-center">
             <h2 className="text-4xl font-bold mb-6">Why Sponsor MAC?</h2>
             <p className="text-lg">Partner with us to reach talented students.</p>
@@ -151,9 +151,18 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
           <div className="flex flex-col justify-center">
             <div className="space-y-4">
               {reasons.map((reason) => (
-                <div key={reason._key} className="p-6 bg-background rounded-2xl">
-                  <h3 className="text-xl text-white font-semibold mb-2">{reason.title}</h3>
-                  <p className="text-white">{reason.description}</p>
+                <div key={reason._key} className={`grid ${reason.image ? 'grid-cols-[35%_1fr]' : 'grid-cols-1'} bg-background rounded-2xl overflow-hidden`}>
+                  {reason.image && (
+                    <img
+                      src={urlFor(reason.image).width(400).height(400).url()}
+                      alt={reason.image.alt || reason.title}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                  <div className="p-6 flex flex-col justify-center">
+                    <h3 className="text-xl text-white font-semibold mb-2">{reason.title}</h3>
+                    <p className="text-white">{reason.description}</p>
+                  </div>
                 </div>
               ))} 
             </div>

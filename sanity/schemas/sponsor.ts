@@ -94,11 +94,27 @@ export const sponsorPage = defineType({
               type: 'string',
               validation: (Rule) => Rule.required(),
             }),
+            defineField({
+              name: 'image',
+              title: 'Reason Image',
+              type: 'image',
+              options: {
+                hotspot: true,
+              },
+              fields: [
+                defineField({
+                  name: 'alt',
+                  title: 'Alt Text',
+                  type: 'string',
+                }),
+              ],
+            }),
           ],
           preview: {
             select: {
               title: 'title',
               subtitle: 'description',
+              media: 'image',
             },
           },
         }),
