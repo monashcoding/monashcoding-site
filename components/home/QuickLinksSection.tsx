@@ -156,7 +156,7 @@ export function QuickLinksSection({ data }: QuickLinksSectionProps) {
                     />
                     <span
                       aria-hidden
-                      className="pointer-events-none absolute inset-0 bg-black/60 rounded-xl"
+                      className="pointer-events-none absolute inset-0 bg-black/75 rounded-xl"
                     />
                   </>
                 )}
@@ -165,10 +165,10 @@ export function QuickLinksSection({ data }: QuickLinksSectionProps) {
                   className="pointer-events-none absolute inset-0 bg-accent/0 transition-colors duration-300 group-hover:bg-accent/5"
                 />
                 <div className="relative z-10">
-                  <h3 className="text-sm font-bold uppercase tracking-[0.1em] text-white/70 transition-colors duration-300 group-hover:text-accent">
+                  <h3 className="text-sm font-bold uppercase tracking-[0.1em] text-white/90 transition-colors duration-300 group-hover:text-accent">
                     {item.label}
                   </h3>
-                  <p className="mt-2 text-xs text-white/40 leading-relaxed line-clamp-2">
+                  <p className="mt-2 text-xs text-white/60 leading-relaxed line-clamp-2">
                     {preview?.description ?? ""}
                   </p>
                 </div>
