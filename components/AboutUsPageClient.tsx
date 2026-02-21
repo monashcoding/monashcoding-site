@@ -199,7 +199,15 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
               className="text-[clamp(3rem,7vw,88px)] font-semibold leading-none"
             >
               <span className="text-foreground">About </span>
-              <span className="text-accent">MAC</span>
+              <span className="relative inline-block text-accent">
+                MAC
+                {/* Tilted yellow underline accent */}
+                <motion.div
+                  variants={itemVariants}
+                  className="absolute -bottom-1 left-1/2 h-[3px] w-full -translate-x-1/2 origin-center -rotate-3 bg-accent"
+                  style={{ marginTop: '0.5rem' }}
+                />
+              </span>
             </motion.h1>
 
             <motion.p
@@ -208,12 +216,6 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
             >
               {renderHighlight(page.pageSubtitle)}
             </motion.p>
-
-            {/* Tilted yellow underline accent */}
-            <motion.div
-              variants={itemVariants}
-              className="mx-auto mt-6 h-[3px] w-56 origin-center rotate-2 bg-accent"
-            />
           </motion.div>
         </div>
       </RibbonAwareSection>
