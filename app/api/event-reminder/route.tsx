@@ -59,10 +59,10 @@ export async function POST(req: Request) {
       from: 'noreply@monashcoding.com',
       to: (email as string).trim(),
       subject: `Reminder: ${eventTitle.trim()}`,
-      react: EventReminderEmailTemplate({
-        eventTitle: eventTitle.trim(),
-        eventDate: eventDate.trim(),
-      }),
+      react: <EventReminderEmailTemplate
+        eventTitle={eventTitle.trim()}
+        eventDate={eventDate.trim()}
+      />,
     });
 
     if (error) {
