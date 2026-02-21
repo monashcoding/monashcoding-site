@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
 import { CommunitySectionData, SocialLink } from '@/lib/sanity/types'
 import type { YouTubeVideo } from '@/lib/youtube/feed'
+import type { InstagramReel } from '@/lib/instagram/feed'
 import {
   PLATFORM_ICONS,
   PLATFORM_LABELS,
@@ -232,6 +233,54 @@ function VideoCard({ video }: { video: YouTubeVideo }) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Instagram reel card                                                */
+/* ------------------------------------------------------------------ */
+
+function InstagramReelCard({ reel }: { reel: InstagramReel }) {
+  return (
+    <a
+      href={reel.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group relative block h-full overflow-hidden rounded-2xl border border-white/10 bg-[rgba(28,28,28,0.8)] no-underline transition-border-color duration-300 hover:border-white/20"
+    >
+      <div className="relative w-full overflow-hidden" style={{ paddingBottom: '100%' }}>
+        <img
+          src={reel.thumbnail}
+          alt={reel.caption}
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          loading="lazy"
+        />
+        {reel.type === 'reel' && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/20 transition-colors duration-300 group-hover:bg-black/10">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 shadow-lg transition-transform duration-300 group-hover:scale-110">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#252525" className="ml-0.5">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="flex items-center justify-between gap-3 border-t border-white/10 px-4 py-3">
+        <div className="min-w-0">
+          <p className="truncate text-sm font-medium text-white/85">
+            {reel.caption || `Instagram ${reel.type}`}
+          </p>
+          <p className="mt-0.5 text-[0.65rem] font-semibold tracking-[0.14em] uppercase text-white/45">
+            {reel.likes !== '0' ? `${reel.likes} likes` : `Instagram ${reel.type}`}
+          </p>
+        </div>
+        {reel.date && (
+          <span className="shrink-0 rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-[0.62rem] font-semibold tracking-[0.12em] uppercase text-white/65">
+            {reel.date}
+          </span>
+        )}
+      </div>
+    </a>
+  )
+}
+
+/* ------------------------------------------------------------------ */
 /*  Yellow fizzle/sparkle canvas on the left or right edge             */
 /* ------------------------------------------------------------------ */
 
@@ -408,6 +457,7 @@ interface CommunitySectionProps {
   data?: CommunitySectionData
   socialLinks?: SocialLink[]
   youtubeVideos?: YouTubeVideo[]
+  instagramReels?: InstagramReel[]
 }
 
 interface CommunityTile {
@@ -421,15 +471,18 @@ export function CommunitySection({
   data,
   socialLinks = [],
   youtubeVideos = [],
+  instagramReels = [],
 }: CommunitySectionProps) {
   const heading = data?.heading ?? 'Our Community'
   const subheading = data?.subheading ?? 'Connect with us on social media'
   const allowedPlatforms = data?.platforms ?? DEFAULT_PLATFORMS
 
+  const hasReels = instagramReels.length > 0
   const hasVideos = youtubeVideos.length > 0
   const [socialsOpen, setSocialsOpen] = useState(true)
+  const [reelsOpen, setReelsOpen] = useState(true)
   const [videosOpen, setVideosOpen] = useState(true)
-  const [activeTab, setActiveTab] = useState<'socials' | 'videos'>('socials')
+  const [activeTab, setActiveTab] = useState<'socials' | 'reels' | 'videos'>('socials')
   const [selectedYear, setSelectedYear] = useState<number | 'all'>('all')
 
   const filteredLinks = socialLinks.filter((link) =>
@@ -459,14 +512,27 @@ export function CommunitySection({
     return youtubeVideos.filter((v) => v.year === selectedYear)
   }, [youtubeVideos, selectedYear])
 
-  /* ---- Mobile content (tabs, same as before) ---- */
+  /* ---- Mobile content (tabs) ---- */
+  const mobileTabs = useMemo(() => {
+    const tabs: ('socials' | 'reels' | 'videos')[] = ['socials']
+    if (hasReels) tabs.push('reels')
+    if (hasVideos) tabs.push('videos')
+    return tabs
+  }, [hasReels, hasVideos])
+
+  const tabLabels: Record<'socials' | 'reels' | 'videos', string> = {
+    socials: 'Socials',
+    reels: 'Reels',
+    videos: 'Videos',
+  }
+
   const mobileContent = (
     <div className="lg:hidden">
       {/* Mobile tabs */}
-      {hasVideos && (
+      {mobileTabs.length > 1 && (
         <div className="mb-6 flex flex-wrap items-center gap-3">
           <div className="inline-flex gap-1.5 rounded-[0.95rem] border border-white/10 bg-white/[0.03] p-1.5">
-            {(['socials', 'videos'] as const).map((tab) => (
+            {mobileTabs.map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -484,7 +550,7 @@ export function CommunitySection({
                   />
                 )}
                 <span className="relative z-10">
-                  {tab === 'socials' ? 'Socials' : 'Videos'}
+                  {tabLabels[tab]}
                 </span>
               </button>
             ))}
@@ -516,7 +582,7 @@ export function CommunitySection({
 
       {/* Mobile content */}
       <AnimatePresence mode="wait">
-        {activeTab === 'socials' ? (
+        {activeTab === 'socials' && (
           <motion.div
             key="socials-mobile"
             initial={{ opacity: 0, y: 12 }}
@@ -535,7 +601,33 @@ export function CommunitySection({
               />
             ))}
           </motion.div>
-        ) : (
+        )}
+
+        {activeTab === 'reels' && (
+          <motion.div
+            key="reels-mobile"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+              {instagramReels.map((reel, index) => (
+                <motion.div
+                  key={reel.shortcode}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ duration: 0.42, delay: index * 0.04, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <InstagramReelCard reel={reel} />
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {activeTab === 'videos' && (
           <motion.div
             key="videos-mobile"
             initial={{ opacity: 0, y: 12 }}
@@ -589,6 +681,30 @@ export function CommunitySection({
           ))}
         </div>
       </CollapsiblePanel>
+
+      {/* Reels panel */}
+      {hasReels && (
+        <CollapsiblePanel
+          label="Reels"
+          isOpen={reelsOpen}
+          onToggle={() => setReelsOpen((v) => !v)}
+        >
+          <div className="grid grid-cols-4 gap-4">
+            {instagramReels.map((reel, index) => (
+              <motion.div
+                key={reel.shortcode}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.42, delay: index * 0.04, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={{ y: -4 }}
+              >
+                <InstagramReelCard reel={reel} />
+              </motion.div>
+            ))}
+          </div>
+        </CollapsiblePanel>
+      )}
 
       {/* Videos panel */}
       {hasVideos && (
