@@ -348,11 +348,11 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
               src={urlFor(page.heroImage).width(1440).height(900).fit('crop').url()}
               alt=""
               fill
-              className="object-cover object-center opacity-40"
+              className="object-cover object-center opacity-15"
               priority
             />
           )}
-          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,var(--color-background)_0%,transparent_25%,transparent_75%,var(--color-background)_100%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,var(--color-background)_0%,transparent_40%,transparent_60%,var(--color-background)_100%)]" />
 
           {/* Content */}
           <motion.div
@@ -434,19 +434,31 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
               </div>
             </motion.div>
 
-            {/* Mission image */}
+            {/* Mission image - clipped to variant-1 blob */}
             {page.missionImage?.asset?.url && (
               <motion.div
                 variants={itemVariants}
                 className="mt-10 w-full lg:mt-0"
               >
-                <div className="relative aspect-[876/650] w-full">
-                  <FadeInImage
-                    src={urlFor(page.missionImage).width(1440).height(1070).fit('crop').url()}
-                    alt="MAC mission"
-                    fill
-                    className="object-cover"
-                  />
+                <div className="relative aspect-885/659 w-full">
+                  <svg className="absolute" width="0" height="0">
+                    <defs>
+                      <clipPath id="blob-mission" clipPathUnits="objectBoundingBox">
+                        <path transform={`scale(${1/885}, ${1/659})`} d="M24.0324 582.821C-46.8515 422.792 83.5324 401.321 280.532 85.321C359.854 -41.9148 464.649 -4.64854 657.148 58.8219C849.648 122.292 761.648 227.322 835.148 333.822C908.649 440.322 896.148 544.322 770.148 569.322C644.148 594.322 615.032 543.74 476.649 555.322C309.096 569.346 94.9164 742.85 24.0324 582.821Z" />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                  <div className="absolute inset-0" style={{ clipPath: 'url(#blob-mission)' }}>
+                    <FadeInImage
+                      src={urlFor(page.missionImage).width(1440).height(1070).fit('crop').url()}
+                      alt="MAC mission"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 885 659" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M24.0324 582.821C-46.8515 422.792 83.5324 401.321 280.532 85.321C359.854 -41.9148 464.649 -4.64854 657.148 58.8219C849.648 122.292 761.648 227.322 835.148 333.822C908.649 440.322 896.148 544.322 770.148 569.322C644.148 594.322 615.032 543.74 476.649 555.322C309.096 569.346 94.9164 742.85 24.0324 582.821Z" stroke="yellow" vectorEffect="non-scaling-stroke" strokeWidth="2" />
+                  </svg>
                 </div>
               </motion.div>
             )}
@@ -618,13 +630,25 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
                     viewport={{ once: true, amount: 0.3 }}
                     transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                   >
-                    <div className="relative aspect-[523/643] w-full max-w-[523px]">
-                      <FadeInImage
-                        src={urlFor(page.journeyImage).width(1046).height(1286).url()}
-                        alt="MAC journey"
-                        fill
-                        className="object-contain"
-                      />
+                    <div className="relative aspect-525/645 w-full max-w-131.25">
+                      <svg className="absolute" width="0" height="0">
+                        <defs>
+                          <clipPath id="blob-journey" clipPathUnits="objectBoundingBox">
+                            <path transform={`scale(${1/525}, ${1/645})`} d="M215 10.6221C133.388 37.923 62.6385 81.8857 62.6385 204.056C62.6386 326.226 -38.865 318.683 18.6387 494.056C76.1424 669.429 175.164 684.831 345.312 569.755C515.46 454.678 567.556 280.204 485.639 145.056C403.721 9.90742 296.612 -16.6789 215 10.6221Z" />
+                          </clipPath>
+                        </defs>
+                      </svg>
+                      <div className="absolute inset-0" style={{ clipPath: 'url(#blob-journey)' }}>
+                        <FadeInImage
+                          src={urlFor(page.journeyImage).width(1050).height(1290).fit('crop').url()}
+                          alt="MAC journey"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 525 645" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M215 10.6221C133.388 37.923 62.6385 81.8857 62.6385 204.056C62.6386 326.226 -38.865 318.683 18.6387 494.056C76.1424 669.429 175.164 684.831 345.312 569.755C515.46 454.678 567.556 280.204 485.639 145.056C403.721 9.90742 296.612 -16.6789 215 10.6221Z" stroke="yellow" vectorEffect="non-scaling-stroke" strokeWidth="2" />
+                      </svg>
                     </div>
                   </motion.div>
                 )}
