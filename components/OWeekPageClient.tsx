@@ -18,20 +18,6 @@ const pageImages = [
   { src: "/oweek/page-10-close.webp", alt: "Closing - 2026 MAC", w: 1600, h: 2263 },
 ];
 
-// Edge colors per page
-const pageBgColors = [
-  "#fdf8e8", // 1 cover - warm cream
-  "#1a1a1a", // 2 about - dark
-  "#fdf8e8", // 3 get involved - warm cream
-  "#0a0a14", // 4 FYR - dark blue-black
-  "#f5f5f5", // 5 sponsors - light
-  "#f8f8f8", // 6 speed friending - white
-  "#4a7a3c", // 7 not waste uni - green
-  "#252525", // 8 keep in touch - dark
-  "#2a2a2a", // 9 schedule - dark
-  "#FFFFFF", // 10 closing - white
-];
-
 // QR code overlay buttons (positioned as % of page image)
 const qrOverlays: Record<
   number,
@@ -54,6 +40,73 @@ const qrOverlays: Record<
     { top: "76.5%", left: "73.5%", width: "18%", height: "11.8%", url: "https://linkedin.com/company/monashcoding", label: "LinkedIn" },
   ],
 };
+
+// Ocean wave dividers using <use> + animateTransform for smooth continuous drift
+const WAVE_W = 1440;
+const WAVE_OPACITIES = [1, 0.4, 0.15];
+const WAVE_DURATIONS = [12, 22, 20];
+const WAVE_DIRECTIONS: [string, string][] = [
+  [`-${WAVE_W} 0`, "0 0"],   // solid: right
+  [`-${WAVE_W} 0`, "0 0"],   // opaque: right
+  ["0 0", `-${WAVE_W} 0`],   // very opaque: left
+];
+
+// Build a sine-wave path spanning 2x viewport width for seamless looping
+function buildWavePath(center: number, amp: number, fillY: number) {
+  const a = amp * 1.35; // bezier control overshoot for sine approximation
+  const up = +(center - a).toFixed(1);
+  const dn = +(center + a).toFixed(1);
+  let d = `M0,${center}`;
+  for (let x = 0; x < WAVE_W * 2; x += 360) {
+    const cy = (x / 360) % 2 === 0 ? up : dn;
+    d += ` C${x + 120},${cy} ${x + 240},${cy} ${x + 360},${center}`;
+  }
+  d += ` L${WAVE_W * 2},${fillY} L0,${fillY} Z`;
+  return d;
+}
+
+function OceanWaves({ color, position }: { color: string; position: "top" | "bottom" }) {
+  const isTop = position === "top";
+  const fillY = isTop ? 0 : 100;
+  const centers = isTop ? [82, 84, 86] : [18, 16, 14];
+
+  return (
+    <div
+      className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2 overflow-hidden"
+      style={{
+        width: "100vw",
+        height: "50vh",
+        [isTop ? "bottom" : "top"]: "85%",
+      }}
+    >
+      {WAVE_OPACITIES.map((opacity, i) => {
+        const id = `wave-${position}-${i}`;
+        return (
+          <svg
+            key={i}
+            className="absolute inset-0 h-full w-full"
+            viewBox={`0 0 ${WAVE_W} 100`}
+            preserveAspectRatio="none"
+          >
+            <defs>
+              <path id={id} d={buildWavePath(centers[i], 1, fillY)} />
+            </defs>
+            <use href={`#${id}`} fill={color} style={{ opacity }}>
+              <animateTransform
+                attributeName="transform"
+                type="translate"
+                from={WAVE_DIRECTIONS[i][0]}
+                to={WAVE_DIRECTIONS[i][1]}
+                dur={`${WAVE_DURATIONS[i]}s`}
+                repeatCount="indefinite"
+              />
+            </use>
+          </svg>
+        );
+      })}
+    </div>
+  );
+}
 
 // Brochure Paginator
 
@@ -135,22 +188,15 @@ export default function OWeekPageClient({ data }: OWeekPageClientProps) {
   };
 
   const page = pageImages[currentPage];
-  const bgColor = pageBgColors[currentPage];
 
   return (
     <main
-      className="flex h-dvh flex-col overflow-hidden bg-background"
+      className="relative h-dvh overflow-hidden bg-background"
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      {/* Top spacer */}
-      <div className="flex-1" />
-
-      {/* Brochure page */}
-      <div
-        className="flex w-full shrink-0 items-center justify-center"
-        style={{ backgroundColor: bgColor }}
-      >
+      {/* Brochure centered */}
+      <div className="relative z-20 flex h-full items-center justify-center pb-12">
         <div
           className="relative w-full"
           style={{
@@ -159,6 +205,10 @@ export default function OWeekPageClient({ data }: OWeekPageClientProps) {
             aspectRatio: "1600 / 2263",
           }}
         >
+          {/* Ocean waves anchored to brochure edges */}
+          <OceanWaves color="#252525" position="top" />
+          <OceanWaves color="#252525" position="bottom" />
+
           <Image
             src={page.src}
             alt={page.alt}
@@ -195,11 +245,8 @@ export default function OWeekPageClient({ data }: OWeekPageClientProps) {
         </div>
       </div>
 
-      {/* Bottom spacer */}
-      <div className="flex-1" />
-
       {/* Page counter / navigation */}
-      <div className="flex shrink-0 items-center justify-center gap-5 py-3">
+      <div className="absolute inset-x-0 bottom-0 z-40 flex items-center justify-center gap-5 py-3">
         <button
           onClick={goPrev}
           disabled={currentPage === 0}
