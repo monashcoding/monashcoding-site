@@ -1,10 +1,22 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import Image from 'next/image'
+import Image, { ImageProps } from 'next/image'
 import { AboutUsPageData } from '@/lib/sanity/types'
 import { urlFor } from '@/sanity/lib/image'
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
+
+function FadeInImage({ className, ...props }: ImageProps) {
+  const [loaded, setLoaded] = useState(false)
+  return (
+    <Image
+      {...props}
+      className={`${className ?? ''} transition-opacity duration-700 ease-out ${loaded ? 'opacity-100' : 'opacity-0'}`}
+      onLoad={() => setLoaded(true)}
+    />
+  )
+}
 
 const defaultData: AboutUsPageData = {
   pageTitle: 'About MAC',
@@ -95,18 +107,42 @@ interface AboutUsPageClientProps {
   data: AboutUsPageData | null
 }
 
-/** Render **bold** markdown segments with purple highlight background */
+/** Purple highlight with slide-over wipe animation */
+function HighlightReveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+  return (
+    <span className="relative inline-block">
+      {/* Purple background that slides in from left */}
+      <motion.span
+        className="absolute inset-x-[-4px] inset-y-[-2px] bg-blue"
+        initial={{ clipPath: 'inset(0 100% 0 0)' }}
+        animate={{ clipPath: 'inset(0 0% 0 0)' }}
+        transition={{
+          duration: 0.6,
+          delay,
+          ease: [0.22, 1, 0.36, 1],
+        }}
+      />
+      <span className="relative font-bold text-white">{children}</span>
+    </span>
+  )
+}
+
+/** Render **bold** markdown segments with purple highlight + slide animation */
 function renderHighlight(text: string) {
   const parts = text.split(/\*\*(.+?)\*\*/g)
-  return parts.map((part, i) =>
-    i % 2 === 1 ? (
-      <span key={i} className="bg-blue px-1 py-0.5 font-bold text-white">
-        {part}
-      </span>
-    ) : (
-      part
-    )
-  )
+  let highlightIndex = 0
+  return parts.map((part, i) => {
+    if (i % 2 === 1) {
+      const delay = 0.8 + highlightIndex * 0.2
+      highlightIndex++
+      return (
+        <HighlightReveal key={i} delay={delay}>
+          {part}
+        </HighlightReveal>
+      )
+    }
+    return part
+  })
 }
 
 /** Render **bold** markdown segments */
@@ -232,7 +268,7 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
               className="mt-10 ml-auto w-full max-w-[720px] lg:mt-16 lg:mr-[-2rem]"
             >
               <div className="relative aspect-[876/650] w-full">
-                <Image
+                <FadeInImage
                   src={urlFor(page.missionImage).width(1440).height(1070).fit('crop').url()}
                   alt="MAC mission"
                   fill
@@ -275,21 +311,25 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
                   <motion.div
                     key={value._key}
                     variants={itemVariants}
-                    className="flex flex-col items-center text-center"
+                    className="group flex flex-col items-center text-center"
                   >
                     {value.image?.asset?.url ? (
                       <div className="relative h-[200px] w-[200px] overflow-hidden md:h-[294px] md:w-[294px]">
-                        <Image
+                        <FadeInImage
                           src={urlFor(value.image).width(588).height(588).fit('crop').url()}
                           alt={value.title}
                           fill
-                          className="object-cover"
+                          className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
+                        />
+                        <span
+                          aria-hidden
+                          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100 bg-[linear-gradient(155deg,rgba(87,87,210,0.25)_0%,rgba(87,87,210,0.08)_45%,transparent_100%)]"
                         />
                       </div>
                     ) : (
                       <div className="h-[200px] w-[200px] bg-white/5 md:h-[294px] md:w-[294px]" />
                     )}
-                    <p className="mt-4 max-w-[255px] text-[clamp(1rem,2.5vw,24px)] text-white">
+                    <p className="mt-4 max-w-[255px] text-[clamp(1rem,2.5vw,24px)] text-white transition-colors duration-300 group-hover:text-blue-light">
                       {value.title}
                     </p>
                   </motion.div>
@@ -303,21 +343,25 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
                     <motion.div
                       key={value._key}
                       variants={itemVariants}
-                      className="flex flex-col items-center text-center"
+                      className="group flex flex-col items-center text-center"
                     >
                       {value.image?.asset?.url ? (
                         <div className="relative h-[200px] w-[200px] overflow-hidden md:h-[294px] md:w-[294px]">
-                          <Image
+                          <FadeInImage
                             src={urlFor(value.image).width(588).height(588).fit('crop').url()}
                             alt={value.title}
                             fill
-                            className="object-cover"
+                            className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
+                          />
+                          <span
+                            aria-hidden
+                            className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100 bg-[linear-gradient(155deg,rgba(87,87,210,0.25)_0%,rgba(87,87,210,0.08)_45%,transparent_100%)]"
                           />
                         </div>
                       ) : (
                         <div className="h-[200px] w-[200px] bg-white/5 md:h-[294px] md:w-[294px]" />
                       )}
-                      <p className="mt-4 max-w-[255px] text-[clamp(1rem,2.5vw,24px)] text-white">
+                      <p className="mt-4 max-w-[255px] text-[clamp(1rem,2.5vw,24px)] text-white transition-colors duration-300 group-hover:text-blue-light">
                         {value.title}
                       </p>
                     </motion.div>
@@ -387,7 +431,7 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
                 {/* Journey image */}
                 {page.journeyImage?.asset?.url && (
                   <div className="relative aspect-[523/643] w-full max-w-[523px]">
-                    <Image
+                    <FadeInImage
                       src={urlFor(page.journeyImage).width(1046).height(1286).url()}
                       alt="MAC journey"
                       fill
