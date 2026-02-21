@@ -138,7 +138,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
       />
 
       {/* SECTION 2: Why Sponsor MAC */}
-      <div className="bg-background mt-[-100vh] py-24 px-8">
+      <div className="bg-background py-24 px-8">
         <div className="w-full mx-auto grid grid-cols-1 lg:grid-cols-[35%_1fr] gap-12 relative">
 
           {/* Curved connector lines from heading to each reason - desktop only */}
