@@ -41,14 +41,14 @@ export function SponsorLogosGrid({ title = "2025 Sponsors", sponsors = defaultSp
 
   return (
     <RibbonAwareSection
-      backgroundClassName="bg-blue"
-      contentClassName="py-24" // Removed px-8 to allow full-width scroll
+      backgroundClassName="bg-gold-50"
+      contentClassName="py-6" // Removed px-8 to allow full-width scroll
     >
       <div className="w-full">
         
         {/* Title */}
         <motion.h2
-          className="text-4xl font-bold text-foreground mb-12 text-center"
+          className="text-4xl font-bold text-background mb-12 text-center"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -64,7 +64,7 @@ export function SponsorLogosGrid({ title = "2025 Sponsors", sponsors = defaultSp
           
           {/* 3. THE TRACK: Moves endlessly to the left */}
           <motion.div
-            className="flex gap-8 w-max"
+            className="flex gap-16 w-max"
             animate={{ x: "-50%" }} // Move exactly half the width (the length of one set)
             transition={{
               ease: "linear",
@@ -74,28 +74,18 @@ export function SponsorLogosGrid({ title = "2025 Sponsors", sponsors = defaultSp
           >
             {marqueeSponsors.map((sponsor, index) => (
               <div
-                key={`${sponsor._key}-${index}`} // Unique key for the duplicate
-                className="shrink-0 w-[200px] md:w-[240px]" // Fixed width ensures smooth scrolling
+                key={`${sponsor._key}-${index}`}
+                className="shrink-0 w-[200px] md:w-[240px] flex items-center justify-center h-[140px]"
               >
-                {/* Card Design
-                   (Copied from your grid, but adapted for flex items) 
-                */}
-                <div 
-                  className="group relative p-6 bg-white/80 border border-white/10 rounded-2xl hover:border-background/90 transition-all duration-300 flex items-center justify-center h-[140px] cursor-pointer"
-                >
                   {sponsor.logo ? (
                     <img
                       src={getImageUrl(sponsor.logo)}
                       alt={sponsor.logo.alt || sponsor.name}
-                      className="w-full h-full object-contain opacity-100 group-hover:opacity-100 transition-opacity duration-300"
+                      className="max-w-full max-h-full object-contain"
                     />
                   ) : (
-                    <div className="text-center">
-                      <div className="text-3xl mb-2">🏢</div>
-                      <p className="text-black/60 text-xs font-medium">{sponsor.name}</p>
-                    </div>
+                    <p className="text-black/60 text-sm font-medium">{sponsor.name}</p>
                   )}
-                </div>
               </div>
             ))}
           </motion.div>

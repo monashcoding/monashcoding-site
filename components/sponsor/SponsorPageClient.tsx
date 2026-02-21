@@ -137,6 +137,9 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
         heroImageAlt={data?.heroImage?.alt}
       />
 
+      {/* 2025 Sponsors Section */}
+      <SponsorLogosGrid title={sponsorsTitle} sponsors={sponsors} />
+
       {/* SECTION 2: Why Sponsor MAC */}
       <div className="bg-background py-24 px-8">
         <div className="w-full mx-auto grid grid-cols-1 lg:grid-cols-[35%_1fr] gap-12 relative">
@@ -198,9 +201,6 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
           </div>
         </div>
       </div>
-
-      {/* 2025 Sponsors Section */}
-      <SponsorLogosGrid title={sponsorsTitle} sponsors={sponsors} />
 
 
 
