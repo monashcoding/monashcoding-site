@@ -1,5 +1,9 @@
 import { defineType, defineField, defineArrayMember } from 'sanity'
-import { UsersIcon } from '@sanity/icons'
+import { UsersIcon, HighlightIcon } from '@sanity/icons'
+import { type PropsWithChildren, createElement } from 'react'
+
+const HighlightDecorator = ({ children }: PropsWithChildren) =>
+  createElement('span', { style: { backgroundColor: '#f5e642', color: '#000000', fontWeight: 'bold', padding: '0 2px' } }, children)
 
 export const aboutUsPage = defineType({
   name: 'aboutUsPage',
@@ -24,6 +28,7 @@ export const aboutUsPage = defineType({
           lists: [],
           marks: {
             decorators: [
+              { title: 'Highlight', value: 'highlight', icon: HighlightIcon, component: HighlightDecorator },
               { title: 'Strong', value: 'strong' },
               { title: 'Emphasis', value: 'em' },
               { title: 'Underline', value: 'underline' },
@@ -56,6 +61,7 @@ export const aboutUsPage = defineType({
           lists: [],
           marks: {
             decorators: [
+              { title: 'Highlight', value: 'highlight', icon: HighlightIcon, component: HighlightDecorator },
               { title: 'Strong', value: 'strong' },
               { title: 'Emphasis', value: 'em' },
               { title: 'Underline', value: 'underline' },
@@ -127,6 +133,7 @@ export const aboutUsPage = defineType({
                   lists: [],
                   marks: {
                     decorators: [
+                      { title: 'Highlight', value: 'highlight', icon: HighlightIcon, component: HighlightDecorator },
                       { title: 'Strong', value: 'strong' },
                       { title: 'Emphasis', value: 'em' },
                     ],
@@ -159,6 +166,7 @@ export const aboutUsPage = defineType({
           lists: [],
           marks: {
             decorators: [
+              { title: 'Highlight', value: 'highlight', icon: HighlightIcon, component: HighlightDecorator },
               { title: 'Strong', value: 'strong' },
               { title: 'Emphasis', value: 'em' },
               { title: 'Underline', value: 'underline' },
