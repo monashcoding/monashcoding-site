@@ -133,7 +133,7 @@ function renderHighlight(text: string) {
   let highlightIndex = 0
   return parts.map((part, i) => {
     if (i % 2 === 1) {
-      const delay = 0.8 + highlightIndex * 0.2
+      const delay = 0.2 + highlightIndex * 0.2
       highlightIndex++
       return (
         <HighlightReveal key={i} delay={delay}>
@@ -156,6 +156,98 @@ function renderBold(text: string) {
     ) : (
       part
     )
+  )
+}
+
+/** Fast typewriter reveal - each character appears sequentially */
+function TypewriterText({
+  text,
+  charDelay = 0.018,
+  startDelay = 0,
+  showCursor = false,
+}: {
+  text: string
+  charDelay?: number
+  startDelay?: number
+  showCursor?: boolean
+}) {
+  const totalTypingTime = text.length * charDelay
+  const blinkDuration = 0.8
+  const numRepeats = Math.ceil((totalTypingTime + 0.3) / blinkDuration)
+
+  // Split into words so each word stays together (no mid-word breaks)
+  const words = text.split(' ')
+  let globalIndex = 0
+
+  return (
+    <>
+      {words.map((word, wi) => {
+        const wordStart = globalIndex
+        globalIndex += word.length
+        if (wi < words.length - 1) globalIndex += 1
+
+        return (
+          <span key={wi} className="inline-flex whitespace-nowrap align-text-bottom leading-[inherit]">
+            {word.split('').map((char, ci) => (
+              <motion.span
+                key={ci}
+                className="inline-block overflow-hidden whitespace-pre leading-[inherit]"
+                variants={{
+                  hidden: { maxWidth: 0 },
+                  show: {
+                    maxWidth: '1.2em',
+                    transition: { duration: 0, delay: startDelay + (wordStart + ci) * charDelay },
+                  },
+                }}
+              >
+                {char}
+              </motion.span>
+            ))}
+            {wi < words.length - 1 && (
+              <motion.span
+                className="inline-block overflow-hidden whitespace-pre leading-[inherit]"
+                variants={{
+                  hidden: { maxWidth: 0 },
+                  show: {
+                    maxWidth: '0.5em',
+                    transition: { duration: 0, delay: startDelay + (wordStart + word.length) * charDelay },
+                  },
+                }}
+              >
+                {' '}
+              </motion.span>
+            )}
+          </span>
+        )
+      })}
+      {showCursor && (
+        <motion.span
+          className="inline-block w-[0.55em] h-[1.1em] overflow-hidden align-text-bottom"
+          style={{ backgroundColor: 'currentColor' }}
+          variants={{
+            hidden: { opacity: 0, maxWidth: 0 },
+            show: {
+              opacity: [1, 1, 0, 0],
+              maxWidth: '0.55em',
+              transition: {
+                opacity: {
+                  delay: startDelay,
+                  duration: blinkDuration,
+                  repeat: numRepeats,
+                  repeatType: 'loop' as const,
+                  times: [0, 0.499, 0.5, 1],
+                  ease: 'linear' as const,
+                },
+                maxWidth: {
+                  delay: startDelay,
+                  duration: 0,
+                },
+              },
+            },
+          }}
+        />
+      )}
+    </>
   )
 }
 
@@ -220,10 +312,10 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
                     transition={{
                       pathLength: {
                         duration: 0.8,
-                        delay: 0.6,
+                        delay: 0.8,
                         ease: [0.22, 1, 0.36, 1],
                       },
-                      opacity: { duration: 0.01, delay: 0.6 },
+                      opacity: { duration: 0.01, delay: 0.8 },
                     }}
                   />
                 </svg>
@@ -240,7 +332,7 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
         </div>
       </RibbonAwareSection>
 
-      {/* ── Our Mission ── */}
+      {/* Our Mission */}
       <RibbonAwareSection
         backgroundClassName="bg-background"
         className="overflow-hidden"
@@ -294,7 +386,7 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
         </motion.div>
       </RibbonAwareSection>
 
-      {/* ── MAC's Values ── */}
+      {/* MAC's Values */}
       {page.values && page.values.length > 0 && (
         <RibbonAwareSection
           backgroundClassName="bg-background"
@@ -379,7 +471,7 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
         </RibbonAwareSection>
       )}
 
-      {/* ── Our Journey ── */}
+      {/* Our Journey */}
       {page.journey && page.journey.length > 0 && (
         <RibbonAwareSection
           backgroundClassName="bg-background"
@@ -405,47 +497,60 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
 
             {/* Two-column layout */}
             <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr]">
-              {/* Left column — year milestones (2019–2024) */}
-              <motion.div variants={itemVariants} className="space-y-0">
-                {leftYears.map((j) => (
-                  <div key={j._key} className="py-4">
+              {/* Left column - year milestones */}
+              <div className="space-y-0">
+                {leftYears.map((j, index) => (
+                  <motion.div
+                    key={j._key}
+                    className="py-4"
+                    variants={{ hidden: {}, show: {} }}
+                  >
                     <h3 className="text-[clamp(2rem,3.5vw,3rem)] font-semibold leading-none text-foreground">
-                      {j.year}
+                      <TypewriterText text={j.year} startDelay={index * 0.1} />
                     </h3>
                     <p className="mt-2 text-[clamp(1rem,2vw,20px)] leading-normal text-[#9a9a9a]">
-                      <span className="mr-1">&gt;</span>
-                      {j.summary}
+                      <TypewriterText text={`> ${j.summary}`} startDelay={index * 0.1 + 0.15} showCursor />
                     </p>
-                  </div>
+                  </motion.div>
                 ))}
-              </motion.div>
+              </div>
 
-              {/* Right column — latest year + image */}
-              <motion.div variants={itemVariants} className="space-y-6">
+              {/* Right column - latest year + image */}
+              <div className="space-y-6">
                 {lastYear && (
-                  <div>
+                  <motion.div
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true, amount: 0.8 }}
+                  >
                     <h3 className="text-[clamp(2rem,3.5vw,3rem)] font-semibold leading-none text-foreground">
-                      {lastYear.year}
+                      <TypewriterText text={lastYear.year} />
                     </h3>
                     <p className="mt-2 text-[clamp(1rem,2vw,20px)] leading-normal text-[#9a9a9a]">
-                      <span className="mr-1">&gt;</span>
-                      {lastYear.summary}
+                      <TypewriterText text={`> ${lastYear.summary}`} startDelay={0.15} showCursor />
                     </p>
-                  </div>
+                  </motion.div>
                 )}
 
                 {/* Journey image */}
                 {page.journeyImage?.asset?.url && (
-                  <div className="relative aspect-[523/643] w-full max-w-[523px]">
-                    <FadeInImage
-                      src={urlFor(page.journeyImage).width(1046).height(1286).url()}
-                      alt="MAC journey"
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.3 }}
+                    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <div className="relative aspect-[523/643] w-full max-w-[523px]">
+                      <FadeInImage
+                        src={urlFor(page.journeyImage).width(1046).height(1286).url()}
+                        alt="MAC journey"
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                  </motion.div>
                 )}
-              </motion.div>
+              </div>
             </div>
 
             {/* Where are we now? */}
