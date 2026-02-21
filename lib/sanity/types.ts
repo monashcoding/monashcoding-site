@@ -352,8 +352,6 @@ export interface FooterSectionData {
   brandName: string
   tagline: string
   columns: FooterColumn[]
-  instagramUrl?: string
-  linkedinUrl?: string
 }
 
 export type HomepageSection =
