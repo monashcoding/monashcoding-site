@@ -77,6 +77,7 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
 
         {/* Section 1 div at the top of the page */}
         <div className="w-full text-center bg-background h-[30vh] flex px-4 md:px-32 lg:px-36 py-8">
+          <div className="w-full px-[5vw] flex">
             {/* Box inside */}
             <motion.div
               className="w-full bg-gold-700 flex items-center justify-center mt-16 rounded-3xl"
@@ -103,6 +104,7 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
                 ))}
               </motion.h1>
             </motion.div>
+          </div>
         </div>
 
         {/* Section 2 div - form and newsletter*/}
@@ -110,13 +112,13 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
           {/* Form and newsletter horizontal section */}
           <div className="w-full flex flex-col gap-12 lg:flex-row my-12 px-[5vw] lg:items-stretch">
             {/* Left side - Form */}
-            <motion.div className="lg:w-[50%]  rounded-4xl  overflow-y-auto" >
+            <motion.div className="lg:w-[55%]  rounded-4xl  overflow-y-auto" >
                 <ContactForm/>
             </motion.div>
 
             {/* Right side - Newsletter*/}
             {/* TODO make sanity and fallbacks for this */}
-            <motion.div className="lg:w-[40%]  bg-white rounded-4xl text-center px-12 py-8 flex flex-col items-center justify-center overflow-hidden gap-4" >
+            <motion.div className="lg:w-[45%]  bg-white rounded-4xl text-center px-12 py-8 flex flex-col items-center justify-center overflow-hidden gap-4" >
               <motion.h2 className="text-4xl font-bold text-gray-800"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
