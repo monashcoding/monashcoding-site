@@ -1,9 +1,4 @@
 import { defineType, defineField } from 'sanity'
-import { HighlightIcon } from '@sanity/icons'
-import { type PropsWithChildren, createElement } from 'react'
-
-const HighlightDecorator = ({ children }: PropsWithChildren) =>
-  createElement('span', { style: { backgroundColor: '#f5e642', color: '#000000', padding: '0 2px' } }, children)
 
 export const hero = defineType({
   name: 'hero',
@@ -30,7 +25,7 @@ export const hero = defineType({
           lists: [],
           marks: {
             decorators: [
-              { title: 'Highlight', value: 'highlight', icon: HighlightIcon, component: HighlightDecorator },
+              { title: 'Highlight', value: 'highlight' },
               { title: 'Strong', value: 'strong' },
               { title: 'Emphasis', value: 'em' },
             ],

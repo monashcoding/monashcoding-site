@@ -143,22 +143,30 @@ interface AboutUsPageClientProps {
   data: AboutUsPageData | null
 }
 
-/** Purple highlight with slide-over wipe animation */
+/** Purple highlight with slide-over wipe animation (inline-friendly, allows text wrapping) */
 function HighlightReveal({ children }: { children: React.ReactNode }) {
   return (
-    <span className="relative inline-block">
-      <motion.span
-        className="absolute inset-x-[-4px] inset-y-[-2px] bg-blue"
-        initial={{ clipPath: 'inset(0 100% 0 0)' }}
-        whileInView={{ clipPath: 'inset(0 0% 0 0)' }}
-        viewport={{ once: true }}
-        transition={{
-          duration: 0.6,
-          ease: [0.22, 1, 0.36, 1],
-        }}
-      />
-      <span className="relative font-bold text-white">{children}</span>
-    </span>
+    <motion.span
+      className="font-bold text-white"
+      style={{
+        backgroundImage: 'linear-gradient(to right, var(--color-blue), var(--color-blue))',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'left',
+        boxDecorationBreak: 'clone',
+        WebkitBoxDecorationBreak: 'clone' as never,
+        padding: '2px 4px',
+        margin: '0 -4px',
+      }}
+      initial={{ backgroundSize: '0% 100%' }}
+      whileInView={{ backgroundSize: '100% 100%' }}
+      viewport={{ once: true }}
+      transition={{
+        duration: 0.6,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+    >
+      {children}
+    </motion.span>
   )
 }
 
@@ -200,21 +208,10 @@ function HandwrittenUnderline({ children }: { children: React.ReactNode }) {
   )
 }
 
-/** Portable Text components: strong = purple highlight wipe, underline = handwritten SVG */
-const aboutUsHighlightComponents: PortableTextComponents = {
+/** Portable Text components: highlight = purple highlight wipe, strong = plain bold, underline = handwritten SVG */
+const aboutUsComponents: PortableTextComponents = {
   marks: {
-    strong: ({ children }) => <HighlightReveal>{children}</HighlightReveal>,
-    underline: ({ children }) => <HandwrittenUnderline>{children}</HandwrittenUnderline>,
-    em: ({ children }) => <em>{children}</em>,
-  },
-  block: {
-    normal: ({ children }) => <p>{children}</p>,
-  },
-}
-
-/** Portable Text components: strong = plain bold, underline = handwritten SVG */
-const aboutUsBoldComponents: PortableTextComponents = {
-  marks: {
+    highlight: ({ children }) => <HighlightReveal>{children}</HighlightReveal>,
     strong: ({ children }) => <strong className="font-bold text-white">{children}</strong>,
     underline: ({ children }) => <HandwrittenUnderline>{children}</HandwrittenUnderline>,
     em: ({ children }) => <em>{children}</em>,
@@ -415,7 +412,7 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
               variants={itemVariants}
               className="mx-auto mt-6 max-w-[732px] text-[clamp(1rem,2.5vw,24px)] leading-normal text-white"
             >
-              <PortableText value={page.pageSubtitle} components={aboutUsHighlightComponents} />
+              <PortableText value={page.pageSubtitle} components={aboutUsComponents} />
             </motion.div>
           </motion.div>
         </div>
@@ -444,7 +441,7 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
                 {page.missionTitle}
               </h2>
               <div className="mt-6 space-y-6 text-[clamp(1rem,2.5vw,24px)] leading-normal text-white">
-                <PortableText value={page.missionBody} components={aboutUsBoldComponents} />
+                <PortableText value={page.missionBody} components={aboutUsComponents} />
               </div>
             </motion.div>
 
@@ -655,7 +652,7 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
                   Where are we now?
                 </h3>
                 <div className="mt-4 space-y-4 text-[clamp(1rem,2vw,20px)] leading-normal text-white">
-                  <PortableText value={page.whereAreWeNow} components={aboutUsHighlightComponents} />
+                  <PortableText value={page.whereAreWeNow} components={aboutUsComponents} />
                 </div>
               </motion.div>
             )}
