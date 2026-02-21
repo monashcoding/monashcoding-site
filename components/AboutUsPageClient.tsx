@@ -247,13 +247,13 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
         contentClassName="relative py-[clamp(4rem,8vw,6rem)] px-6 md:px-8"
       >
         <motion.div
-          className="relative mx-auto max-w-[1240px]"
+          className="relative mx-auto max-w-[1240px] lg:max-w-[1440px]"
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.2 }}
           variants={containerVariants}
         >
-<div className="lg:grid lg:grid-cols-2 lg:items-center lg:gap-12">
+<div className="lg:grid lg:grid-cols-[1fr_1.4fr] lg:items-center lg:gap-12">
             {/* Text content */}
             <motion.div
               variants={itemVariants}
