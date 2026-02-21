@@ -57,6 +57,9 @@ export default function CommitteePageClient({
 
 
   const title = pageData?.pageTitle || 'Meet the Team'
+  const teamDescription = selectedTeam !== 'all' && selectedTeam !== 'alumni'
+    ? pageData?.teamDescriptions?.find((td) => td.team === selectedTeam)?.description
+    : undefined
 
   // Ordered list of teams that have members
   const activeTeams = TEAM_ORDER.filter((team) => availableTeams.includes(team))
@@ -245,6 +248,22 @@ export default function CommitteePageClient({
               )}
             </div>
           </div>
+
+          {/* Team Description */}
+          <AnimatePresence mode="wait">
+            {teamDescription && (
+              <motion.p
+                key={selectedTeam}
+                className="mx-auto mb-10 max-w-2xl text-center text-sm leading-relaxed text-foreground/60"
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.25 }}
+              >
+                {teamDescription}
+              </motion.p>
+            )}
+          </AnimatePresence>
 
           {/* Committee Member Grid */}
           <div className="relative mx-auto max-w-7xl">
