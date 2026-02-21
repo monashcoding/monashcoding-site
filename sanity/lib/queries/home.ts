@@ -105,9 +105,7 @@ export const homepageQuery = groq`
             url,
             isExternal
           }
-        },
-        instagramUrl,
-        linkedinUrl
+        }
       }
     }
   }
