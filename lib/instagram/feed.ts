@@ -12,18 +12,52 @@ export interface InstagramReel {
   pinned?: boolean
 }
 
+/* ------------------------------------------------------------------ */
+/*  Global in-memory cache (shared across all requests in the process) */
+/* ------------------------------------------------------------------ */
+
+interface CachedReel {
+  data: InstagramReel
+  fetchedAt: number
+}
+
+const cache = new Map<string, CachedReel>()
+const CACHE_TTL = 60 * 60 * 1000 // 60 minutes
+const REFRESH_INTERVAL = 60 * 60 * 1000 // 60 minutes
+
+let refreshTimer: ReturnType<typeof setInterval> | null = null
+
+function startBackgroundRefresh() {
+  if (refreshTimer) return
+  refreshTimer = setInterval(async () => {
+    const urls = [...cache.keys()]
+    if (urls.length === 0) return
+    await Promise.allSettled(urls.map((url) => fetchAndCache(url)))
+  }, REFRESH_INTERVAL)
+  // Don't block process exit
+  if (refreshTimer && typeof refreshTimer === 'object' && 'unref' in refreshTimer) {
+    refreshTimer.unref()
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Public API                                                         */
+/* ------------------------------------------------------------------ */
+
 /**
- * Fetch metadata for Instagram reels/posts by scraping og: meta tags.
- * Uses ISR caching (1 hour) matching the YouTube fetcher pattern.
- * Thumbnail CDN URLs expire, so they are refreshed on each revalidation.
+ * Fetch metadata for Instagram reels/posts.
+ * Returns cached data instantly if available; fetches on demand otherwise.
+ * A background interval refreshes all cached entries every 60 minutes.
  */
 export async function fetchInstagramReels(
   urls: string[]
 ): Promise<InstagramReel[]> {
   if (urls.length === 0) return []
 
+  startBackgroundRefresh()
+
   const results = await Promise.allSettled(
-    urls.map((url) => fetchSingleReel(url))
+    urls.map((url) => getOrFetch(url))
   )
 
   return results
@@ -35,13 +69,37 @@ export async function fetchInstagramReels(
     .filter((r): r is InstagramReel => r !== null)
 }
 
+/* ------------------------------------------------------------------ */
+/*  Cache logic                                                        */
+/* ------------------------------------------------------------------ */
+
+async function getOrFetch(url: string): Promise<InstagramReel | null> {
+  const cached = cache.get(url)
+  if (cached && Date.now() - cached.fetchedAt < CACHE_TTL) {
+    return cached.data
+  }
+  return fetchAndCache(url)
+}
+
+async function fetchAndCache(url: string): Promise<InstagramReel | null> {
+  const reel = await fetchSingleReel(url)
+  if (reel) {
+    cache.set(url, { data: reel, fetchedAt: Date.now() })
+  }
+  return reel
+}
+
+/* ------------------------------------------------------------------ */
+/*  Instagram scraping                                                 */
+/* ------------------------------------------------------------------ */
+
 async function fetchSingleReel(url: string): Promise<InstagramReel | null> {
   try {
     // Instagram only serves og: meta tags to known bot/crawler User-Agents.
     // A regular browser UA gets a JS-only app shell with no metadata.
     const res = await fetch(url, {
       headers: { 'User-Agent': 'facebookexternalhit/1.1' },
-      next: { revalidate: 3600 },
+      cache: 'no-store',
     })
     if (!res.ok) return null
 
@@ -70,10 +128,11 @@ async function fetchSingleReel(url: string): Promise<InstagramReel | null> {
   }
 }
 
+/* ------------------------------------------------------------------ */
+/*  Helpers                                                            */
+/* ------------------------------------------------------------------ */
+
 function extractMetaContent(html: string, property: string): string | null {
-  // Match both attribute orderings:
-  // <meta property="og:image" content="...">
-  // <meta content="..." property="og:image">
   const regex = new RegExp(
     `<meta[^>]*property=["']${property}["'][^>]*content=["']([^"']+)["']` +
       `|<meta[^>]*content=["']([^"']+)["'][^>]*property=["']${property}["']`
@@ -101,7 +160,6 @@ function parseOgDescription(desc: string): {
       caption: match[4],
     }
   }
-  // Fallback: return the whole description as caption
   return { likes: '0', comments: '0', date: '', caption: decoded }
 }
 
