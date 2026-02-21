@@ -4,6 +4,11 @@ export const committeePageQuery = groq`
   *[_type == "committeePage"][0] {
     pageTitle,
     pageSubtitle,
+    teamDescriptions[] {
+      _key,
+      team,
+      description
+    },
     timeline[] {
       _key,
       date,
