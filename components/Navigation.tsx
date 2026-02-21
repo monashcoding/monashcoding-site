@@ -216,7 +216,7 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
             href={MEMBER_SIGNUP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="lg:hidden min-w-0 flex-1 rounded-md bg-accent px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.09em] text-accent-foreground text-center truncate"
+            className="lg:hidden min-w-0 flex-1 flex items-center justify-center rounded-md bg-accent px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.09em] text-accent-foreground truncate h-10.5"
             transition={{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }}
           >
             Become a Member
@@ -226,8 +226,8 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
             href={JOB_BOARD_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden lg:inline-flex items-center gap-2 rounded-md bg-[#2a2a52] px-4 py-1.5 text-sm font-semibold uppercase tracking-[0.07em] text-[#d2d2ff]"
-            animate={{ x: showMemberCta ? -14 : 0 }}
+            className="hidden lg:inline-flex items-center gap-2 rounded-md bg-[#2a2a52] px-4 py-2 text-sm font-semibold uppercase tracking-[0.07em] text-[#d2d2ff]"
+            animate={{ x: 0 }}
             whileHover={{ y: -2, scale: 1.02 }}
             transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
           >
@@ -242,7 +242,7 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
                 href={MEMBER_SIGNUP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden lg:inline-flex rounded-md bg-accent px-5 py-1.5 text-sm font-semibold uppercase tracking-[0.08em] text-accent-foreground"
+                className="hidden lg:inline-flex items-center rounded-md bg-accent px-5 py-2 text-sm font-semibold uppercase tracking-[0.08em] text-accent-foreground"
                 initial={{ y: -24, opacity: 0, scale: 0.97 }}
                 animate={{ y: 0, opacity: 1, scale: 1 }}
                 exit={{ y: -24, opacity: 0, scale: 0.97 }}
@@ -257,7 +257,7 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
           {/* Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className={`relative shrink-0 flex items-center gap-3 py-1.5 px-5 rounded-md border cursor-pointer transition-all duration-300 ${
+            className={`relative shrink-0 flex items-center gap-3 py-2.5 px-5 rounded-md border cursor-pointer transition-all duration-300 h-10.5 lg:h-auto lg:py-2 ${
               isOpen
                 ? "bg-accent border-accent text-accent-foreground hover:bg-[#e6c800]"
                 : "bg-[#2a2a2e] border-white/20 text-white hover:border-white/40"
