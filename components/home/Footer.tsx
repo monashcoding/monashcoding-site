@@ -69,7 +69,7 @@ export function Footer({ data, navItems, socialLinks }: FooterProps) {
               <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-foreground mb-6">
                 {column.title}
               </h4>
-              <ul className="list-none p-0 m-0 space-y-3">
+              <ul className="list-none p-0 m-0 grid grid-cols-2 gap-x-6 gap-y-3">
                 {column.links.map((link) => (
                   <li key={link._key}>
                     <a
@@ -90,7 +90,7 @@ export function Footer({ data, navItems, socialLinks }: FooterProps) {
               <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-foreground mb-6">
                 Socials
               </h4>
-              <ul className="list-none p-0 m-0 space-y-3">
+              <ul className="list-none p-0 m-0 grid grid-cols-2 gap-x-6 gap-y-3">
                 {socialLinks.map((link) => {
                   const Icon = PLATFORM_ICONS[link.platform]
                   if (!Icon) return null
