@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { OWeekPageData } from "@/lib/sanity/types";
 
 // Page data (2026 pamphlet)
-const pageImages = [
+const pageImages: { src: string; alt: string; w: number; h: number; bg?: string }[] = [
   { src: "/oweek/page-1-cover.webp", alt: "Cover - Welcome to 2026 MAC!", w: 1600, h: 2263 },
   { src: "/oweek/page-2-about.webp", alt: "About Us - Monash Association of Coding", w: 1600, h: 2263 },
   { src: "/oweek/page-3-involved.webp", alt: "How to Get Involved - Events & Workshops", w: 1600, h: 2263 },
@@ -15,7 +15,7 @@ const pageImages = [
   { src: "/oweek/page-7-notwaste.webp", alt: "MAC x IBL - How 2 Not Waste Uni", w: 1600, h: 2263 },
   { src: "/oweek/page-8-touch.webp", alt: "Let's Keep in Touch - Socials", w: 1600, h: 2263 },
   { src: "/oweek/page-9-schedule.webp", alt: "Semester 1 Schedule", w: 1600, h: 2263 },
-  { src: "/oweek/page-10-close.webp", alt: "Closing - 2026 MAC", w: 1600, h: 2263 },
+  { src: "/oweek/page-10-close.webp", alt: "Closing - 2026 MAC", w: 1600, h: 2263, bg: "white" },
 ];
 
 // QR code overlay buttons (positioned as % of page image)
@@ -239,6 +239,7 @@ export default function OWeekPageClient({ data }: OWeekPageClientProps) {
               maxWidth: "800px",
               maxHeight: "calc(100dvh - 140px)",
               aspectRatio: "1600 / 2263",
+              ...(page.bg && { backgroundColor: page.bg }),
             }}
           >
             <Image
