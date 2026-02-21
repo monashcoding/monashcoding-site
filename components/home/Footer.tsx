@@ -70,7 +70,10 @@ export function Footer({ data, navItems, socialLinks }: FooterProps) {
         <RibbonBlock darkClass="text-[#252525] [&_*]:!text-[#252525] [&_svg]:!fill-[#252525] [&_svg]:!text-[#252525]">
         <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-12 mb-16">
           <div>
-            <div className="text-3xl font-extrabold text-foreground mb-4">{brandName}</div>
+            <div className="flex items-center gap-3 text-3xl font-extrabold text-foreground mb-4">
+              <Image src="/logo/logo.jpg" alt="MAC Logo" width={40} height={40} className="rounded-full" />
+              {brandName}
+            </div>
             <p className="text-white/60 leading-relaxed">{tagline}</p>
           </div>
           {columns.map((column) => (
