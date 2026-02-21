@@ -28,6 +28,13 @@ export const navigation = defineType({
               type: 'string',
               validation: (Rule) => Rule.required(),
             }),
+            defineField({
+              name: 'image',
+              title: 'Background Image',
+              description: 'Optional background image for the home page nav card',
+              type: 'image',
+              options: { hotspot: true },
+            }),
           ],
           preview: {
             select: {

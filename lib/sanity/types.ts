@@ -78,6 +78,7 @@ export interface NavItem {
   _key: string
   label: string
   href: string
+  image?: SanityImage
 }
 
 export interface SocialLink {

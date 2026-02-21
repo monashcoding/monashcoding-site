@@ -2,17 +2,13 @@
 
 import { useMemo } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
-import { NavigationData, PageVisibility } from "@/lib/sanity/types";
+import { NavigationData, NavItem, PageVisibility } from "@/lib/sanity/types";
 import { NAV_PREVIEWS } from "@/components/navigation/navPreviewConfig";
+import { urlFor } from "@/sanity/lib/image";
 
-interface NavItem {
-  _key?: string;
-  label: string;
-  href: string;
-}
-
-const defaultNavItems: NavItem[] = [
+const defaultNavItems: Omit<NavItem, "_key">[] = [
   { label: "About Us", href: "/about" },
   { label: "Meet the Team", href: "/team" },
   { label: "Sponsor Us", href: "/sponsor" },
@@ -33,7 +29,7 @@ interface QuickLinksSectionProps {
 
 export function QuickLinksSection({ data }: QuickLinksSectionProps) {
   const navItems = useMemo(() => {
-    const raw: NavItem[] = data?.navItems?.filter((i) => i.href !== "/") ?? defaultNavItems;
+    const raw = (data?.navItems?.filter((i) => i.href !== "/") ?? defaultNavItems) as NavItem[];
     const pageVisibility = data?.pageVisibility;
     if (!pageVisibility) return raw;
 
@@ -83,11 +79,27 @@ export function QuickLinksSection({ data }: QuickLinksSectionProps) {
                 href={item.href}
                 className="absolute inset-0 flex items-center overflow-hidden no-underline"
               >
-                {/* Default background */}
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 bg-accent/0 transition-colors duration-300 group-hover:bg-accent/5"
-                />
+                {/* Background image */}
+                {item.image?.asset && (
+                  <>
+                    <Image
+                      src={urlFor(item.image).width(800).height(500).fit("crop").url()}
+                      alt={item.label}
+                      fill
+                      className="object-cover"
+                    />
+                    {/* Dark overlay — fades out on hover */}
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 bg-[#1a1a1a]/80 transition-opacity duration-500 group-hover:opacity-0"
+                    />
+                    {/* Gradient overlay — fades in on hover */}
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100 bg-[linear-gradient(95deg,rgba(26,26,26,0.7)_40%,transparent_100%)]"
+                    />
+                  </>
+                )}
                 {/* Vertical slanted title — slides right on hover */}
                 <span
                   className="quick-link-title absolute left-1/2 top-1/2 z-10 text-[clamp(1rem,1.2vw,1.5rem)] font-bold uppercase tracking-[0.2em] text-white/70 whitespace-nowrap transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:text-accent group-hover:translate-x-[60%]"
@@ -133,6 +145,21 @@ export function QuickLinksSection({ data }: QuickLinksSectionProps) {
                 href={item.href}
                 className="group relative block rounded-xl border border-white/[0.08] p-5 no-underline overflow-hidden transition-colors duration-300 hover:border-accent/[0.3]"
               >
+                {/* Background image */}
+                {item.image?.asset && (
+                  <>
+                    <Image
+                      src={urlFor(item.image).width(600).height(300).fit("crop").url()}
+                      alt={item.label}
+                      fill
+                      className="object-cover rounded-xl"
+                    />
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 bg-black/60 rounded-xl"
+                    />
+                  </>
+                )}
                 <span
                   aria-hidden
                   className="pointer-events-none absolute inset-0 bg-accent/0 transition-colors duration-300 group-hover:bg-accent/5"
