@@ -1,4 +1,3 @@
-export { InstagramSection } from './InstagramSection'
 export { SponsorsSection } from './SponsorsSection'
 export { EventsSection } from './EventsSection'
 export { CommunitySection } from './CommunitySection'

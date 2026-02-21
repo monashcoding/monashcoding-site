@@ -3,7 +3,6 @@
 import { HomepageSection, EventDocument, SocialLink } from '@/lib/sanity/types'
 import type { YouTubeVideo } from '@/lib/youtube/feed'
 import {
-  InstagramSection,
   SponsorsSection,
   SectionRenderer,
 } from '@/components/home'
@@ -24,7 +23,6 @@ export function HomeContent({ sections, events, socialLinks, youtubeVideos }: Ho
   // Fallback to default sections if no Sanity data
   return (
     <>
-      <InstagramSection />
       <SponsorsSection />
     </>
   )

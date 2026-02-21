@@ -289,15 +289,6 @@ export interface ContentStreamSectionData {
 }
 
 // Homepage Sections
-export interface InstagramSectionData {
-  _key: string
-  _type: 'instagramSection'
-  heading: string
-  handle: string
-  url: string
-  postCount: number
-}
-
 export interface Sponsor {
   _key: string
   name: string
@@ -337,7 +328,6 @@ export interface FooterSectionData {
 }
 
 export type HomepageSection =
-  | InstagramSectionData
   | SponsorsSectionData
   | EventsSectionData
   | CommunitySectionData

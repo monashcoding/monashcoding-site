@@ -1,50 +1,5 @@
 import { defineType, defineField, defineArrayMember } from 'sanity'
 
-const instagramSectionSchema = defineArrayMember({
-  type: 'object',
-  name: 'instagramSection',
-  title: 'Instagram Section',
-  fields: [
-    defineField({
-      name: 'heading',
-      title: 'Section Heading',
-      type: 'string',
-      initialValue: 'Follow Our Journey',
-    }),
-    defineField({
-      name: 'handle',
-      title: 'Instagram Handle',
-      type: 'string',
-      initialValue: '@monashcoding',
-    }),
-    defineField({
-      name: 'url',
-      title: 'Instagram URL',
-      type: 'url',
-      initialValue: 'https://instagram.com/monashcoding',
-    }),
-    defineField({
-      name: 'postCount',
-      title: 'Number of Posts to Show',
-      type: 'number',
-      initialValue: 6,
-      validation: (Rule) => Rule.required().min(1).max(12),
-    }),
-  ],
-  preview: {
-    select: {
-      heading: 'heading',
-      handle: 'handle',
-    },
-    prepare({ heading, handle }: { heading?: string; handle?: string }) {
-      return {
-        title: heading || 'Instagram Section',
-        subtitle: handle,
-      }
-    },
-  },
-})
-
 const sponsorSchema = {
   type: 'object',
   name: 'sponsor',
@@ -416,7 +371,6 @@ export const homepage = defineType({
       description: 'Drag to reorder sections on the homepage',
       type: 'array',
       of: [
-        instagramSectionSchema,
         sponsorsSectionSchema,
         eventsSectionSchema,
         communitySectionSchema,
