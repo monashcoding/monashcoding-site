@@ -380,15 +380,22 @@ const communitySectionSchema = defineArrayMember({
                     return true
                   }),
             }),
+            defineField({
+              name: 'pinned',
+              title: 'Pinned',
+              type: 'boolean',
+              description: 'Pinned reels are shown first.',
+              initialValue: false,
+            }),
           ],
           preview: {
-            select: { url: 'url' },
-            prepare({ url }: { url?: string }) {
+            select: { url: 'url', pinned: 'pinned' },
+            prepare({ url, pinned }: { url?: string; pinned?: boolean }) {
               const shortcode =
                 url?.match(/\/(reel|p)\/([A-Za-z0-9_-]+)/)?.[2] ?? ''
               const type = url?.includes('/reel/') ? 'Reel' : 'Post'
               return {
-                title: shortcode || 'No URL',
+                title: `${pinned ? '(Pinned) ' : ''}${shortcode || 'No URL'}`,
                 subtitle: type,
               }
             },

@@ -264,6 +264,14 @@ function InstagramReelCard({ reel }: { reel: InstagramReel }) {
             {reel.comments}
           </span>
         </div>
+        {/* Pinned indicator - top-right */}
+        {reel.pinned && (
+          <div className="absolute top-2.5 right-2.5 flex h-7 w-7 items-center justify-center rounded-full bg-accent shadow-lg">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="#252525">
+              <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z" />
+            </svg>
+          </div>
+        )}
         {/* Play icon for reels */}
         {reel.type === 'reel' && (
           <div className="absolute right-2.5 bottom-2.5">
@@ -483,7 +491,11 @@ export function CommunitySection({
   const subheading = data?.subheading ?? 'Connect with us on social media'
   const allowedPlatforms = data?.platforms ?? DEFAULT_PLATFORMS
 
-  const hasReels = instagramReels.length > 0
+  const sortedReels = useMemo(
+    () => [...instagramReels].reverse().sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0)),
+    [instagramReels]
+  )
+  const hasReels = sortedReels.length > 0
   const hasVideos = youtubeVideos.length > 0
   const [socialsOpen, setSocialsOpen] = useState(true)
   const [reelsOpen, setReelsOpen] = useState(true)
@@ -620,7 +632,7 @@ export function CommunitySection({
             transition={{ duration: 0.3 }}
           >
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-              {instagramReels.map((reel, index) => (
+              {sortedReels.map((reel, index) => (
                 <motion.div
                   key={reel.shortcode}
                   initial={{ opacity: 0, y: 20 }}
@@ -698,7 +710,7 @@ export function CommunitySection({
           onToggle={() => setReelsOpen((v) => !v)}
         >
           <div className="grid grid-cols-4 gap-4">
-            {instagramReels.map((reel, index) => (
+            {sortedReels.map((reel, index) => (
               <motion.div
                 key={reel.shortcode}
                 initial={{ opacity: 0, y: 20 }}

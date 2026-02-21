@@ -285,6 +285,7 @@ export interface EventsSectionData {
 export interface InstagramReelUrl {
   _key: string
   url: string
+  pinned?: boolean
 }
 
 export interface CommunitySectionData {

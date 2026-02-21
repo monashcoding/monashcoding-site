@@ -9,6 +9,7 @@ export interface InstagramReel {
   likes: string
   comments: string
   type: 'reel' | 'post'
+  pinned?: boolean
 }
 
 /**

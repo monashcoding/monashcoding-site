@@ -82,7 +82,8 @@ export const homepageQuery = groq`
         platforms,
         instagramReels[] {
           _key,
-          url
+          url,
+          pinned
         }
       },
       // Content stream section
