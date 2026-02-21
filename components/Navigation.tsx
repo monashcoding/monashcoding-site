@@ -200,7 +200,7 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
               alt="MAC Logo"
               width={48}
               height={48}
-              className="w-12 h-12 rounded-full object-cover transition-transform duration-300 hover:scale-105"
+              className="w-12 h-12 rounded-full object-cover"
               priority
             />
           </Link>
