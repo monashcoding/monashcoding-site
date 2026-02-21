@@ -39,7 +39,7 @@ interface HoverState {
   active: boolean
 }
 
-function SocialTiltCard({
+export function SocialTiltCard({
   platform,
   url,
   isPlaceholder,
@@ -92,9 +92,9 @@ function SocialTiltCard({
         style={{
           transform: `rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(${hover.active && !isPlaceholder ? 1.03 : 1})`,
           transition:
-            'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.4s ease',
+            'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
           transformStyle: 'preserve-3d',
-          border: `1px solid ${hover.active && !isPlaceholder ? `${accent.color}44` : 'rgba(255,255,255,0.08)'}`,
+          border: 'none',
           backgroundColor: 'rgba(28,28,28,0.8)',
         }}
       >
@@ -130,11 +130,6 @@ function SocialTiltCard({
               <span
                 className="inline-flex h-8 w-8 items-center justify-center rounded-full text-white/60 transition-all duration-300"
                 style={{
-                  borderWidth: '1px',
-                  borderStyle: 'solid',
-                  borderColor: hover.active
-                    ? `${accent.color}55`
-                    : 'rgba(255,255,255,0.12)',
                   backgroundColor: hover.active
                     ? `${accent.color}15`
                     : 'rgba(255,255,255,0.04)',
@@ -331,12 +326,12 @@ function CollapsiblePanel({
   children: React.ReactNode
 }) {
   return (
-    <div className="border border-white/[0.06] rounded-2xl overflow-hidden">
+    <div className="rounded-2xl overflow-hidden">
       <div className="flex">
         {/* Vertical label strip */}
         <button
           onClick={onToggle}
-          className="relative flex-shrink-0 w-16 flex items-center justify-center cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] transition-colors duration-300 border-r border-white/[0.06] py-6"
+          className="relative flex-shrink-0 w-16 flex items-center justify-center cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] transition-colors duration-300 py-6"
         >
           <span
             className="text-[0.8rem] font-bold uppercase tracking-[0.2em] text-white/60 whitespace-nowrap transition-colors duration-300 hover:text-accent"

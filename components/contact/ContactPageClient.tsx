@@ -6,7 +6,7 @@ import { ContactPageData, SocialLink } from "@/lib/sanity/types";
 import { PLATFORM_ICONS, PLATFORM_LABELS } from "@/lib/socialPlatforms";
 import { RibbonAwareSection } from "@/components/RibbonAwareSection";
 import ContactForm from "@/components/contact/ContactForm";
-import { set } from "sanity";
+import { SocialTiltCard } from "@/components/home/CommunitySection";
 
 // Fallback data
 const defaultSocialLinks: SocialLink[] = [
@@ -170,14 +170,28 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
         {/* Section 3 - Socials */}
         <motion.div
           className="bg-background flex flex-col justify-center items-center py-12 gap-6"
-          
         >
           <motion.div className="text-base font-semibold text-white text-[clamp(2rem,3vw,6rem)]">
             Talk to us
           </motion.div>
 
-          <motion.div className="flex justify-center gap-6 flex-wrap"
-          >
+          {/* Desktop - SocialTiltCards from community section */}
+          <div className="hidden lg:block w-full px-[5vw]">
+            <div className="mx-auto max-w-310 grid gap-4" style={{ gridTemplateColumns: `repeat(${Math.min(socialLinks.length, 4)}, 1fr)` }}>
+              {socialLinks.map((link, index) => (
+                <SocialTiltCard
+                  key={link._key}
+                  platform={link.platform}
+                  url={link.url}
+                  isPlaceholder={false}
+                  index={index}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile - original compact cards */}
+          <motion.div className="flex justify-center gap-6 flex-wrap lg:hidden">
             {socialLinks.map((link, index) => {
               const IconComponent = PLATFORM_ICONS[link.platform];
               const label = PLATFORM_LABELS[link.platform] || link.platform;
@@ -188,14 +202,14 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-36 h-30 flex flex-col items-center justify-center gap-2 bg-white/5 border border-white/10 rounded-2xl text-white/50 transition-all  hover:bg-gold-700/10 hover:border-gold-700/30 hover:text-gold-700 no-underline"
+                  className="w-36 h-30 flex flex-col items-center justify-center gap-2 bg-white/5 border border-white/10 rounded-2xl text-white/50 transition-all hover:bg-gold-700/10 hover:border-gold-700/30 hover:text-gold-700 no-underline"
                   aria-label={label}
                   whileHover={{ scale: 1.05 }}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{once: true}}
                   transition={{ duration: 0.2, delay: index * 0.2 }}
-                  >
+                >
                   {IconComponent && <IconComponent className="w-8 h-8" />}
                   <span className="text-xs text-center font-medium capitalize">{label}</span>
                   <span className="text-xs text-center">{description}</span>
@@ -203,7 +217,7 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
               );
             })}
 
-            {/* Email copy*/}
+            {/* Email copy */}
             {(() => {
               const EmailIconComponent = PLATFORM_ICONS["email" as const];
               return (
@@ -218,7 +232,7 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
                   transition={{ duration: 0.2, delay: 1 }}>
                   <EmailIconComponent className="w-8 h-8" />
                   <AnimatePresence mode="wait">
-                    <motion.span 
+                    <motion.span
                       key={emailCopied ? "copied" : "email"}
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -231,9 +245,7 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
                   </AnimatePresence>
                 </motion.button>
               );
-            })()}       
-
-
+            })()}
           </motion.div>
         </motion.div>
 
