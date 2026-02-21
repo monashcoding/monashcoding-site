@@ -216,12 +216,9 @@ export function EventPageClient({ event }: EventPageClientProps) {
             <h2 className="text-[clamp(1.45rem,2.8vw,2.2rem)] font-semibold text-foreground">
               Overview
             </h2>
-            <p className="mt-4 text-[clamp(0.98rem,1.25vw,1.12rem)] leading-relaxed text-white/72">
-              {event.description}
-            </p>
 
             {event.body && event.body.length > 0 && (
-              <div className="mt-8 border-t border-white/10 pt-8">
+              <div className="mt-6">
                 <EventBody value={event.body} className="text-white/80" />
               </div>
             )}
