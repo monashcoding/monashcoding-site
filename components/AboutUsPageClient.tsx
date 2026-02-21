@@ -201,12 +201,32 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
               <span className="text-foreground">About </span>
               <span className="relative inline-block text-accent">
                 MAC
-                {/* Tilted yellow underline accent */}
-                <motion.div
-                  variants={itemVariants}
-                  className="absolute -bottom-1 left-1/2 h-[3px] w-full -translate-x-1/2 origin-center -rotate-3 bg-accent"
-                  style={{ marginTop: '0.5rem' }}
-                />
+                {/* Curved handwriting-style underline */}
+                <svg
+                  className="absolute -bottom-3 left-1/2 -translate-x-1/2 -rotate-5 w-[110%]"
+                  viewBox="0 0 120 12"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="none"
+                >
+                  <motion.path
+                    d="M2 7 Q 60 2, 118 7"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    fill="none"
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    animate={{ pathLength: 1, opacity: 1 }}
+                    transition={{
+                      pathLength: {
+                        duration: 0.8,
+                        delay: 0.6,
+                        ease: [0.22, 1, 0.36, 1],
+                      },
+                      opacity: { duration: 0.01, delay: 0.6 },
+                    }}
+                  />
+                </svg>
               </span>
             </motion.h1>
 
