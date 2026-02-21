@@ -1,76 +1,5 @@
 import { defineType, defineField, defineArrayMember } from 'sanity'
 
-const storyItemSchema = {
-  type: 'object',
-  name: 'storyItem',
-  title: 'Story Item',
-  fields: [
-    defineField({
-      name: 'year',
-      title: 'Year',
-      type: 'string',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'title',
-      title: 'Title',
-      type: 'string',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'content',
-      title: 'Content',
-      type: 'text',
-      rows: 3,
-      validation: (Rule) => Rule.required(),
-    }),
-  ],
-  preview: {
-    select: {
-      year: 'year',
-      title: 'title',
-    },
-    prepare({ year, title }: { year?: string; title?: string }) {
-      return {
-        title: `${year} - ${title}`,
-      }
-    },
-  },
-}
-
-const storySectionSchema = defineArrayMember({
-  type: 'object',
-  name: 'storySection',
-  title: 'Story Section',
-  fields: [
-    defineField({
-      name: 'heading',
-      title: 'Section Heading',
-      type: 'string',
-      initialValue: 'Our Story',
-    }),
-    defineField({
-      name: 'items',
-      title: 'Story Items',
-      type: 'array',
-      of: [storyItemSchema],
-      validation: (Rule) => Rule.required().min(1),
-    }),
-  ],
-  preview: {
-    select: {
-      heading: 'heading',
-      items: 'items',
-    },
-    prepare({ heading, items }: { heading?: string; items?: unknown[] }) {
-      return {
-        title: heading || 'Story Section',
-        subtitle: `${items?.length || 0} items`,
-      }
-    },
-  },
-})
-
 const instagramSectionSchema = defineArrayMember({
   type: 'object',
   name: 'instagramSection',
@@ -487,7 +416,6 @@ export const homepage = defineType({
       description: 'Drag to reorder sections on the homepage',
       type: 'array',
       of: [
-        storySectionSchema,
         instagramSectionSchema,
         sponsorsSectionSchema,
         eventsSectionSchema,

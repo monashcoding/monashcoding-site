@@ -42,16 +42,6 @@ export const homepageQuery = groq`
     sections[] {
       _key,
       _type,
-      // Story section
-      _type == "storySection" => {
-        heading,
-        items[] {
-          _key,
-          year,
-          title,
-          content
-        }
-      },
       // Instagram section
       _type == "instagramSection" => {
         heading,

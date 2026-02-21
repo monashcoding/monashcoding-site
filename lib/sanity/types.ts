@@ -289,20 +289,6 @@ export interface ContentStreamSectionData {
 }
 
 // Homepage Sections
-export interface StoryItem {
-  _key: string
-  year: string
-  title: string
-  content: string
-}
-
-export interface StorySectionData {
-  _key: string
-  _type: 'storySection'
-  heading: string
-  items: StoryItem[]
-}
-
 export interface InstagramSectionData {
   _key: string
   _type: 'instagramSection'
@@ -351,7 +337,6 @@ export interface FooterSectionData {
 }
 
 export type HomepageSection =
-  | StorySectionData
   | InstagramSectionData
   | SponsorsSectionData
   | EventsSectionData
