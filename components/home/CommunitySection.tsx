@@ -160,7 +160,7 @@ export function SocialTiltCard({
               {label}
             </p>
             <p
-              className={`mt-1.5 text-[0.82rem] ${isPlaceholder ? 'text-white/20' : 'text-white/50'}`}
+              className={`mt-1.5 text-[0.82rem] break-all ${isPlaceholder ? 'text-white/20' : 'text-white/50'}`}
             >
               {isPlaceholder ? 'Coming soon' : (description || 'Follow us')}
             </p>
