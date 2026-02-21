@@ -18,15 +18,6 @@ const defaultColumns: FooterColumn[] = [
       { _key: '4', label: 'Contact', url: '/contact', isExternal: false },
     ],
   },
-  {
-    _key: 'resources',
-    title: 'Resources',
-    links: [
-      { _key: '1', label: 'Events', url: '#', isExternal: false },
-      { _key: '2', label: 'Blog', url: '#', isExternal: false },
-      { _key: '3', label: 'FAQs', url: '#', isExternal: false },
-    ],
-  },
 ]
 
 function NewsletterForm() {
@@ -128,7 +119,6 @@ export function Footer({ data, navItems, socialLinks }: FooterProps) {
           isExternal: false,
         })),
       },
-      ...defaultColumns.filter((c) => c._key !== 'nav'),
     ]
   } else {
     columns = defaultColumns
