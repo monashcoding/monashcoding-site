@@ -5,7 +5,8 @@ export const socialLinksQuery = groq`
     links[] {
       _key,
       platform,
-      url
+      url,
+      description
     }
   }
 `

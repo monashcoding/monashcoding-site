@@ -28,22 +28,6 @@ export const contactPage = defineType({
       initialValue: 'hello@monashcoding.com',
     }),
     defineField({
-      name: 'discordLink',
-      title: 'Discord Link',
-      type: 'url',
-      validation: (Rule) =>
-        Rule.uri({
-          scheme: ['http', 'https'],
-        }),
-      initialValue: 'https://discord.gg/monashcoding',
-    }),
-    defineField({
-      name: 'discordLabel',
-      title: 'Discord Label',
-      type: 'string',
-      initialValue: 'Join our community',
-    }),
-    defineField({
       name: 'location',
       title: 'Location',
       type: 'string',
@@ -54,6 +38,13 @@ export const contactPage = defineType({
       title: 'Location Map Link',
       type: 'url',
       initialValue: 'https://maps.google.com/?q=Monash+University+Clayton',
+    }),
+    // Image
+    defineField({
+      name: 'bottomImage',
+      title: 'Bottom Image',
+      type: 'image',
+      description: 'Image shown at the bottom of the contact page.',
     }),
   ],
   preview: {

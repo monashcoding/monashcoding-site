@@ -9,9 +9,9 @@ export interface EmailTemplateProps {
 
 export function EmailTemplate({ name, emailAddress, subject, message }: EmailTemplateProps) {
   return (
-    <div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f8f7f4', padding: '0', margin: '0' }}>
+    <div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#252525', padding: '0', margin: '0' }}>
       {/* Main Container */}
-      <table width="100%" cellPadding="0" cellSpacing="0" style={{ backgroundColor: '#f8f7f4' }}>
+      <table width="100%" cellPadding="0" cellSpacing="0" style={{ backgroundColor: '#252525' }}>
         <tbody>
           {/* Header with Gradient */}
           <tr>
@@ -20,13 +20,13 @@ export function EmailTemplate({ name, emailAddress, subject, message }: EmailTem
                 <tbody>
                   <tr>
                     <td style={{
-                      background: 'linear-gradient(135deg, #b8860b 0%, #daa520 100%)',
+                      background: 'linear-gradient(135deg, #FFE330 0%, #ffd700 100%)',
                       padding: '40px 30px',
                       borderRadius: '12px 12px 0 0',
                       textAlign: 'center'
                     }}>
                       <h1 style={{
-                        color: '#ffffff',
+                        color: '#252525',
                         margin: '0',
                         fontSize: '28px',
                         fontWeight: '700',
@@ -35,7 +35,7 @@ export function EmailTemplate({ name, emailAddress, subject, message }: EmailTem
                         New Message Received
                       </h1>
                       <p style={{
-                        color: 'rgba(255,255,255,0.9)',
+                        color: 'rgba(37,37,37,0.8)',
                         margin: '10px 0 0 0',
                         fontSize: '14px'
                       }}>
@@ -47,13 +47,13 @@ export function EmailTemplate({ name, emailAddress, subject, message }: EmailTem
                   {/* Content Section */}
                   <tr>
                     <td style={{
-                      backgroundColor: '#ffffff',
+                      backgroundColor: '#1a1a1a',
                       padding: '40px 30px',
                       borderRadius: '0 0 12px 12px'
                     }}>
                       {/* Greeting */}
                       <p style={{
-                        color: '#1a1a1a',
+                        color: '#ffffff',
                         fontSize: '16px',
                         lineHeight: '1.6',
                         margin: '0 0 25px 0'
@@ -63,8 +63,8 @@ export function EmailTemplate({ name, emailAddress, subject, message }: EmailTem
 
                       {/* Contact Details Card */}
                       <div style={{
-                        backgroundColor: '#f8f7f4',
-                        borderLeft: '4px solid #b8860b',
+                        backgroundColor: '#252525',
+                        borderLeft: '4px solid #FFE330',
                         padding: '20px',
                         borderRadius: '6px',
                         marginBottom: '25px'
@@ -73,7 +73,7 @@ export function EmailTemplate({ name, emailAddress, subject, message }: EmailTem
                         <div style={{ marginBottom: '15px' }}>
                           <span style={{
                             display: 'block',
-                            color: '#b8860b',
+                            color: '#FFE330',
                             fontSize: '12px',
                             fontWeight: '700',
                             textTransform: 'uppercase',
@@ -83,7 +83,7 @@ export function EmailTemplate({ name, emailAddress, subject, message }: EmailTem
                             From
                           </span>
                           <span style={{
-                            color: '#1a1a1a',
+                            color: '#ffffff',
                             fontSize: '16px',
                             fontWeight: '600'
                           }}>
@@ -95,7 +95,7 @@ export function EmailTemplate({ name, emailAddress, subject, message }: EmailTem
                         <div style={{ marginBottom: '15px' }}>
                           <span style={{
                             display: 'block',
-                            color: '#b8860b',
+                            color: '#FFE330',
                             fontSize: '12px',
                             fontWeight: '700',
                             textTransform: 'uppercase',
@@ -105,21 +105,21 @@ export function EmailTemplate({ name, emailAddress, subject, message }: EmailTem
                             Email
                           </span>
                           <a href={`mailto:${emailAddress}`} style={{
-                            color: '#0066cc',
+                            color: '#5757D3',
                             fontSize: '14px',
                             textDecoration: 'none',
-                            borderBottom: '1px solid #0066cc'
+                            borderBottom: '1px solid #5757D3'
                           }}>
                             {emailAddress}
                           </a>
                         </div>
 
-                        {/* Subject (if provided) */}
+                        {/* Subject */}
                         {subject && (
-                          <div>
+                          <div style={{ marginBottom: '0' }}>
                             <span style={{
                               display: 'block',
-                              color: '#b8860b',
+                              color: '#FFE330',
                               fontSize: '12px',
                               fontWeight: '700',
                               textTransform: 'uppercase',
@@ -129,8 +129,8 @@ export function EmailTemplate({ name, emailAddress, subject, message }: EmailTem
                               Subject
                             </span>
                             <span style={{
-                              color: '#1a1a1a',
-                              fontSize: '14px',
+                              color: '#ffffff',
+                              fontSize: '16px',
                               fontWeight: '600'
                             }}>
                               {subject}
@@ -143,7 +143,7 @@ export function EmailTemplate({ name, emailAddress, subject, message }: EmailTem
                       <div style={{ marginBottom: '25px' }}>
                         <span style={{
                           display: 'block',
-                          color: '#b8860b',
+                          color: '#FFE330',
                           fontSize: '12px',
                           fontWeight: '700',
                           textTransform: 'uppercase',
@@ -153,14 +153,15 @@ export function EmailTemplate({ name, emailAddress, subject, message }: EmailTem
                           Message
                         </span>
                         <div style={{
-                          backgroundColor: '#f8f7f4',
+                          backgroundColor: '#252525',
                           padding: '20px',
                           borderRadius: '6px',
-                          color: '#1a1a1a',
+                          color: '#ffffff',
                           lineHeight: '1.8',
                           fontSize: '14px',
                           whiteSpace: 'pre-wrap',
-                          wordWrap: 'break-word'
+                          wordWrap: 'break-word',
+                          border: '1px solid #404040'
                         }}>
                           {message}
                         </div>
@@ -170,8 +171,8 @@ export function EmailTemplate({ name, emailAddress, subject, message }: EmailTem
                       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
                         <a href={`mailto:${emailAddress}`} style={{
                           display: 'inline-block',
-                          backgroundColor: '#b8860b',
-                          color: '#ffffff',
+                          backgroundColor: '#FFE330',
+                          color: '#252525',
                           padding: '14px 32px',
                           borderRadius: '6px',
                           textDecoration: 'none',
@@ -187,16 +188,16 @@ export function EmailTemplate({ name, emailAddress, subject, message }: EmailTem
 
                       {/* Footer Note */}
                       <p style={{
-                        color: '#666666',
+                        color: '#a0a0a0',
                         fontSize: '12px',
                         lineHeight: '1.6',
                         textAlign: 'center',
-                        borderTop: '1px solid #e0e0e0',
+                        borderTop: '1px solid #404040',
                         paddingTop: '20px',
                         margin: '0'
                       }}>
                         This email was sent from your Monash Coding contact form.<br />
-                        <span style={{ color: '#999999' }}>Please reply directly to this email or contact {emailAddress}</span>
+                        <span style={{ color: '#707070' }}>Please reply directly to this email or contact {emailAddress}</span>
                       </p>
                     </td>
                   </tr>
@@ -209,14 +210,14 @@ export function EmailTemplate({ name, emailAddress, subject, message }: EmailTem
           <tr>
             <td align="center" style={{ padding: '30px 20px' }}>
               <p style={{
-                color: '#999999',
+                color: '#a0a0a0',
                 fontSize: '12px',
                 margin: '0',
                 textAlign: 'center'
               }}>
-                <strong style={{ color: '#b8860b' }}>Monash Coding</strong><br />
+                <strong style={{ color: '#FFE330' }}>Monash Coding</strong><br />
                 Monash University, Clayton VIC<br />
-                <a href="https://monashcoding.com" style={{ color: '#b8860b', textDecoration: 'none' }}>
+                <a href="https://monashcoding.com" style={{ color: '#FFE330', textDecoration: 'none' }}>
                   monashcoding.com
                 </a>
               </p>

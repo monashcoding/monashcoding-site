@@ -84,6 +84,7 @@ export interface SocialLink {
   _key: string
   platform: SocialPlatform
   url: string
+  description?: string
 }
 
 export interface PageVisibility {
@@ -223,10 +224,9 @@ export interface ContactPageData {
   pageTitle: string
   pageSubtitle: string
   email: string
-  discordLink: string
-  discordLabel: string
   location: string
   locationMapLink: string
+  bottomImage: SanityImage
 }
 
 // Event types
