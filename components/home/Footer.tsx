@@ -1,6 +1,3 @@
-'use client'
-
-import { useState } from 'react'
 import Image from 'next/image'
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
 import { RibbonBlock } from '@/components/RibbonText'
@@ -19,79 +16,6 @@ const defaultColumns: FooterColumn[] = [
     ],
   },
 ]
-
-function NewsletterForm() {
-  const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
-  const [errorMsg, setErrorMsg] = useState('')
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    const trimmed = email.trim()
-    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
-      setErrorMsg('Please enter a valid email address')
-      return
-    }
-
-    setStatus('sending')
-    setErrorMsg('')
-
-    try {
-      const response = await fetch('/api/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: 'Newsletter Subscriber',
-          emailAddress: trimmed,
-          subject: 'Newsletter Subscription',
-          message: `New newsletter subscription from: ${trimmed}`,
-        }),
-      })
-
-      if (!response.ok) throw new Error('Failed to subscribe')
-
-      setStatus('success')
-      setEmail('')
-    } catch {
-      setStatus('error')
-      setErrorMsg('Something went wrong. Please try again.')
-    }
-  }
-
-  return (
-    <div>
-      <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-foreground mb-3">
-        Newsletter
-      </h4>
-      <p className="text-white/60 text-sm mb-4">Stay up to date with our latest events and news.</p>
-      {status === 'success' ? (
-        <p className="text-accent text-sm font-medium">Thanks for subscribing!</p>
-      ) : (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value)
-              if (errorMsg) setErrorMsg('')
-              if (status === 'error') setStatus('idle')
-            }}
-            placeholder="Enter your email"
-            className="w-full px-4 py-2 rounded-full bg-white/10 border border-white/10 text-foreground text-sm placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
-          />
-          <button
-            type="submit"
-            disabled={status === 'sending'}
-            className="w-full px-6 py-2 rounded-full bg-accent text-background text-sm font-semibold hover:bg-accent/90 active:scale-95 transition-all disabled:opacity-50"
-          >
-            {status === 'sending' ? 'Sending...' : 'Subscribe'}
-          </button>
-        </form>
-      )}
-      {errorMsg && <p className="text-red-400 text-sm mt-2">{errorMsg}</p>}
-    </div>
-  )
-}
 
 interface FooterProps {
   data?: FooterSectionData
@@ -187,7 +111,6 @@ export function Footer({ data, navItems, socialLinks }: FooterProps) {
               </ul>
             </div>
           )}
-          <NewsletterForm />
         </div>
         <div className="pt-8 border-t border-white/10">
           <span className="text-white/50 text-sm">
