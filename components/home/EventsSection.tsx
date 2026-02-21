@@ -170,7 +170,7 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
 
         <motion.div
           variants={itemVariants}
-          className="mb-10 inline-flex flex-wrap items-center gap-2 rounded-[1.2rem] border border-white/10 bg-white/[0.03] p-2"
+          className="mb-10 inline-flex flex-wrap items-center gap-2 rounded-[1.2rem] bg-[#1e1e1e] p-2"
         >
           {FILTER_OPTIONS.map((filter) => {
             const active = activeTag === filter.value
