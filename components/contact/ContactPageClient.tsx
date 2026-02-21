@@ -108,22 +108,22 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
         {/* Section 2 div - form and newsletter*/}
         <div className="bg-blue w-full flex items-center justify-center px-4 md:px-32 lg:px-36 py-8">
           {/* Form and newsletter horizontal section */}
-          <div className="w-full flex flex-col gap-12 lg:flex-row my-12 px-[5vw] lg:items-center">
+          <div className="w-full flex flex-col gap-12 lg:flex-row my-12 px-[5vw] lg:items-stretch">
             {/* Left side - Form */}
-            <motion.div className="flex-2  rounded-4xl  overflow-y-auto outline-black outline-2  shadow-lg shadow-accent" > 
+            <motion.div className="lg:w-[50%]  rounded-4xl  overflow-y-auto" >
                 <ContactForm/>
             </motion.div>
 
             {/* Right side - Newsletter*/}
             {/* TODO make sanity and fallbacks for this */}
-            <motion.div className="flex-1  bg-white shadow-lg shadow-accent rounded-4xl text-center px-12 py-8 flex flex-col items-center justify-center outline-black outline-2 overflow-hidden gap-4 " >
-              <motion.h2 className="text-2xl font-bold text-gray-800"
+            <motion.div className="lg:w-[40%]  bg-white rounded-4xl text-center px-12 py-8 flex flex-col items-center justify-center overflow-hidden gap-4" >
+              <motion.h2 className="text-4xl font-bold text-gray-800"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.15 }}
               
               >
-                Join our Newsletter!
+                Join our<br/> Newsletter!
               </motion.h2>
 
               <motion.p className=" text-gray-600"
@@ -154,7 +154,7 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
               transition={{ duration: 0.6, delay: 0.15 }}
               >
                 <motion.button 
-                  className="flex justify-center max-w-md px-6 py-2 bg-background text-white rounded-3xl  transition-colors duration-300"
+                  className="flex justify-center max-w-md px-10 py-4 text-lg font-bold bg-background text-white rounded-3xl  transition-colors duration-300"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
