@@ -22,6 +22,12 @@ export const aboutUsPage = defineType({
         'Monash Association of Coding (MAC) is the largest student-run computing club at Monash University, with over 1,500 current members and an online presence that extends across the globe.',
     }),
     defineField({
+      name: 'heroImage',
+      title: 'Hero Background Image',
+      type: 'image',
+      options: { hotspot: true },
+    }),
+    defineField({
       name: 'missionTitle',
       title: 'Mission Section Title',
       type: 'string',
@@ -34,6 +40,12 @@ export const aboutUsPage = defineType({
       rows: 6,
       initialValue:
         'We strive to upskill students through high-quality events, workshops and hackathons, spanning both technical and professional domains.\n\nThrough our impact, we aim to make coding enjoyable and accessible to all, offering students real-world experience and insight into the tech industry.',
+    }),
+    defineField({
+      name: 'missionImage',
+      title: 'Mission Section Image',
+      type: 'image',
+      options: { hotspot: true },
     }),
     defineField({
       name: 'values',
@@ -92,6 +104,12 @@ export const aboutUsPage = defineType({
           },
         }),
       ],
+    }),
+    defineField({
+      name: 'journeyImage',
+      title: 'Journey Section Image',
+      type: 'image',
+      options: { hotspot: true },
     }),
     defineField({
       name: 'whereAreWeNow',
