@@ -384,10 +384,13 @@ export interface AboutUsJourneyYear {
 export interface AboutUsPageData {
   pageTitle: string
   pageSubtitle: string
+  heroImage?: SanityImage
   missionTitle: string
   missionBody: string
+  missionImage?: SanityImage
   values: AboutUsValue[]
   journey: AboutUsJourneyYear[]
+  journeyImage?: SanityImage
   whereAreWeNow: string
   stats: AboutUsStat[]
 }
