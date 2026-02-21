@@ -208,7 +208,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
 
       {/* Contact Section - Become a Sponsor */}
       <RibbonAwareSection
-        backgroundClassName="bg-linear-to-b from-transparent to-gold-700/5"
+        backgroundClassName="bg-background"
         contentClassName="py-24 px-8"
       >
         <div className="max-w-[1200px] mx-auto ">
@@ -230,131 +230,133 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
             {ctaDescription}
           </motion.p>
           
-          {/* Div for form and direct contact */}
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 mb-12">
-            {/* Contact Form */}
-            <motion.form
-              onSubmit={handleFormSubmit}
-              className="space-y-4 p-8 lg:col-span-3 bg-white/5 border border-white/10 rounded-3xl"
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4 }}
-            >
-              <h3 className="text-2xl font-bold text-foreground mb-6">Contact form</h3>
-
-              {/* Company name  */}
-              <div>
-                <label className="block text-sm font-medium text-white/80 mb-2">Company Name</label>
-                <input
-                  type="text"
-                  name="companyName"
-                  value={formData.companyName}
-                  onChange={handleFormChange}
-                  required
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-accent/50 focus:bg-white/10 transition-all"
-                  placeholder="Your company name"
+          {/* Form container with image on left */}
+          <motion.div
+            className="max-w-[900px] mx-auto mb-12 grid grid-cols-1 lg:grid-cols-2 bg-white/5 border border-white/10 rounded-3xl overflow-hidden"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
+          >
+            {/* Left: Image */}
+            {data?.contactImage && (
+              <div className="hidden lg:block">
+                <img
+                  src={urlFor(data.contactImage).width(800).quality(80).url()}
+                  alt={data.contactImage.alt || "Contact"}
+                  className="w-full h-full object-cover"
                 />
               </div>
-              
-              {/* Contact name */}
-              <div>
-                <label className="block text-sm font-medium text-white/80 mb-2">Contact Name</label>
-                <input
-                  type="text"
-                  name="contactName"
-                  value={formData.contactName}
-                  onChange={handleFormChange}
-                  required
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-accent/50 focus:bg-white/10 transition-all"
-                  placeholder="Your name"
-                />
-              </div>
+            )}
 
-              {/* Email */}
-              <div>
-                <label className="block text-sm font-medium text-white/80 mb-2">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleFormChange}
-                  required
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-accent/50 focus:bg-white/10 transition-all"
-                  placeholder="your@email.com"
-                />
-              </div>
+            {/* Right: Form + Direct Contact */}
+            <div className={`${!data?.contactImage ? 'lg:col-span-2' : ''} p-8`}>
+              <form onSubmit={handleFormSubmit} className="space-y-4">
+                <h3 className="text-2xl font-bold text-foreground mb-6">Contact form</h3>
 
-              {/* Message */}
-              <div>
-                <label className="block text-sm font-medium text-white/80 mb-2">Message</label>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleFormChange}
-                  required
-                  rows={4}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-accent/50 focus:bg-white/10 transition-all resize-none"
-                  placeholder="Tell us about your sponsorship interests..."
-                />
-              </div>
-
-              <motion.button
-                type="submit"
-                disabled={formStatus === "loading"}
-                className="w-full py-3 px-6 bg-accent text-background font-semibold rounded-full hover:bg-accent/90 transition-all disabled:opacity-50 cursor-pointer"
-                whileTap={{ scale: 0.95 }}
-              >
-                {formStatus === "loading" ? "Sending..." : formStatus === "success" ? "Sent! ✓" : "Send Message"}
-              </motion.button>
-
-              <AnimatePresence>
-                {formStatus === "error" && (
-                  <motion.p
-                    className="text-red-400 text-sm text-center"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                  >
-                    Failed to send message. Please try again.
-                  </motion.p>
-                )}
-              </AnimatePresence>
-            </motion.form>
-
-            {/* Direct Contact Info */}
-            <motion.div
-              className="max-h-[400px] p-8 lg:col-span-2 bg-white/5 border border-white/10 rounded-3xl flex flex-col justify-center"
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: 0.1 }}
-            >
-              <h3 className="text-2xl font-bold text-foreground mb-6">Direct Contact</h3>
-              <div className="space-y-6">
+                {/* Company name */}
                 <div>
-                  <p className="text-white/60 text-sm mb-2">Email</p>
-                  <div className="flex items-center justify-between gap-4 p-4 bg-white/5 border border-white/10 rounded-xl">
-                    <span className="text-foreground font-medium">sponsorship@monashcoding.com</span>
-                    <motion.button
-                      onClick={handleCopyEmail}
-                      className="px-3 py-2 bg-accent/20 hover:bg-accent/30 border border-accent/30 rounded-lg text-accent text-sm font-medium transition-all cursor-pointer"
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {copied ? "Copied!" : "Copy"}
-                    </motion.button>
-                  </div>
+                  <label className="block text-sm font-medium text-white/80 mb-2">Company Name</label>
+                  <input
+                    type="text"
+                    name="companyName"
+                    value={formData.companyName}
+                    onChange={handleFormChange}
+                    required
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-accent/50 focus:bg-white/10 transition-all"
+                    placeholder="Your company name"
+                  />
                 </div>
 
-                <div className="pt-6 border-t border-white/10">
-                  <p className="text-white/70 text-sm leading-relaxed">
-                    Prefer to reach out directly? Our sponsorship team is ready to discuss partnership opportunities tailored to your company's goals.
-                  </p>
+                {/* Contact name */}
+                <div>
+                  <label className="block text-sm font-medium text-white/80 mb-2">Contact Name</label>
+                  <input
+                    type="text"
+                    name="contactName"
+                    value={formData.contactName}
+                    onChange={handleFormChange}
+                    required
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-accent/50 focus:bg-white/10 transition-all"
+                    placeholder="Your name"
+                  />
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-medium text-white/80 mb-2">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleFormChange}
+                    required
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-accent/50 focus:bg-white/10 transition-all"
+                    placeholder="your@email.com"
+                  />
+                </div>
+
+                {/* Message */}
+                <div>
+                  <label className="block text-sm font-medium text-white/80 mb-2">Message</label>
+                  <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleFormChange}
+                    required
+                    rows={4}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-accent/50 focus:bg-white/10 transition-all resize-none"
+                    placeholder="Tell us about your sponsorship interests..."
+                  />
+                </div>
+
+                <motion.button
+                  type="submit"
+                  disabled={formStatus === "loading"}
+                  className="w-full py-3 px-6 bg-accent text-background font-semibold rounded-full hover:bg-accent/90 transition-all disabled:opacity-50 cursor-pointer"
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {formStatus === "loading" ? "Sending..." : formStatus === "success" ? "Sent! ✓" : "Send Message"}
+                </motion.button>
+
+                <AnimatePresence>
+                  {formStatus === "error" && (
+                    <motion.p
+                      className="text-red-400 text-sm text-center"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      Failed to send message. Please try again.
+                    </motion.p>
+                  )}
+                </AnimatePresence>
+              </form>
+
+              {/* Separator with OR */}
+              <div className="my-6 flex items-center gap-4">
+                <div className="flex-1 border-t border-white/20" />
+                <span className="text-white/40 text-sm font-medium">OR</span>
+                <div className="flex-1 border-t border-white/20" />
+              </div>
+
+              {/* Direct Contact */}
+              <div>
+                <h3 className="text-lg font-bold text-foreground mb-3">Reach out directly</h3>
+                <div className="flex items-center justify-between gap-3 p-4 bg-white/5 border border-white/10 rounded-xl">
+                  <span className="text-foreground font-medium text-sm break-all min-w-0">sponsorship@monashcoding.com</span>
+                  <motion.button
+                    onClick={handleCopyEmail}
+                    className="shrink-0 px-3 py-2 bg-accent/20 hover:bg-accent/30 border border-accent/30 rounded-lg text-accent text-sm font-medium transition-all cursor-pointer"
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {copied ? "Copied!" : "Copy"}
+                  </motion.button>
                 </div>
               </div>
-            </motion.div>
-            
-          </div>
+            </div>
+
+          </motion.div>
         </div>
       </RibbonAwareSection>
 

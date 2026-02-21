@@ -238,6 +238,21 @@ export const sponsorPage = defineType({
       initialValue: "Let's discuss how we can create a partnership that benefits both your organization and our community.",
     }),
     defineField({
+      name: 'contactImage',
+      title: 'Contact Section Image',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alt Text',
+          type: 'string',
+        }),
+      ],
+    }),
+    defineField({
       name: 'ctaButtonText',
       title: 'CTA Button Text',
       type: 'string',

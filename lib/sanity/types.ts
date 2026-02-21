@@ -225,6 +225,7 @@ export interface SponsorPageData {
   sponsors: SponsorLogo[]
   ctaTitle: string
   ctaDescription: string
+  contactImage?: SanityImage
   ctaButtonText: string
   ctaButtonLink: string
 }

@@ -46,6 +46,12 @@ export const sponsorPageQuery = groq`
     },
     ctaTitle,
     ctaDescription,
+    contactImage {
+      asset->,
+      alt,
+      hotspot,
+      crop
+    },
     ctaButtonText,
     ctaButtonLink
   }
