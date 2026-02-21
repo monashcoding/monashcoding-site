@@ -258,7 +258,7 @@ export default function OWeekPageClient({ data }: OWeekPageClientProps) {
                 href={ov.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="absolute flex items-center justify-center rounded-lg bg-gold-400 outline-1 outline-background transition-colors hover:bg-gold-300"
+                className="absolute flex items-center justify-center rounded-lg bg-gold-400/80 outline-1 outline-background transition-colors hover:bg-gold-300/90"
                 style={{ top: ov.top, left: ov.left, width: ov.width, height: ov.height }}
               >
                 <span className="px-2 text-center text-xs font-bold leading-tight text-background">
