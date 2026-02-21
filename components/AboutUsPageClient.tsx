@@ -1,24 +1,13 @@
 'use client'
 
-import { useState } from 'react'
 import { motion } from 'framer-motion'
-import Image, { ImageProps } from 'next/image'
+import Image from 'next/image'
 import { PortableText, PortableTextComponents } from '@portabletext/react'
 import { AboutUsPageData } from '@/lib/sanity/types'
 import { urlFor } from '@/sanity/lib/image'
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
+import { FadeInImage } from '@/components/ui/FadeInImage'
 import { blocksToTextAndBoldRanges, ptBlock, toPortableTextBlocks } from '@/lib/sanity/portableText'
-
-function FadeInImage({ className, ...props }: ImageProps) {
-  const [loaded, setLoaded] = useState(false)
-  return (
-    <Image
-      {...props}
-      className={`${className ?? ''} transition-opacity duration-700 ease-out ${loaded ? 'opacity-100' : 'opacity-0'}`}
-      onLoad={() => setLoaded(true)}
-    />
-  )
-}
 
 const defaultData: AboutUsPageData = {
   pageTitle: 'About MAC',
