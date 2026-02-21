@@ -183,6 +183,7 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
                   key={link._key}
                   platform={link.platform}
                   url={link.url}
+                  description={link.description}
                   isPlaceholder={false}
                   index={index}
                 />

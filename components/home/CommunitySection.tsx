@@ -27,6 +27,7 @@ const PLATFORM_ACCENTS: Partial<Record<SocialPlatform, { color: string }>> = {
   facebook: { color: '#1877F2' },
   linkedin: { color: '#0A66C2' },
   discord: { color: '#5865F2' },
+  email: { color: '#EA4335' },
 }
 
 /* ------------------------------------------------------------------ */
@@ -44,11 +45,13 @@ export function SocialTiltCard({
   url,
   isPlaceholder,
   index,
+  description,
 }: {
   platform: SocialPlatform
   url?: string
   isPlaceholder: boolean
   index: number
+  description?: string
 }) {
   const [hover, setHover] = useState<HoverState>({
     x: 0.5,
@@ -159,7 +162,7 @@ export function SocialTiltCard({
             <p
               className={`mt-1.5 text-[0.82rem] ${isPlaceholder ? 'text-white/20' : 'text-white/50'}`}
             >
-              {isPlaceholder ? 'Coming soon' : 'Follow us'}
+              {isPlaceholder ? 'Coming soon' : (description || 'Follow us')}
             </p>
           </div>
         </div>
@@ -168,11 +171,11 @@ export function SocialTiltCard({
   )
 
   if (url) {
+    const isMailto = url.toLowerCase().startsWith('mailto:')
     return (
       <a
         href={url}
-        target="_blank"
-        rel="noopener noreferrer"
+        {...(!isMailto && { target: '_blank', rel: 'noopener noreferrer' })}
         className="block no-underline"
       >
         {card}
@@ -409,6 +412,7 @@ interface CommunityTile {
   _key: string
   platform: SocialPlatform
   url?: string
+  description?: string
   isPlaceholder: boolean
 }
 
@@ -437,6 +441,7 @@ export function CommunitySection({
           _key: link._key,
           platform: link.platform,
           url: link.url,
+          description: link.description,
           isPlaceholder: false,
         }))
       : allowedPlatforms.map((platform) => ({
@@ -525,6 +530,7 @@ export function CommunitySection({
                 key={tile._key}
                 platform={tile.platform}
                 url={tile.url}
+                description={tile.description}
                 isPlaceholder={tile.isPlaceholder}
                 index={index}
               />
