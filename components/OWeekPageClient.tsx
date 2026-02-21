@@ -139,15 +139,25 @@ export default function OWeekPageClient({ data }: OWeekPageClientProps) {
     const prevBody = body.style.overflow;
     const prevPos = body.style.position;
     const prevWidth = body.style.width;
+    const prevOverscrollHtml = html.style.overscrollBehavior;
+    const prevOverscrollBody = body.style.overscrollBehavior;
     html.style.overflow = "hidden";
+    html.style.overscrollBehavior = "none";
     body.style.overflow = "hidden";
     body.style.position = "fixed";
     body.style.width = "100%";
+    body.style.overscrollBehavior = "none";
+    // Prevent pull-to-refresh on mobile by blocking touchmove on the document
+    const preventTouch = (e: TouchEvent) => { e.preventDefault(); };
+    document.addEventListener("touchmove", preventTouch, { passive: false });
     return () => {
       html.style.overflow = prevHtml;
+      html.style.overscrollBehavior = prevOverscrollHtml;
       body.style.overflow = prevBody;
       body.style.position = prevPos;
       body.style.width = prevWidth;
+      body.style.overscrollBehavior = prevOverscrollBody;
+      document.removeEventListener("touchmove", preventTouch);
     };
   }, []);
 
