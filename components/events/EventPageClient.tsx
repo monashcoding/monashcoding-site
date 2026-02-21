@@ -84,7 +84,7 @@ export function EventPageClient({ event }: EventPageClientProps) {
               >
                 <Link
                   href="/"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/60 px-3.5 py-2 text-xs font-semibold tracking-[0.1em] uppercase text-white/75 no-underline transition-colors duration-300 hover:border-white/35 hover:text-white"
+                  className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-black/60 px-3.5 py-2 text-xs font-semibold tracking-[0.1em] uppercase text-white/75 no-underline transition-colors duration-300 hover:border-white/35 hover:text-white"
                 >
                   <svg
                     width="14"
@@ -108,11 +108,11 @@ export function EventPageClient({ event }: EventPageClientProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.52, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
               >
-                <span className={`inline-flex items-center justify-center rounded-full px-3 pt-[0.3rem] pb-[0.22rem] text-[0.67rem] leading-none font-semibold tracking-[0.13em] uppercase ${TAG_STYLES[event.tag]}`}>
+                <span className={`inline-flex items-center justify-center rounded-md px-3 pt-[0.3rem] pb-[0.22rem] text-[0.67rem] leading-none font-semibold tracking-[0.13em] uppercase ${TAG_STYLES[event.tag]}`}>
                   {TAG_LABELS[event.tag]}
                 </span>
                 {event.isPinned && (
-                  <span className="inline-flex items-center justify-center rounded-full border border-accent bg-accent px-3 pt-[0.3rem] pb-[0.22rem] text-[0.67rem] leading-none font-semibold tracking-[0.13em] uppercase text-[#252525]">
+                  <span className="inline-flex items-center justify-center rounded-md border border-accent bg-accent px-3 pt-[0.3rem] pb-[0.22rem] text-[0.67rem] leading-none font-semibold tracking-[0.13em] uppercase text-[#252525]">
                     Featured
                   </span>
                 )}
@@ -185,7 +185,7 @@ export function EventPageClient({ event }: EventPageClientProps) {
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex w-full items-center justify-center gap-2 rounded-full border border-accent/70 bg-accent px-5 py-3 text-center text-sm font-semibold tracking-[0.08em] uppercase text-accent-foreground no-underline transition-transform duration-300 hover:-translate-y-0.5"
+                      className="group flex w-full items-center justify-center gap-2 rounded-md border border-accent/70 bg-accent px-5 py-3 text-center text-sm font-semibold tracking-[0.08em] uppercase text-accent-foreground no-underline transition-transform duration-300 hover:-translate-y-0.5"
                     >
                       <span>{link.label}</span>
                       <svg
