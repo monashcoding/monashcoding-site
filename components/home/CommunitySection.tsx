@@ -249,30 +249,37 @@ function InstagramReelCard({ reel }: { reel: InstagramReel }) {
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           loading="lazy"
         />
+        {/* Likes & comments overlay - top-left */}
+        <div className="absolute top-2.5 left-2.5 flex items-center gap-2.5 rounded-lg bg-black/55 px-2.5 py-1.5 backdrop-blur-sm">
+          <span className="flex items-center gap-1 text-[0.68rem] font-semibold text-white/90">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="text-red-400">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+            {reel.likes}
+          </span>
+          <span className="flex items-center gap-1 text-[0.68rem] font-semibold text-white/90">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="text-white/70">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            {reel.comments}
+          </span>
+        </div>
+        {/* Play icon for reels */}
         {reel.type === 'reel' && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/20 transition-colors duration-300 group-hover:bg-black/10">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 shadow-lg transition-transform duration-300 group-hover:scale-110">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="#252525" className="ml-0.5">
+          <div className="absolute right-2.5 bottom-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-lg transition-transform duration-300 group-hover:scale-110">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="#252525" className="ml-0.5">
                 <path d="M8 5v14l11-7z" />
               </svg>
             </div>
           </div>
         )}
       </div>
-      <div className="flex items-center justify-between gap-3 border-t border-white/10 px-4 py-3">
-        <div className="min-w-0">
-          <p className="truncate text-sm font-medium text-white/85">
-            {reel.caption || `Instagram ${reel.type}`}
-          </p>
-          <p className="mt-0.5 text-[0.65rem] font-semibold tracking-[0.14em] uppercase text-white/45">
-            {reel.likes !== '0' ? `${reel.likes} likes` : `Instagram ${reel.type}`}
-          </p>
-        </div>
-        {reel.date && (
-          <span className="shrink-0 rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-[0.62rem] font-semibold tracking-[0.12em] uppercase text-white/65">
-            {reel.date}
-          </span>
-        )}
+      {/* Caption */}
+      <div className="border-t border-white/10 px-4 py-3">
+        <p className="line-clamp-2 text-sm leading-snug text-white/85">
+          {reel.caption || `Instagram ${reel.type}`}
+        </p>
       </div>
     </a>
   )
