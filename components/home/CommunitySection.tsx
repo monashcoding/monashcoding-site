@@ -426,7 +426,6 @@ export function CommunitySection({
   const allowedPlatforms = data?.platforms ?? DEFAULT_PLATFORMS
 
   const hasVideos = youtubeVideos.length > 0
-  const [socialsOpen, setSocialsOpen] = useState(true)
   const [videosOpen, setVideosOpen] = useState(true)
   const [activeTab, setActiveTab] = useState<'socials' | 'videos'>('socials')
   const [selectedYear, setSelectedYear] = useState<number | 'all'>('all')
@@ -572,24 +571,32 @@ export function CommunitySection({
   /* ---- Desktop content (collapsible panels with vertical labels) ---- */
   const desktopContent = (
     <div className="hidden lg:flex flex-col gap-4">
-      {/* Socials panel */}
-      <CollapsiblePanel
-        label="Socials"
-        isOpen={socialsOpen}
-        onToggle={() => setSocialsOpen((v) => !v)}
-      >
-        <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${Math.min(tiles.length, 4)}, 1fr)` }}>
-          {tiles.map((tile, index) => (
-            <SocialTiltCard
-              key={tile._key}
-              platform={tile.platform}
-              url={tile.url}
-              isPlaceholder={tile.isPlaceholder}
-              index={index}
-            />
-          ))}
+      {/* Socials panel (always open, no collapse) */}
+      <div className="rounded-2xl overflow-hidden">
+        <div className="flex">
+          <div className="relative shrink-0 w-16 flex items-center justify-center bg-white/3 py-6">
+            <span
+              className="text-[0.8rem] font-bold uppercase tracking-[0.2em] text-white/60 whitespace-nowrap"
+              style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+            >
+              Socials
+            </span>
+          </div>
+          <div className="flex-1 min-w-0 p-6">
+            <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${Math.min(tiles.length, 4)}, 1fr)` }}>
+              {tiles.map((tile, index) => (
+                <SocialTiltCard
+                  key={tile._key}
+                  platform={tile.platform}
+                  url={tile.url}
+                  isPlaceholder={tile.isPlaceholder}
+                  index={index}
+                />
+              ))}
+            </div>
+          </div>
         </div>
-      </CollapsiblePanel>
+      </div>
 
       {/* Videos panel */}
       {hasVideos && (
