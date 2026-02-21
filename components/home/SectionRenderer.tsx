@@ -2,6 +2,7 @@
 
 import { HomepageSection, EventDocument, SocialLink } from '@/lib/sanity/types'
 import type { YouTubeVideo } from '@/lib/youtube/feed'
+import type { InstagramReel } from '@/lib/instagram/feed'
 import { StorySection } from './StorySection'
 import { InstagramSection } from './InstagramSection'
 import { SponsorsSection } from './SponsorsSection'
@@ -14,9 +15,10 @@ interface SectionRendererProps {
   events?: EventDocument[]
   socialLinks?: SocialLink[]
   youtubeVideos?: YouTubeVideo[]
+  instagramReels?: InstagramReel[]
 }
 
-export function SectionRenderer({ sections, events, socialLinks, youtubeVideos }: SectionRendererProps) {
+export function SectionRenderer({ sections, events, socialLinks, youtubeVideos, instagramReels }: SectionRendererProps) {
   return (
     <>
       {sections.map((section) => {
@@ -30,7 +32,7 @@ export function SectionRenderer({ sections, events, socialLinks, youtubeVideos }
           case 'eventsSection':
             return <EventsSection key={section._key} data={section} events={events} />
           case 'communitySection':
-            return <CommunitySection key={section._key} data={section} socialLinks={socialLinks} youtubeVideos={youtubeVideos} />
+            return <CommunitySection key={section._key} data={section} socialLinks={socialLinks} youtubeVideos={youtubeVideos} instagramReels={instagramReels} />
           case 'contentStreamSection':
             return <ContentStreamSection key={section._key} data={section} />
           case 'footerSection':

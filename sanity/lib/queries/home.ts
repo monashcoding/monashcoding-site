@@ -79,7 +79,11 @@ export const homepageQuery = groq`
       _type == "communitySection" => {
         heading,
         subheading,
-        platforms
+        platforms,
+        instagramReels[] {
+          _key,
+          url
+        }
       },
       // Content stream section
       _type == "contentStreamSection" => {

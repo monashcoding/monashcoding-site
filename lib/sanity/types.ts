@@ -282,12 +282,18 @@ export interface EventsSectionData {
   maxEvents: number
 }
 
+export interface InstagramReelUrl {
+  _key: string
+  url: string
+}
+
 export interface CommunitySectionData {
   _key: string
   _type: 'communitySection'
   heading: string
   subheading?: string
   platforms?: SocialPlatform[]
+  instagramReels?: InstagramReelUrl[]
 }
 
 export type ContentPlatform = 'instagram' | 'youtube'

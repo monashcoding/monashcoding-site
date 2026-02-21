@@ -353,6 +353,49 @@ const communitySectionSchema = defineArrayMember({
         }),
       ],
     }),
+    defineField({
+      name: 'instagramReels',
+      title: 'Instagram Reels',
+      description:
+        'Paste Instagram reel or post URLs. Thumbnails and captions are fetched automatically.',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'instagramReelUrl',
+          title: 'Instagram Reel URL',
+          fields: [
+            defineField({
+              name: 'url',
+              title: 'URL',
+              type: 'url',
+              validation: (Rule) =>
+                Rule.required()
+                  .uri({ scheme: ['https'] })
+                  .custom((url) => {
+                    if (typeof url !== 'string') return true
+                    if (!url.match(/instagram\.com\/(reel|p)\//)) {
+                      return 'URL must be an Instagram reel or post URL'
+                    }
+                    return true
+                  }),
+            }),
+          ],
+          preview: {
+            select: { url: 'url' },
+            prepare({ url }: { url?: string }) {
+              const shortcode =
+                url?.match(/\/(reel|p)\/([A-Za-z0-9_-]+)/)?.[2] ?? ''
+              const type = url?.includes('/reel/') ? 'Reel' : 'Post'
+              return {
+                title: shortcode || 'No URL',
+                subtitle: type,
+              }
+            },
+          },
+        }),
+      ],
+    }),
   ],
   preview: {
     select: { heading: 'heading' },
