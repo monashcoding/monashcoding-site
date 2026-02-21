@@ -24,7 +24,7 @@ const defaultData: AboutUsPageData = {
     'Monash Association of Coding (MAC) is the **largest student-run computing club** at **Monash University,** with over 1,500 current members and an online presence that extends **across the globe**.',
   missionTitle: 'Our Mission',
   missionBody:
-    'We strive to **upskill students** through high-quality **events, workshops and hackathons**, spanning both technical and professional domains.\n\nThrough our impact, we aim to make coding enjoyable and accessible to all, offering students **real-world experience** and **insight into the tech industry**.',
+    'We strive to **__upskill students__** through high-quality **events, workshops and hackathons**, spanning both technical and professional domains.\n\nThrough our impact, we aim to make coding enjoyable and accessible to all, offering students **real-world experience** and **insight into the tech industry**.',
   values: [
     { _key: '1', title: 'Share your success with others', description: '' },
     { _key: '2', title: 'Make it happen', description: '' },
@@ -37,47 +37,47 @@ const defaultData: AboutUsPageData = {
       _key: '1',
       year: '2019',
       summary:
-        'MAC is founded by a group of friends who organised mock technical interviews.',
+        'MAC is **founded by a group of friends** who organised mock technical interviews.',
     },
     {
       _key: '2',
       year: '2020',
       summary:
-        "Awarded 'Most Outstanding New Club' by Monash Clubs & Societies.",
+        "Awarded **'Most Outstanding New Club'** by Monash Clubs & Societies.",
     },
     {
       _key: '3',
       year: '2021',
       summary:
-        "Held MAC's first hackathon with 200+ participants.",
+        "Held MAC's first hackathon with **200+ participants**.",
     },
     {
       _key: '4',
       year: '2022',
       summary:
-        "Launched our new annual flagship hackathon called 'MACathon'.",
+        "Launched our **new annual flagship hackathon** called 'MACathon'.",
     },
     {
       _key: '5',
       year: '2023',
       summary:
-        'Hosted our biggest networking night yet with over 175 attendees.',
+        'Hosted our biggest networking night yet with **over 175 attendees**.',
     },
     {
       _key: '6',
       year: '2024',
       summary:
-        "Awarded 'Outstanding Marketing Campaign' and 'Best Club in Monash' by Monash Clubs & Societies.",
+        "Awarded '**Outstanding Marketing Campaign**' and '**Best Club in Monash**' by Monash Clubs & Societies.",
     },
     {
       _key: '7',
       year: '2025',
       summary:
-        "Crowned 'Most Popular Club Event' at the Monash Awards Night for the MAC x UNIHACK Hackathon with over 650 participants.",
+        "Crowned '**Most Popular Club Event**' at the Monash Awards Night for the MAC x UNIHACK Hackathon with **over 650 participants**.",
     },
   ],
   whereAreWeNow:
-    "MAC's exponential growth has led us to become **one of Australia's leading computing societies.**\n\nWe unite **over 1500 enthusiastic members** and a **tight-knit committee of over 60 passionate students** in technology. We endeavour to equip our community with professional skills, industry insights and connections with ambitious individuals.\n\nThrough weekly technical events, hackathons and networking nights, totalling **2000+ attendees**, we empower our students to thrive holistically in a forever-evolving tech space.",
+    "MAC's exponential growth has led us to become **one of Australia's __leading computing societies__.**\n\nWe unite **over 1500 enthusiastic members** and a **tight-knit committee of over 60 passionate students** in technology. We endeavour to equip our community with professional skills, industry insights and connections with ambitious individuals.\n\nThrough weekly technical events, hackathons and networking nights, totalling **2000+ attendees**, we empower our students to thrive holistically in a forever-evolving tech space.",
   stats: [
     { _key: '1', value: '1,500+', label: 'Members' },
     { _key: '2', value: '60+', label: 'Committee members' },
@@ -127,7 +127,7 @@ function HighlightReveal({ children, delay = 0 }: { children: React.ReactNode; d
   )
 }
 
-/** Render **bold** markdown segments with purple highlight + slide animation */
+/** Render **bold** markdown segments with purple highlight + slide animation, with __underline__ support */
 function renderHighlight(text: string) {
   const parts = text.split(/\*\*(.+?)\*\*/g)
   let highlightIndex = 0
@@ -137,46 +137,115 @@ function renderHighlight(text: string) {
       highlightIndex++
       return (
         <HighlightReveal key={i} delay={delay}>
-          {part}
+          {renderUnderline(part, i)}
         </HighlightReveal>
       )
     }
-    return part
+    return <span key={i}>{renderUnderline(part, i)}</span>
   })
 }
 
-/** Render **bold** markdown segments */
+/** Handwritten curved underline stroke (matches the hero "MAC" underline) */
+function HandwrittenUnderline({ children }: { children: React.ReactNode }) {
+  const textLen = typeof children === 'string' ? children.length : 20
+  // Shorter text = more tilt, longer text = subtler tilt
+  const rotation = -(Math.min(3, Math.max(0.5, 4 - textLen * 0.12)))
+
+  return (
+    <span className="relative inline-block">
+      {children}
+      <svg
+        className="absolute bottom-0 left-0 w-full h-[0.35em] text-accent"
+        style={{ transform: `translateY(40%) rotate(${rotation}deg)` }}
+        viewBox="0 0 120 12"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        preserveAspectRatio="none"
+      >
+        <motion.path
+          d="M2 7 Q 60 2, 118 7"
+          stroke="currentColor"
+          strokeWidth="3"
+          strokeLinecap="round"
+          fill="none"
+          initial={{ pathLength: 0, opacity: 0 }}
+          whileInView={{ pathLength: 1, opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{
+            pathLength: {
+              duration: 0.8,
+              ease: [0.22, 1, 0.36, 1],
+            },
+            opacity: { duration: 0.01 },
+          }}
+        />
+      </svg>
+    </span>
+  )
+}
+
+/** Parse __text__ patterns and wrap with HandwrittenUnderline */
+function renderUnderline(text: string, keyPrefix: string | number = ''): React.ReactNode[] {
+  const parts = text.split(/__(.+?)__/g)
+  if (parts.length === 1) return [text]
+  return parts.map((part, i) =>
+    i % 2 === 1 ? (
+      <HandwrittenUnderline key={`${keyPrefix}-u${i}`}>{part}</HandwrittenUnderline>
+    ) : (
+      <span key={`${keyPrefix}-t${i}`}>{part}</span>
+    )
+  )
+}
+
+/** Render **bold** markdown segments, with __underline__ support */
 function renderBold(text: string) {
   const parts = text.split(/\*\*(.+?)\*\*/g)
   return parts.map((part, i) =>
     i % 2 === 1 ? (
       <strong key={i} className="font-bold text-white">
-        {part}
+        {renderUnderline(part, i)}
       </strong>
     ) : (
-      part
+      <span key={i}>{renderUnderline(part, i)}</span>
     )
   )
 }
 
-/** Fast typewriter reveal - each character appears sequentially */
+/** Fast typewriter reveal - each character appears sequentially.
+ *  Supports **bold** markdown which renders with a blue highlight. */
 function TypewriterText({
   text,
   charDelay = 0.018,
   startDelay = 0,
   showCursor = false,
+  highlightBold = true,
 }: {
   text: string
   charDelay?: number
   startDelay?: number
   showCursor?: boolean
+  highlightBold?: boolean
 }) {
-  const totalTypingTime = text.length * charDelay
+  // Parse **bold** ranges, stripping markers from rendered text
+  const boldRanges: [number, number][] = []
+  let renderedText = ''
+  for (const part of text.split(/(\*\*.+?\*\*)/g)) {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      const content = part.slice(2, -2)
+      boldRanges.push([renderedText.length, renderedText.length + content.length])
+      renderedText += content
+    } else {
+      renderedText += part
+    }
+  }
+  const isBold = (i: number) => boldRanges.some(([s, e]) => i >= s && i < e)
+
+  const totalTypingTime = renderedText.length * charDelay
   const blinkDuration = 0.8
   const numRepeats = Math.ceil((totalTypingTime + 0.3) / blinkDuration)
 
   // Split into words so each word stays together (no mid-word breaks)
-  const words = text.split(' ')
+  const words = renderedText.split(' ')
   let globalIndex = 0
 
   return (
@@ -188,24 +257,28 @@ function TypewriterText({
 
         return (
           <span key={wi} className="inline-flex whitespace-nowrap align-text-bottom leading-[inherit]">
-            {word.split('').map((char, ci) => (
-              <motion.span
-                key={ci}
-                className="inline-block overflow-hidden whitespace-pre leading-[inherit]"
-                variants={{
-                  hidden: { maxWidth: 0 },
-                  show: {
-                    maxWidth: '1.2em',
-                    transition: { duration: 0, delay: startDelay + (wordStart + ci) * charDelay },
-                  },
-                }}
-              >
-                {char}
-              </motion.span>
-            ))}
+            {word.split('').map((char, ci) => {
+              const idx = wordStart + ci
+              const bold = isBold(idx)
+              return (
+                <motion.span
+                  key={ci}
+                  className={`inline-block overflow-hidden whitespace-pre leading-[inherit]${bold ? (highlightBold ? ' bg-blue font-bold text-white' : ' font-bold text-white') : ''}`}
+                  variants={{
+                    hidden: { maxWidth: 0 },
+                    show: {
+                      maxWidth: '1.2em',
+                      transition: { duration: 0, delay: startDelay + idx * charDelay },
+                    },
+                  }}
+                >
+                  {char}
+                </motion.span>
+              )
+            })}
             {wi < words.length - 1 && (
               <motion.span
-                className="inline-block overflow-hidden whitespace-pre leading-[inherit]"
+                className={`inline-block overflow-hidden whitespace-pre leading-[inherit]${isBold(wordStart + word.length) && highlightBold ? ' bg-blue' : ''}`}
                 variants={{
                   hidden: { maxWidth: 0 },
                   show: {
@@ -295,7 +368,7 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
                 MAC
                 {/* Curved handwriting-style underline */}
                 <svg
-                  className="absolute -bottom-3 left-1/2 -translate-x-1/2 -rotate-5 w-[110%]"
+                  className="absolute -bottom-3 left-1/2 -translate-x-1/2 -rotate-3 w-[110%]"
                   viewBox="0 0 120 12"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -509,7 +582,7 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
                       <TypewriterText text={j.year} startDelay={index * 0.1} />
                     </h3>
                     <p className="mt-2 text-[clamp(1rem,2vw,20px)] leading-normal text-[#9a9a9a]">
-                      <TypewriterText text={`> ${j.summary}`} startDelay={index * 0.1 + 0.15} showCursor />
+                      <TypewriterText text={`> ${j.summary}`} startDelay={index * 0.1 + 0.15} showCursor highlightBold={false} />
                     </p>
                   </motion.div>
                 ))}
@@ -527,7 +600,7 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
                       <TypewriterText text={lastYear.year} />
                     </h3>
                     <p className="mt-2 text-[clamp(1rem,2vw,20px)] leading-normal text-[#9a9a9a]">
-                      <TypewriterText text={`> ${lastYear.summary}`} startDelay={0.15} showCursor />
+                      <TypewriterText text={`> ${lastYear.summary}`} startDelay={0.15} showCursor highlightBold={false} />
                     </p>
                   </motion.div>
                 )}
@@ -568,7 +641,7 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
                       key={i}
                       className="text-[clamp(1rem,2vw,20px)] leading-normal text-white"
                     >
-                      {renderBold(paragraph)}
+                      {renderHighlight(paragraph)}
                     </p>
                   ))}
                 </div>
