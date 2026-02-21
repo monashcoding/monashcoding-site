@@ -68,11 +68,11 @@ export function EventCard({ event, index }: EventCardProps) {
           )}
 
           <div className="absolute left-4 right-4 top-4 flex items-start justify-between gap-3">
-            <span className={`inline-flex items-center justify-center rounded-full px-3 pt-[0.3rem] pb-[0.22rem] text-[0.68rem] leading-none font-semibold tracking-[0.12em] uppercase ${TAG_STYLES[event.tag]}`}>
+            <span className={`inline-flex items-center justify-center rounded-md px-3 pt-[0.3rem] pb-[0.22rem] text-[0.68rem] leading-none font-semibold tracking-[0.12em] uppercase ${TAG_STYLES[event.tag]}`}>
               {TAG_LABELS[event.tag]}
             </span>
             {isFeatured && (
-              <span className="inline-flex items-center justify-center rounded-full border border-accent bg-accent px-3 pt-[0.3rem] pb-[0.22rem] text-[0.63rem] leading-none font-semibold tracking-[0.14em] uppercase text-[#252525]">
+              <span className="inline-flex items-center justify-center rounded-md border border-accent bg-accent px-3 pt-[0.3rem] pb-[0.22rem] text-[0.63rem] leading-none font-semibold tracking-[0.14em] uppercase text-[#252525]">
                 Featured
               </span>
             )}
