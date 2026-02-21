@@ -171,30 +171,38 @@ export function Footer({ data, navItems, socialLinks }: FooterProps) {
               </ul>
             </div>
           ))}
+          {socialLinks && socialLinks.length > 0 && (
+            <div>
+              <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-foreground mb-6">
+                Socials
+              </h4>
+              <ul className="list-none p-0 m-0 space-y-3">
+                {socialLinks.map((link) => {
+                  const Icon = PLATFORM_ICONS[link.platform]
+                  if (!Icon) return null
+                  return (
+                    <li key={link._key}>
+                      <a
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-white/60 no-underline transition-colors duration-300 hover:text-accent"
+                      >
+                        <Icon size={18} />
+                        {PLATFORM_LABELS[link.platform]}
+                      </a>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          )}
           <NewsletterForm />
         </div>
-        <div className="flex justify-between items-center flex-wrap gap-4 pt-8 border-t border-white/10">
+        <div className="pt-8 border-t border-white/10">
           <span className="text-white/50 text-sm">
             © {new Date().getFullYear()} Monash Association of Coding. All rights reserved.
           </span>
-          <div className="flex gap-6">
-            {socialLinks?.map((link) => {
-              const Icon = PLATFORM_ICONS[link.platform]
-              if (!Icon) return null
-              return (
-                <a
-                  key={link._key}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={PLATFORM_LABELS[link.platform]}
-                  className="text-white/50 transition-colors duration-300 hover:text-accent"
-                >
-                  <Icon size={20} />
-                </a>
-              )
-            })}
-          </div>
         </div>
         </RibbonBlock>
       </div>
