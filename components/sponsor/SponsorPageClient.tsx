@@ -37,6 +37,24 @@ const defaultBenefits: Benefit[] = [
   },
 ];
 
+const cutoutVariants = [
+  {
+    width: 859,
+    height: 592,
+    path: 'M160.418 491.357C-12.5824 491.357 -89.5816 175.731 160.418 175.731C410.418 175.731 420.565 -51.7921 613.065 11.6784C805.565 75.1488 757.414 161.356 830.915 267.857C904.416 374.357 820.766 617.535 691.415 561.857C562.065 506.178 521.301 578.274 382.918 589.857C215.365 603.88 333.418 491.357 160.418 491.357Z',
+  },
+  {
+    width: 802,
+    height: 578,
+    path: 'M92.6761 448.109C-58.5903 384.981 -3.55743 317.236 113.443 114.236C230.443 -88.764 297.942 50.7358 515.442 8.73584C732.942 -33.2642 691.941 124.236 765.442 230.736C838.943 337.236 797.442 354.363 657.942 497.236C518.442 640.108 462.559 544.026 324.176 555.608C156.623 569.632 243.942 511.236 92.6761 448.109Z',
+  },
+  {
+    width: 769,
+    height: 535,
+    path: 'M61.6674 415.256C78.3438 265.364 -98.0093 184.147 82.434 81.383C262.877 -21.3811 353.548 -25.5888 512.491 65.1471C671.433 155.883 660.932 91.3827 734.433 197.883C807.934 304.383 757.876 356.619 626.933 464.383C495.991 572.147 431.55 511.173 293.167 522.756C125.615 536.779 44.991 565.147 61.6674 415.256Z',
+  },
+];
+
 interface SponsorPageClientProps {
   data: SponsorPageData | null;
 }
@@ -140,31 +158,62 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
       />
 
       {/* SECTION 2: Why Sponsor MAC */}
-      <div className="bg-white/90 mt-[-100vh] text-background py-24 px-8">
-        <div className="w-full mx-auto grid grid-cols-1 lg:grid-cols-[35%_1fr] gap-12">
+      <div className="bg-white/90 mt-[-100vh] py-24 px-8">
+        <div className="w-full mx-auto grid grid-cols-1 lg:grid-cols-[35%_1fr] gap-12 relative">
+
+          {/* Curved connector lines from heading to each reason - desktop only */}
+          <svg
+            className="hidden lg:block absolute inset-0 w-full h-full pointer-events-none z-10"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            fill="none"
+          >
+            <path d="M 11 40 Q 13 20, 34 16" stroke="var(--color-accent)" vectorEffect="non-scaling-stroke" strokeWidth="12" strokeLinecap="round" />
+            <path d="M 25 50 L 34 50" stroke="var(--color-accent)" vectorEffect="non-scaling-stroke" strokeWidth="12" strokeLinecap="round" />
+            <path d="M 11 60 Q 13 90, 34 84" stroke="var(--color-accent)" vectorEffect="non-scaling-stroke" strokeWidth="12" strokeLinecap="round" />
+          </svg>
 
           <div className="flex flex-col justify-center">
-            <h2 className="text-4xl font-bold mb-6">Why Sponsor MAC?</h2>
-            <p className="text-lg">Partner with us to reach talented students.</p>
+            <h2 className="text-4xl font-bold mb-6 text-black">Why Sponsor MAC?</h2>
+            <p className="text-lg text-black/70">Partner with us to reach talented students.</p>
           </div>
 
           <div className="flex flex-col justify-center">
             <div className="space-y-4">
-              {reasons.map((reason) => (
-                <div key={reason._key} className={`grid ${reason.image ? 'grid-cols-[35%_1fr]' : 'grid-cols-1'} bg-background rounded-2xl overflow-hidden`}>
-                  {reason.image && (
-                    <img
-                      src={urlFor(reason.image).width(400).height(400).url()}
-                      alt={reason.image.alt || reason.title}
-                      className="w-full h-full object-cover"
-                    />
-                  )}
-                  <div className="p-6 flex flex-col justify-center">
-                    <h3 className="text-xl text-white font-semibold mb-2">{reason.title}</h3>
-                    <p className="text-white">{reason.description}</p>
+              {reasons.map((reason, index) => {
+                const variant = cutoutVariants[index % cutoutVariants.length];
+                return (
+                  <div key={reason._key} className="flex flex-col md:flex-row items-center gap-6">
+                    {reason.image && (
+                      <div className="shrink-0 w-80" style={{ aspectRatio: `${variant.width}/${variant.height}` }}>
+                        <div className="relative w-full h-full">
+                          <svg className="absolute" width="0" height="0">
+                            <defs>
+                              <clipPath id={`blob-reason-${index}`} clipPathUnits="objectBoundingBox">
+                                <path transform={`scale(${1 / variant.width}, ${1 / variant.height})`} d={variant.path} />
+                              </clipPath>
+                            </defs>
+                          </svg>
+                          <div className="absolute inset-0" style={{ clipPath: `url(#blob-reason-${index})` }}>
+                            <img
+                              src={urlFor(reason.image).width(500).height(400).url()}
+                              alt={reason.image.alt || reason.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox={`0 0 ${variant.width} ${variant.height}`} fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d={variant.path} stroke="var(--color-accent)" vectorEffect="non-scaling-stroke" strokeWidth="2" />
+                          </svg>
+                        </div>
+                      </div>
+                    )}
+                    <div className="flex flex-col justify-center">
+                      <h3 className="text-xl font-semibold mb-2 text-black">{reason.title}</h3>
+                      <p className="text-black/80">{reason.description}</p>
+                    </div>
                   </div>
-                </div>
-              ))} 
+                );
+              })}
             </div>
           </div>
         </div>
