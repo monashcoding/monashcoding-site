@@ -11,6 +11,15 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/membership',
+        destination: 'https://clubs.msa.monash.edu/organisation/7489/',
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default withBundleAnalyzer({
