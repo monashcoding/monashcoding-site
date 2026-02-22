@@ -316,7 +316,7 @@ export default function SponsorForm() {
         
           <motion.button
           type="submit"
-          className="rounded-lgpx-6 py-4 bg-gold-700 text-background font-medium hover:bg-gold-800  active:scale-95"
+          className="rounded-md px-6 py-4 bg-gold-700 text-background font-medium hover:bg-gold-800 active:scale-95"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >

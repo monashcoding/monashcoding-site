@@ -321,7 +321,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
                 <motion.button
                   type="submit"
                   disabled={formStatus === "loading"}
-                  className="w-full py-3 px-6 bg-accent text-background font-semibold rounded-full hover:bg-accent/90 transition-all disabled:opacity-50 cursor-pointer"
+                  className="w-full py-3 px-6 bg-accent text-background font-semibold rounded-md hover:bg-accent/90 transition-all disabled:opacity-50 cursor-pointer"
                   whileTap={{ scale: 0.95 }}
                 >
                   {formStatus === "loading" ? "Sending..." : formStatus === "success" ? "Sent! ✓" : "Send Message"}
