@@ -138,9 +138,16 @@ export interface TimelineEvent {
   description?: string
 }
 
+export interface TeamDescription {
+  _key: string
+  team: TeamSlug
+  description: string
+}
+
 export interface CommitteePageData {
   pageTitle: string
   pageSubtitle?: string
+  teamDescriptions?: TeamDescription[]
   timeline?: TimelineEvent[]
 }
 

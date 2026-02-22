@@ -163,6 +163,70 @@ export const committeePage = defineType({
       type: 'string',
     }),
     defineField({
+      name: 'teamDescriptions',
+      title: 'Team Descriptions',
+      description: 'Description shown beneath the team selector when a team is selected',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          name: 'teamDescription',
+          title: 'Team Description',
+          fields: [
+            defineField({
+              name: 'team',
+              title: 'Team',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Management', value: 'management' },
+                  { title: 'Events', value: 'events' },
+                  { title: 'Marketing', value: 'marketing' },
+                  { title: 'Design', value: 'design' },
+                  { title: 'Human Resources', value: 'human-resources' },
+                  { title: 'Sponsorship', value: 'sponsorship' },
+                  { title: 'Media', value: 'media' },
+                  { title: 'Projects', value: 'projects' },
+                  { title: 'Outreach', value: 'outreach' },
+                ],
+              },
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'description',
+              title: 'Description',
+              type: 'text',
+              rows: 3,
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+          preview: {
+            select: {
+              team: 'team',
+              description: 'description',
+            },
+            prepare({ team, description }) {
+              const teamLabels: Record<string, string> = {
+                management: 'Management',
+                events: 'Events',
+                marketing: 'Marketing',
+                design: 'Design',
+                'human-resources': 'Human Resources',
+                sponsorship: 'Sponsorship',
+                media: 'Media',
+                projects: 'Projects',
+                outreach: 'Outreach',
+              }
+              return {
+                title: teamLabels[team] || team,
+                subtitle: description,
+              }
+            },
+          },
+        },
+      ],
+    }),
+    defineField({
       name: 'timeline',
       title: 'Timeline Events',
       type: 'array',

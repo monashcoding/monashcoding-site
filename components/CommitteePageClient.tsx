@@ -3,7 +3,6 @@
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion'
 import { useState, useRef, useEffect, useCallback, useTransition } from 'react'
 import Image from 'next/image'
-import dynamic from 'next/dynamic'
 import { urlFor } from '@/sanity/lib/image'
 import { CommitteeMember, CommitteePageData, TeamSlug } from '@/lib/sanity/types'
 import { TEAM_ORDER } from '@/lib/committee-utils'
@@ -11,8 +10,6 @@ import { fetchCommitteeMembersByFilter, fetchAlumniPaginated } from '@/app/(site
 import { type FilterOption } from '@/app/(site)/team/constants'
 import Timeline from '@/components/team/Timeline'
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
-
-const Dither = dynamic(() => import('@/components/Dither'), { ssr: false })
 
 interface CommitteePageClientProps {
   pageData: CommitteePageData | null
@@ -57,10 +54,12 @@ export default function CommitteePageClient({
   const sectionRef = useRef<HTMLDivElement>(null)
   const loadMoreCallbackRef = useRef<() => Promise<void>>(null!)
   const observerRef = useRef<IntersectionObserver | null>(null)
-  const [isHovering, setIsHovering] = useState(false)
-  const ditherContainerRef = useRef<HTMLDivElement>(null)
+
 
   const title = pageData?.pageTitle || 'Meet the Team'
+  const teamDescription = selectedTeam !== 'all' && selectedTeam !== 'alumni'
+    ? pageData?.teamDescriptions?.find((td) => td.team === selectedTeam)?.description
+    : undefined
 
   // Ordered list of teams that have members
   const activeTeams = TEAM_ORDER.filter((team) => availableTeams.includes(team))
@@ -153,54 +152,6 @@ export default function CommitteePageClient({
     }
   }, [])
 
-  // Mouse tracking for dither effect - uses DOM manipulation to avoid React re-renders
-  useEffect(() => {
-    const section = sectionRef.current
-    const ditherContainer = ditherContainerRef.current
-    if (!section || !ditherContainer) return
-
-    const handleMouseMove = (e: MouseEvent) => {
-      // Use viewport-relative coordinates since dither is fixed positioned
-      ditherContainer.style.setProperty('--mouse-x', `${e.clientX}px`)
-      ditherContainer.style.setProperty('--mouse-y', `${e.clientY}px`)
-    }
-
-    const handleMouseEnter = () => setIsHovering(true)
-    const handleMouseLeave = () => setIsHovering(false)
-
-    section.addEventListener('mousemove', handleMouseMove)
-    section.addEventListener('mouseenter', handleMouseEnter)
-    section.addEventListener('mouseleave', handleMouseLeave)
-
-    return () => {
-      section.removeEventListener('mousemove', handleMouseMove)
-      section.removeEventListener('mouseenter', handleMouseEnter)
-      section.removeEventListener('mouseleave', handleMouseLeave)
-    }
-  }, [])
-
-  // Clip-path update for dither effect - clips at section top
-  useEffect(() => {
-    const section = sectionRef.current
-    const ditherContainer = ditherContainerRef.current
-    if (!section || !ditherContainer) return
-
-    const updateClipPath = () => {
-      const rect = section.getBoundingClientRect()
-      // Clip everything above the section's top edge
-      const clipTop = Math.max(0, rect.top)
-      ditherContainer.style.setProperty('--clip-top', `${clipTop}px`)
-    }
-
-    updateClipPath()
-    window.addEventListener('scroll', updateClipPath, { passive: true })
-    window.addEventListener('resize', updateClipPath, { passive: true })
-
-    return () => {
-      window.removeEventListener('scroll', updateClipPath)
-      window.removeEventListener('resize', updateClipPath)
-    }
-  }, [])
 
   return (
     <main className="relative min-h-screen bg-background">
@@ -257,33 +208,9 @@ export default function CommitteePageClient({
         contentClassName="px-4 py-16"
         contentRef={sectionRef}
       >
-        {/* Dither effect - fixed to viewport, clipped to section bounds */}
-        <div
-          ref={ditherContainerRef}
-          className="fixed inset-0 pointer-events-none -z-10"
-          style={{
-            opacity: isHovering ? 1 : 0,
-            transition: 'opacity 0.3s',
-            clipPath: `inset(var(--clip-top, 0px) 0 0 0)`,
-            maskImage: `radial-gradient(circle 300px at var(--mouse-x, 0px) var(--mouse-y, 0px), black 0%, transparent 70%)`,
-            WebkitMaskImage: `radial-gradient(circle 300px at var(--mouse-x, 0px) var(--mouse-y, 0px), black 0%, transparent 70%)`,
-          }}
-        >
-          <Dither
-            waveSpeed={0.03}
-            waveFrequency={3}
-            waveAmplitude={0.3}
-            waveColor={[0.97, 0.89, 0.36]}
-            colorNum={4}
-            pixelSize={2}
-            enableMouseInteraction={false}
-            mouseRadius={0.4}
-          />
-        </div>
-
         {/* Filter Tabs */}
           <div className="relative mx-auto mb-12 flex justify-center">
-            <div className="inline-flex flex-wrap justify-center gap-2 rounded-2xl bg-[#252525] p-3">
+            <div className="inline-flex flex-wrap justify-center gap-2 rounded-2xl bg-[#1e1e1e] p-3">
               <button
                 onClick={() => handleTabClick('all')}
                 className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 ${
@@ -322,6 +249,22 @@ export default function CommitteePageClient({
             </div>
           </div>
 
+          {/* Team Description */}
+          <AnimatePresence mode="wait">
+            {teamDescription && (
+              <motion.p
+                key={selectedTeam}
+                className="mx-auto mb-10 max-w-2xl text-center text-sm leading-relaxed text-foreground/60"
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.25 }}
+              >
+                {teamDescription}
+              </motion.p>
+            )}
+          </AnimatePresence>
+
           {/* Committee Member Grid */}
           <div className="relative mx-auto max-w-7xl">
             <AnimatePresence mode="wait">
@@ -331,6 +274,7 @@ export default function CommitteePageClient({
                   className="grid gap-6"
                   style={{
                     gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                    gridAutoRows: '1fr',
                   }}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -340,7 +284,7 @@ export default function CommitteePageClient({
                   {Array.from({ length: 8 }).map((_, i) => (
                     <div
                       key={i}
-                      className="animate-pulse overflow-hidden rounded-2xl border border-white/10 bg-card"
+                      className="flex flex-col animate-pulse overflow-hidden rounded-2xl bg-card"
                     >
                       <div className="aspect-square bg-white/5" />
                       <div className="space-y-2 p-4">
@@ -364,13 +308,14 @@ export default function CommitteePageClient({
                       className="grid gap-6"
                       style={{
                         gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                        gridAutoRows: '1fr',
                       }}
                     >
                       {displayedMembers.map((member) => (
                         <div
                           key={member._id}
                           onClick={() => setSelectedMember(member)}
-                          className="group cursor-pointer overflow-hidden rounded-2xl bg-card border border-white/10 transition-colors duration-200"
+                          className="group flex flex-col cursor-pointer overflow-hidden rounded-2xl bg-card transition-colors duration-200"
                         >
                           {/* Photo */}
                           <div className="relative aspect-square overflow-hidden">
@@ -394,7 +339,7 @@ export default function CommitteePageClient({
                             )}
                           </div>
                           {/* Info */}
-                          <div className="p-4">
+                          <div className="flex-1 rounded-b-2xl bg-[#1e1e1e] p-4">
                             <h3 className="text-lg font-semibold text-foreground">{member.name}</h3>
                             <p className="text-sm text-[#d4a900]">{member.role}</p>
                             <p className="mt-1 text-xs text-foreground/50">
@@ -411,6 +356,7 @@ export default function CommitteePageClient({
                         className="grid gap-6"
                         style={{
                           gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                          gridAutoRows: '1fr',
                         }}
                       >
                         {displayedMembers.map((member) => (
@@ -421,7 +367,7 @@ export default function CommitteePageClient({
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.25, ease: 'easeOut' }}
                             onClick={() => setSelectedMember(member)}
-                            className="group cursor-pointer overflow-hidden rounded-2xl bg-card border border-white/10 transition-all duration-300 hover:-translate-y-1"
+                            className="group flex flex-col cursor-pointer overflow-hidden rounded-2xl bg-card transition-all duration-300 hover:-translate-y-1"
                           >
                             {/* Photo */}
                             <div className="relative aspect-square overflow-hidden">
@@ -444,7 +390,7 @@ export default function CommitteePageClient({
                               )}
                             </div>
                             {/* Info */}
-                            <div className="p-4">
+                            <div className="flex-1 rounded-b-2xl bg-[#1e1e1e] p-4">
                               <h3 className="text-lg font-semibold text-foreground">{member.name}</h3>
                               <p className="text-sm text-[#d4a900]">{member.role}</p>
                               <p className="mt-1 text-xs text-foreground/50">
