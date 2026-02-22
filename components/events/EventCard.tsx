@@ -51,7 +51,7 @@ export function EventCard({ event, index, disableGreyOut = false }: EventCardPro
   return (
     <Link href={`/events/${event.slug.current}`} className={`group block h-full no-underline ${isPast && !disableGreyOut ? 'opacity-50 grayscale-40' : ''}`}>
       <motion.article
-        className="relative isolate h-full overflow-hidden rounded-lg bg-[#f0f0f0] transition-colors duration-300"
+        className="relative isolate h-full overflow-hidden rounded-lg bg-[#1e1e1e] transition-colors duration-300"
         initial={{ opacity: 0, y: 28 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.24 }}
@@ -96,19 +96,19 @@ export function EventCard({ event, index, disableGreyOut = false }: EventCardPro
 
         <div className={`relative space-y-4 ${isFeatured ? 'p-7 md:p-8' : 'p-5 md:p-6'}`}>
           <div className="space-y-3">
-            <h3 className={`font-semibold leading-[1.14] text-[#1a1a1a] ${isFeatured ? 'text-[clamp(1.5rem,2.1vw,2.2rem)]' : 'text-[clamp(1.15rem,1.4vw,1.45rem)]'}`}>
+            <h3 className={`font-semibold leading-[1.14] text-foreground ${isFeatured ? 'text-[clamp(1.5rem,2.1vw,2.2rem)]' : 'text-[clamp(1.15rem,1.4vw,1.45rem)]'}`}>
               {event.title}
             </h3>
             {index === 0 && (
-              <p className="text-black/55 leading-relaxed line-clamp-3 text-[clamp(0.92rem,1.1vw,1.04rem)]">
+              <p className="text-white/55 leading-relaxed line-clamp-3 text-[clamp(0.92rem,1.1vw,1.04rem)]">
                 {event.description}
               </p>
             )}
           </div>
 
-          <div className="flex flex-wrap gap-2.5 text-[0.74rem] text-black/60">
+          <div className="flex flex-wrap gap-2.5 text-[0.74rem] text-white/60">
             {!event.hideDate && (
-              <span className="inline-flex items-center gap-2 rounded-md border border-black/10 bg-black/5 px-3 py-1.5">
+              <span className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-1.5">
                 <svg
                   width="14"
                   height="14"
@@ -128,7 +128,7 @@ export function EventCard({ event, index, disableGreyOut = false }: EventCardPro
               </span>
             )}
             {event.location && (
-              <span className="inline-flex items-center gap-2 rounded-md border border-black/10 bg-black/5 px-3 py-1.5">
+              <span className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-1.5">
                 <svg
                   width="14"
                   height="14"
@@ -147,7 +147,7 @@ export function EventCard({ event, index, disableGreyOut = false }: EventCardPro
             )}
           </div>
 
-          <div className="inline-flex items-center gap-2 text-[0.77rem] font-semibold tracking-[0.12em] uppercase text-[#1a1a1a] transition-transform duration-300 group-hover:translate-x-1">
+          <div className="inline-flex items-center gap-2 text-[0.77rem] font-semibold tracking-[0.12em] uppercase text-foreground transition-transform duration-300 group-hover:translate-x-1">
             View event
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M7 17L17 7M17 7H8M17 7V16" />
