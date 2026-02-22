@@ -59,8 +59,18 @@ export function EventCard({ event, index, disableGreyOut = false }: EventCardPro
         whileHover={{ y: -5, scale: 1.005 }}
       >
 
-        <div className="relative mx-3 mt-3 overflow-hidden rounded-xl aspect-2/1">
-          {event.image?.asset ? (
+        <div className="relative mx-3 mt-3 overflow-hidden rounded-xl aspect-2/1 bg-[#444040]">
+          {/* Mascot placeholder - visible when no image or while image loads */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Image
+              src="/mascot/min-mac-linked.svg"
+              alt=""
+              width={180}
+              height={180}
+              priority
+            />
+          </div>
+          {event.image?.asset && (
             <Image
               src={urlFor(event.image)
                 .width(isFeatured ? 1400 : 800)
@@ -68,10 +78,8 @@ export function EventCard({ event, index, disableGreyOut = false }: EventCardPro
                 .url()}
               alt={event.image.alt || event.title}
               fill
-              className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+              className="relative z-1 object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
             />
-          ) : (
-            <div className="absolute inset-0 bg-[#444040]" />
           )}
 
           <div className="absolute left-4 right-4 top-4 flex items-start justify-between gap-3">
