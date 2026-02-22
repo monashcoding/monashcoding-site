@@ -65,33 +65,30 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
   return (
     <main className="flex flex-col">
 
-        {/* Section 1 div at the top of the page */}
+        {/* Section 1 - Title */}
         <RibbonAwareSection
           backgroundClassName="bg-background"
-          className="w-full text-center h-[30vh] flex px-4 md:px-32 lg:px-36 py-8"
+          className="w-full pt-28 pb-12 px-6 md:px-16"
           as="div"
         >
-          <div className="w-full px-[5vw] flex">
-            {/* Box inside */}
+          <div className="mx-auto max-w-4xl">
             <motion.div
-              className="w-full bg-gold-700 flex items-center justify-center mt-16 rounded-xl"
+              className="w-full bg-gold-700 flex items-center justify-center py-8 rounded-xl"
               initial={{ opacity: 0, y: -50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              {/* Heading text*/}
               <motion.h1
                 variants={headingAnimations}
                 initial="hidden"
                 animate="visible"
                 className="text-[clamp(2.5rem,4vw,8rem)] font-extrabold"
               >
-                {/* Individual characters bouncing. This is inheriting the animations from the parent container. Thus doing "hidden" and "visible" */}
                 {Array.from(pageTitle).map((char, i) => (
                   <motion.span
                     key={i}
                     variants={wordOrCharAnimations}
-                    className="inline-block whitespace-pre text-background" // Preserve spaces between words for bounciness
+                    className="inline-block whitespace-pre text-background"
                     >
                     {char}
                   </motion.span>
@@ -101,23 +98,21 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
           </div>
         </RibbonAwareSection>
 
-        {/* Section 2 div - form */}
+        {/* Section 2 - Form */}
         <RibbonAwareSection
           backgroundClassName="bg-blue"
-          className="w-full flex items-center justify-center px-4 md:px-32 lg:px-36 py-8"
+          className="w-full py-16 px-6 md:px-16"
           as="div"
         >
-          <div className="w-full flex flex-col gap-12 my-12 px-[5vw]">
-            <motion.div className="w-full rounded-xl overflow-y-auto" >
-                <ContactForm/>
-            </motion.div>
+          <div className="mx-auto max-w-4xl">
+            <ContactForm/>
           </div>
         </RibbonAwareSection>
 
         {/* Section 3 - Socials */}
         <RibbonAwareSection
           backgroundClassName="bg-background"
-          className="flex flex-col justify-center items-center py-12 gap-6"
+          className="flex flex-col justify-center items-center pt-12 pb-24 gap-6"
           as="div"
         >
           <motion.div className="text-base font-semibold text-white text-[clamp(2rem,3vw,6rem)]">
