@@ -99,60 +99,9 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
 
         {/* Section 2 div - form and newsletter*/}
         <div className="bg-blue w-full flex items-center justify-center px-4 md:px-32 lg:px-36 py-8">
-          {/* Form and newsletter horizontal section */}
-          <div className="w-full flex flex-col gap-12 lg:flex-row my-12 px-[5vw] lg:items-stretch">
-            {/* Left side - Form */}
-            <motion.div className="lg:w-[55%]  rounded-xl  overflow-y-auto" >
+          <div className="w-full flex flex-col gap-12 my-12 px-[5vw]">
+            <motion.div className="w-full rounded-xl overflow-y-auto" >
                 <ContactForm/>
-            </motion.div>
-
-            {/* Right side - Newsletter*/}
-            {/* TODO make sanity and fallbacks for this */}
-            <motion.div className="lg:w-[45%]  bg-white rounded-xl text-center px-12 py-8 flex flex-col items-center justify-center overflow-hidden gap-4" >
-              <motion.h2 className="text-4xl font-bold text-gray-800"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              
-              >
-                Join our<br/> Newsletter!
-              </motion.h2>
-
-              <motion.p className=" text-gray-600"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              >
-                Keep up with the latest updates throughout the semester on our events and exclusive member perks!
-              </motion.p>
-
-              {/* Email input */}
-              <motion.div className="flex justify-center text-background"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              >
-                <input 
-                  type="email"
-                  placeholder="Email"
-                  className="w-full max-w-md bg-gray-900/15 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold-700/30"
-                />
-              </motion.div>
-
-              {/* Join button*/}
-              <motion.div className="justify-center text-background"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              >
-                <motion.button 
-                  className="flex justify-center max-w-md px-10 py-4 text-lg font-bold bg-background text-white rounded-lg  transition-colors duration-300"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Join!
-                </motion.button>
-              </motion.div>
             </motion.div>
           </div>
         </div>
