@@ -163,7 +163,7 @@ export default function CommitteePageClient({
       >
         <div className="absolute inset-0 z-0">
           <Image
-            src="/MAC_FULLCOMM-2.tif"
+            src="/MAC_FULLCOMM-2.jpg"
             alt="MAC Team"
             fill
             className="object-cover"
