@@ -31,6 +31,7 @@ export const socialLinks = defineType({
                   { title: 'YouTube', value: 'youtube' },
                   { title: 'TikTok', value: 'tiktok' },
                   { title: 'Website', value: 'website' },
+                  { title: 'Email', value: 'email' },
                 ],
               },
               validation: (Rule) => Rule.required(),
@@ -41,7 +42,7 @@ export const socialLinks = defineType({
               type: 'url',
               validation: (Rule) =>
                 Rule.required().uri({
-                  scheme: ['http', 'https'],
+                  scheme: ['http', 'https', 'mailto'],
                   allowRelative: true,
                 }),
             }),

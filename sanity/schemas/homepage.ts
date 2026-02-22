@@ -274,16 +274,6 @@ const footerSectionSchema = defineArrayMember({
       type: 'array',
       of: [footerColumnSchema],
     }),
-    defineField({
-      name: 'instagramUrl',
-      title: 'Instagram URL',
-      type: 'url',
-    }),
-    defineField({
-      name: 'linkedinUrl',
-      title: 'LinkedIn URL',
-      type: 'url',
-    }),
   ],
   preview: {
     prepare() {
