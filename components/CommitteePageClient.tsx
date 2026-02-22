@@ -494,49 +494,19 @@ export default function CommitteePageClient({
                 <p className="mb-1 text-lg text-[#d4a900]">{selectedMember.role}</p>
                 <p className="mb-4 text-sm text-foreground/50">{TEAM_LABELS[selectedMember.team]}</p>
 
-                {selectedMember.bio && (
-                  <p className="mb-6 text-sm leading-relaxed text-foreground/70">{selectedMember.bio}</p>
-                )}
-
-                {/* Additional Details */}
-                {(selectedMember.pastRoles?.length || selectedMember.mbti || selectedMember.birthday || selectedMember.firstDay || selectedMember.discordHandle) && (
-                  <div className="mb-6 w-full space-y-2 text-left text-sm">
-                    {selectedMember.pastRoles && selectedMember.pastRoles.length > 0 && (
-                      <div className="flex items-start gap-2">
-                        <span className="shrink-0 text-foreground/40">Past Roles:</span>
-                        <span className="text-foreground/70">{selectedMember.pastRoles.join(', ')}</span>
-                      </div>
-                    )}
-                    {selectedMember.mbti && (
-                      <div className="flex items-center gap-2">
-                        <span className="text-foreground/40">MBTI:</span>
-                        <span className="text-foreground/70">{selectedMember.mbti}</span>
-                      </div>
-                    )}
-                    {selectedMember.birthday && (
-                      <div className="flex items-center gap-2">
-                        <span className="text-foreground/40">Birthday:</span>
-                        <span className="text-foreground/70">{selectedMember.birthday}</span>
-                      </div>
-                    )}
-                    {selectedMember.firstDay && (
-                      <div className="flex items-center gap-2">
-                        <span className="text-foreground/40">First Day:</span>
-                        <span className="text-foreground/70">{selectedMember.firstDay}</span>
-                      </div>
-                    )}
-                    {selectedMember.discordHandle && (
-                      <div className="flex items-center gap-2">
-                        <span className="text-foreground/40">Discord:</span>
-                        <span className="text-foreground/70">{selectedMember.discordHandle}</span>
-                      </div>
-                    )}
+                {/* Past Roles */}
+                {selectedMember.pastRoles && selectedMember.pastRoles.length > 0 && (
+                  <div className="mb-6 w-full text-left text-sm">
+                    <div className="flex items-start gap-2">
+                      <span className="shrink-0 text-foreground/40">Past Roles:</span>
+                      <span className="text-foreground/70">{selectedMember.pastRoles.join(', ')}</span>
+                    </div>
                   </div>
                 )}
 
-                {/* Social Links */}
-                <div className="flex flex-wrap justify-center gap-3">
-                  {selectedMember.linkedIn && (
+                {/* LinkedIn */}
+                {selectedMember.linkedIn && (
+                  <div className="flex justify-center">
                     <a
                       href={selectedMember.linkedIn}
                       target="_blank"
@@ -547,35 +517,8 @@ export default function CommitteePageClient({
                         <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
                       </svg>
                     </a>
-                  )}
-                  {selectedMember.email && (
-                    <a
-                      href={`mailto:${selectedMember.email}`}
-                      className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-foreground transition-colors hover:bg-[#FFE330] hover:text-black"
-                    >
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                        <polyline points="22,6 12,13 2,6" />
-                      </svg>
-                    </a>
-                  )}
-                  {selectedMember.bentoMe && (
-                    <a
-                      href={selectedMember.bentoMe}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-foreground transition-colors hover:bg-[#FFE330] hover:text-black"
-                      title="Bento.me"
-                    >
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <rect x="3" y="3" width="7" height="7" rx="1" />
-                        <rect x="14" y="3" width="7" height="7" rx="1" />
-                        <rect x="3" y="14" width="7" height="7" rx="1" />
-                        <rect x="14" y="14" width="7" height="7" rx="1" />
-                      </svg>
-                    </a>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             </motion.div>
           </motion.div>
