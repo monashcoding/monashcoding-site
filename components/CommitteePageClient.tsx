@@ -156,11 +156,8 @@ export default function CommitteePageClient({
   return (
     <main className="relative min-h-screen bg-background">
       {/* Hero Section with Team Photo Background */}
-      <RibbonAwareSection
-        className="h-[400px]"
-        backgroundClassName="bg-black"
-        contentClassName="h-full"
-      >
+      <section className="relative h-[400px]">
+        {/* Image layer - below ribbon (z-0) */}
         <div className="absolute inset-0 z-0">
           <Image
             src="/MAC_FULLCOMM-2.jpg"
@@ -174,6 +171,7 @@ export default function CommitteePageClient({
           {/* Dark gradient for text readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/40" />
         </div>
+        {/* Text layer - above ribbon (z-10) */}
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
           <motion.h1
             className="text-[clamp(2.5rem,8vw,5rem)] font-extrabold text-white"
@@ -185,7 +183,7 @@ export default function CommitteePageClient({
             {title}
           </motion.h1>
         </div>
-      </RibbonAwareSection>
+      </section>
 
       {/* Timeline Section */}
       <RibbonAwareSection
