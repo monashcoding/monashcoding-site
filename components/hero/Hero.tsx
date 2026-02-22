@@ -73,7 +73,7 @@ const fallbackData: HeroData = {
     {
       _key: 'fallback-1',
       _type: 'heroImage',
-      image: { asset: { _id: '', url: '/hero-image.jpg' } },
+      image: { asset: { _id: '', url: '/hero-image-optimized.jpg' } },
       alt: 'MAC community',
     },
   ],
@@ -85,7 +85,7 @@ const fallbackData: HeroData = {
 
 // Helper to build image URL from Sanity image or fallback
 function getImageUrl(image: SanityImage | undefined): string {
-  if (!image?.asset?.url) return '/hero-image.jpg'
+  if (!image?.asset?.url) return '/hero-image-optimized.jpg'
   if (image.asset.url.startsWith('/')) return image.asset.url
   return urlFor(image).width(1200).height(1600).fit('crop').url()
 }
