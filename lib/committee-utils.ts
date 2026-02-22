@@ -32,6 +32,21 @@ function isDirector(role: string): boolean {
   return role.toLowerCase().includes('director')
 }
 
+// NOTE: I don't know what the best way is to avoid some super specific ordering logic
+// for the media team, partly because I was too lazy to refactor the committee schema
+// to include a subrole or something - Jason :L, maybe a TODO? good luck whoever has
+// been cursed to read this, don't ignore me
+
+// Role priority within media team (lower = higher priority)
+function getMediaRolePriority(role: string): number {
+  const normalized = role.toLowerCase()
+  if (/short\s*form/.test(normalized) && /director/.test(normalized)) return 0
+  if (/long\s*form/.test(normalized) && /director/.test(normalized)) return 1
+  if (/short\s*form/.test(normalized) && /officer/.test(normalized)) return 2
+  if (/long\s*form/.test(normalized) && /officer/.test(normalized)) return 3
+  return 99
+}
+
 export function sortMembers(members: CommitteeMember[]): CommitteeMember[] {
   return [...members].sort((a, b) => {
     // Sort by team order first
@@ -43,6 +58,13 @@ export function sortMembers(members: CommitteeMember[]): CommitteeMember[] {
     if (a.team === 'management') {
       const priorityA = getManagementRolePriority(a.role)
       const priorityB = getManagementRolePriority(b.role)
+      if (priorityA !== priorityB) return priorityA - priorityB
+    }
+
+    // Within media, sort by specific role priority
+    if (a.team === 'media') {
+      const priorityA = getMediaRolePriority(a.role)
+      const priorityB = getMediaRolePriority(b.role)
       if (priorityA !== priorityB) return priorityA - priorityB
     }
 
