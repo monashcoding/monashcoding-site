@@ -6,11 +6,31 @@ export const sponsorPage = defineType({
   title: 'Sponsor Page',
   type: 'document',
   icon: CreditCardIcon,
+  fieldsets: [
+    { name: 'hero', title: 'Hero Section', options: { collapsible: true } },
+  ],
   fields: [
+    defineField({
+      name: 'heroImage',
+      title: 'Hero Background Image',
+      type: 'image',
+      fieldset: 'hero',
+      options: {
+        hotspot: true,
+      },
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alt Text',
+          type: 'string',
+        }),
+      ],
+    }),
     defineField({
       name: 'pageTitle',
       title: 'Page Title',
       type: 'string',
+      fieldset: 'hero',
       initialValue: 'Partner With Us',
     }),
     defineField({
@@ -18,13 +38,15 @@ export const sponsorPage = defineType({
       title: 'Page Subtitle',
       type: 'text',
       rows: 2,
+      fieldset: 'hero',
       initialValue: 'Join leading tech companies in supporting the next generation of developers. Your partnership helps us create impactful events and opportunities for students.',
     }),
     defineField({
       name: 'stats',
       title: 'Stats',
-      description: 'Key statistics to showcase',
+      description: 'Key statistics displayed in the hero section',
       type: 'array',
+      fieldset: 'hero',
       of: [
         defineArrayMember({
           type: 'object',
@@ -53,76 +75,67 @@ export const sponsorPage = defineType({
       ],
     }),
     defineField({
-      name: 'tiersTitle',
-      title: 'Tiers Section Title',
-      type: 'string',
-      initialValue: 'Sponsorship Tiers',
-    }),
-    defineField({
-      name: 'tiersSubtitle',
-      title: 'Tiers Section Subtitle',
-      type: 'string',
-      initialValue: 'Choose a partnership level that aligns with your goals and budget',
-    }),
-    defineField({
-      name: 'tiers',
-      title: 'Sponsorship Tiers',
+      name: 'reasons',
+      title: 'Why Sponsor Reasons',
       type: 'array',
       of: [
         defineArrayMember({
           type: 'object',
           fields: [
             defineField({
-              name: 'name',
-              title: 'Tier Name',
+              name: 'title',
+              title: 'Reason Title',
               type: 'string',
               validation: (Rule) => Rule.required(),
             }),
             defineField({
-              name: 'price',
-              title: 'Price',
-              description: 'e.g., "$500", "$1,500", "Custom"',
+              name: 'description',
+              title: 'Reason Description',
               type: 'string',
               validation: (Rule) => Rule.required(),
             }),
             defineField({
-              name: 'featured',
-              title: 'Featured',
-              description: 'Highlight this tier as "Most Popular"',
-              type: 'boolean',
-              initialValue: false,
-            }),
-            defineField({
-              name: 'features',
-              title: 'Features',
-              type: 'array',
-              of: [defineArrayMember({ type: 'string' })],
-              validation: (Rule) => Rule.min(1),
+              name: 'image',
+              title: 'Reason Image',
+              type: 'image',
+              options: {
+                hotspot: true,
+              },
+              fields: [
+                defineField({
+                  name: 'alt',
+                  title: 'Alt Text',
+                  type: 'string',
+                }),
+              ],
             }),
           ],
           preview: {
             select: {
-              title: 'name',
-              subtitle: 'price',
-              featured: 'featured',
-            },
-            prepare({ title, subtitle, featured }) {
-              return {
-                title: featured ? `⭐ ${title}` : title,
-                subtitle,
-              }
+              title: 'title',
+              subtitle: 'description',
+              media: 'image',
             },
           },
         }),
       ],
+      initialValue: [
+        {
+          title: 'Boost Recognitions',
+          description: "Make your brand known by partnering with Monash University's largest tech student society with 1600+ members reaching a wide range of communities locally and internationally.",
+        },
+        {
+          title: 'Audience Reach',
+          description: 'Our platform boasts a diverse and engaged audience, spanning various demographics and interests. Through our social channels, events and collaborations, we consistently reach millions of active users each month.',
+        },
+        {
+          title: 'Social Media Exposure',
+          description: 'As of 2025 we have reached over 230 million views through our social media, and we are still continuing to grow!',
+        },
+      ],
     }),
-    defineField({
-      name: 'benefitsTitle',
-      title: 'Benefits Section Title',
-      type: 'string',
-      initialValue: 'Why Partner With MAC?',
-    }),
-    defineField({
+
+     defineField({
       name: 'benefits',
       title: 'Benefits',
       type: 'array',
@@ -164,6 +177,54 @@ export const sponsorPage = defineType({
       ],
     }),
     defineField({
+      name: 'sponsorsTitle',
+      title: 'Sponsors Section Title',
+      type: 'string',
+      initialValue: '2025 Sponsors',
+    }),
+    defineField({
+      name: 'sponsors',
+      title: 'Sponsor Logos',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'name',
+              title: 'Company Name',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'logo',
+              title: 'Logo',
+              type: 'image',
+              options: {
+                hotspot: true,
+                accept: 'image/jpeg,image/png,image/svg+xml',
+              },
+              fields: [
+                defineField({
+                  name: 'alt',
+                  title: 'Alt Text',
+                  type: 'string',
+                  validation: (Rule) => Rule.required(),
+                }),
+              ],
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+          preview: {
+            select: {
+              title: 'name',
+              media: 'logo',
+            },
+          },
+        }),
+      ],
+    }),
+    defineField({
       name: 'ctaTitle',
       title: 'CTA Title',
       type: 'string',
@@ -175,6 +236,21 @@ export const sponsorPage = defineType({
       type: 'text',
       rows: 2,
       initialValue: "Let's discuss how we can create a partnership that benefits both your organization and our community.",
+    }),
+    defineField({
+      name: 'contactImage',
+      title: 'Contact Section Image',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alt Text',
+          type: 'string',
+        }),
+      ],
     }),
     defineField({
       name: 'ctaButtonText',

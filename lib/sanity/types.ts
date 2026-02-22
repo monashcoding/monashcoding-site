@@ -202,6 +202,12 @@ export interface SponsorTier {
   features: string[]
 }
 
+export interface SponsorLogo {
+  _key: string
+  name: string
+  logo: SanityImage
+}
+
 export interface Benefit {
   _key: string
   icon: string
@@ -210,16 +216,23 @@ export interface Benefit {
 }
 
 export interface SponsorPageData {
+  heroImage?: SanityImage
   pageTitle: string
   pageSubtitle: string
+  reasons: {
+    _key: string
+    title: string
+    description: string
+    image?: SanityImage
+  }[]
   stats: Stat[]
-  tiersTitle: string
-  tiersSubtitle: string
-  tiers: SponsorTier[]
   benefitsTitle: string
   benefits: Benefit[]
+  sponsorsTitle: string
+  sponsors: SponsorLogo[]
   ctaTitle: string
   ctaDescription: string
+  contactImage?: SanityImage
   ctaButtonText: string
   ctaButtonLink: string
 }

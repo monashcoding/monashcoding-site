@@ -26,7 +26,7 @@ export function EmailTemplate({ name, emailAddress, subject, message }: EmailTem
                       textAlign: 'center'
                     }}>
                       <h1 style={{
-                        color: '#252525',
+                        color: '#000000',
                         margin: '0',
                         fontSize: '28px',
                         fontWeight: '700',
@@ -35,7 +35,7 @@ export function EmailTemplate({ name, emailAddress, subject, message }: EmailTem
                         New Message Received
                       </h1>
                       <p style={{
-                        color: 'rgba(37,37,37,0.8)',
+                        color: 'rgba(0, 0, 0, 1)',
                         margin: '10px 0 0 0',
                         fontSize: '14px'
                       }}>
