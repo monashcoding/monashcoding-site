@@ -129,19 +129,27 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
   return (
     <main className="">
       {/* SECTION 1: Zooming scroll hero with stats */}
-      <ScrollZoomHero
-        title={pageTitle}
-        subtitle={pageSubtitle}
-        stats={stats}
-        heroImageUrl={data?.heroImage ? urlFor(data.heroImage).width(2072).quality(80).url() : undefined}
-        heroImageAlt={data?.heroImage?.alt}
-      />
+      <RibbonAwareSection
+        backgroundClassName="bg-background"
+        contentClassName=""
+      >
+        <ScrollZoomHero
+          title={pageTitle}
+          subtitle={pageSubtitle}
+          stats={stats}
+          heroImageUrl={data?.heroImage ? urlFor(data.heroImage).width(2072).quality(80).url() : undefined}
+          heroImageAlt={data?.heroImage?.alt}
+        />
+      </RibbonAwareSection>
 
       {/* 2025 Sponsors Section */}
       <SponsorLogosGrid title={sponsorsTitle} sponsors={sponsors} />
 
       {/* SECTION 2: Why Sponsor MAC */}
-      <div className="bg-background py-24 px-8">
+      <RibbonAwareSection
+        backgroundClassName="bg-background"
+        contentClassName="py-24 px-8"
+      >
         <div className="w-full mx-auto grid grid-cols-1 lg:grid-cols-[35%_1fr] gap-12 relative">
 
           {/* Curved connector lines from heading to each reason - desktop only */}
@@ -200,7 +208,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
             </div>
           </div>
         </div>
-      </div>
+      </RibbonAwareSection>
 
 
 
