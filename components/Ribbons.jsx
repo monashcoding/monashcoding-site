@@ -8,6 +8,9 @@ const MODULE_ID = Symbol('ribbon');
 function initRibbon(config) {
   if (typeof window === 'undefined') return;
 
+  // Disable ribbons on mobile devices
+  if (window.innerWidth < 768) return;
+
   const existing = window[RIBBON_KEY];
 
   // Same module version and still healthy - skip (handles React Strict Mode double-invoke)
