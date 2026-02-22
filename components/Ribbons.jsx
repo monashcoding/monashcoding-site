@@ -1,21 +1,23 @@
 import { useEffect } from 'react';
 import { Renderer, Transform, Vec3, Color, Polyline } from 'ogl';
 
-// Use window to persist across HMR reloads
 const RIBBON_KEY = '__RIBBON_INSTANCE__';
+// New value on each module evaluation - lets us detect HMR reloads
+const MODULE_ID = Symbol('ribbon');
 
 function initRibbon(config) {
   if (typeof window === 'undefined') return;
 
-  // Check window for existing instance (survives HMR)
-  if (window[RIBBON_KEY]?.healthy) return;
+  const existing = window[RIBBON_KEY];
 
-  // Clean up stale container from a failed previous init
+  // Same module version and still healthy - skip (handles React Strict Mode double-invoke)
+  if (existing?.healthy && existing?.moduleId === MODULE_ID) return;
+
+  // Tear down old instance (HMR reload or failed previous init)
+  if (existing?.cancel) existing.cancel();
   const staleContainer = document.getElementById('ribbon-container');
-  if (staleContainer) {
-    staleContainer.remove();
-    delete window[RIBBON_KEY];
-  }
+  if (staleContainer) staleContainer.remove();
+  delete window[RIBBON_KEY];
 
   const {
     colors,
@@ -68,8 +70,14 @@ function initRibbon(config) {
   gl.canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;';
   container.appendChild(gl.canvas);
 
-  // Store state on window to survive HMR — mark as healthy
-  window[RIBBON_KEY] = { container, canvas: gl.canvas, healthy: true };
+  let cancelled = false;
+  window[RIBBON_KEY] = {
+    container,
+    canvas: gl.canvas,
+    healthy: true,
+    moduleId: MODULE_ID,
+    cancel: () => { cancelled = true; },
+  };
 
   // Handle WebGL context loss/restore
   gl.canvas.addEventListener('webglcontextlost', (e) => {
@@ -163,7 +171,7 @@ function initRibbon(config) {
     const thickness = baseThickness + (Math.random() - 0.5) * 3;
     const mouseOffset = new Vec3(
       (index - center) * offsetFactor + (Math.random() - 0.5) * 0.01,
-      (Math.random() - 0.5) * 0.1,
+      0,
       0
     );
 
@@ -226,6 +234,7 @@ function initRibbon(config) {
   let lastTime = performance.now();
 
   function update() {
+    if (cancelled) return;
     requestAnimationFrame(update);
 
     // Skip rendering if context is lost
@@ -243,9 +252,7 @@ function initRibbon(config) {
     const height = window.innerHeight;
 
     lines.forEach(line => {
-      tmp.copy(mouse).add(line.mouseOffset).sub(line.points[0]).multiply(line.spring);
-      line.mouseVelocity.add(tmp).multiply(line.friction);
-      line.points[0].add(line.mouseVelocity);
+      line.points[0].copy(mouse).add(line.mouseOffset);
 
       for (let i = 1; i < line.points.length; i++) {
         if (isFinite(maxAge) && maxAge > 0) {
