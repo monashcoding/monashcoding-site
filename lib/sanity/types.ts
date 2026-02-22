@@ -183,8 +183,6 @@ export interface RecruitmentPageData {
   timeline: TimelineItem[]
   ctaTitle: string
   ctaDescription: string
-  ctaButtonText: string
-  ctaButtonLink: string
   applicationsOpen: boolean
 }
 
@@ -234,8 +232,6 @@ export interface SponsorPageData {
   ctaTitle: string
   ctaDescription: string
   contactImage?: SanityImage
-  ctaButtonText: string
-  ctaButtonLink: string
 }
 
 // Contact

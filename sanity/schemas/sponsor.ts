@@ -252,18 +252,6 @@ export const sponsorPage = defineType({
         }),
       ],
     }),
-    defineField({
-      name: 'ctaButtonText',
-      title: 'CTA Button Text',
-      type: 'string',
-      initialValue: 'Contact Us',
-    }),
-    defineField({
-      name: 'ctaButtonLink',
-      title: 'CTA Button Link',
-      type: 'string',
-      initialValue: '/contact',
-    }),
   ],
   preview: {
     prepare() {

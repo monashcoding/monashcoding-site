@@ -51,8 +51,6 @@ export const sponsorPageQuery = groq`
       alt,
       hotspot,
       crop
-    },
-    ctaButtonText,
-    ctaButtonLink
+    }
   }
 `
