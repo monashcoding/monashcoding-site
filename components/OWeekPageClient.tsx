@@ -203,7 +203,7 @@ export default function OWeekPageClient({ data }: OWeekPageClientProps) {
   return (
     <main className="relative h-dvh overflow-hidden bg-background">
       {/* Wave frame - mirrors brochure position so waves align to page edges */}
-      <div className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center">
+      <div className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center md:hidden">
         <div
           className="relative w-full"
           style={{
@@ -220,9 +220,8 @@ export default function OWeekPageClient({ data }: OWeekPageClientProps) {
       {/* Scroll-snap container */}
       <div
         ref={scrollRef}
-        className="relative z-20 h-full overflow-y-auto"
+        className="relative z-20 h-full snap-y snap-mandatory md:snap-proximity overflow-y-auto"
         style={{
-          scrollSnapType: "y mandatory",
           overscrollBehavior: "contain",
           paddingTop: snapPad,
           paddingBottom: snapPad,
@@ -233,12 +232,8 @@ export default function OWeekPageClient({ data }: OWeekPageClientProps) {
           <div
             key={idx}
             ref={idx === 0 ? firstPageRef : undefined}
-            className="relative mx-auto w-full"
+            className="relative mx-auto w-full max-w-200 max-h-[calc(100dvh-140px)] md:max-h-none aspect-1600/2263 md:aspect-auto snap-start"
             style={{
-              scrollSnapAlign: "start",
-              maxWidth: "800px",
-              maxHeight: "calc(100dvh - 140px)",
-              aspectRatio: "1600 / 2263",
               ...(page.bg && { backgroundColor: page.bg }),
             }}
           >
@@ -247,7 +242,7 @@ export default function OWeekPageClient({ data }: OWeekPageClientProps) {
               alt={page.alt}
               width={1600}
               height={2263}
-              className="block h-full w-full"
+              className="block h-full w-full md:h-auto"
               priority={idx < 2}
             />
 
