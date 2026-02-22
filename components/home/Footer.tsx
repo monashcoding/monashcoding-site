@@ -87,7 +87,7 @@ export function Footer({ navItems, socialLinks }: FooterProps) {
                 Socials
               </h4>
               <ul className="list-none p-0 m-0 grid grid-cols-2 gap-x-6 gap-y-3">
-                {socialLinks.map((link) => {
+                {socialLinks.filter((link) => link.platform !== 'email').map((link) => {
                   const Icon = PLATFORM_ICONS[link.platform]
                   if (!Icon) return null
                   return (
@@ -105,6 +105,22 @@ export function Footer({ navItems, socialLinks }: FooterProps) {
                   )
                 })}
               </ul>
+              {socialLinks.filter((link) => link.platform === 'email').map((link) => {
+                const Icon = PLATFORM_ICONS[link.platform]
+                if (!Icon) return null
+                const emailAddress = link.url.replace(/^mailto:/i, '')
+                return (
+                  <div key={link._key} className="mt-3">
+                    <a
+                      href={link.url}
+                      className="flex items-center gap-2 text-white/60 no-underline transition-colors duration-300 hover:text-accent"
+                    >
+                      <Icon size={18} />
+                      {emailAddress}
+                    </a>
+                  </div>
+                )
+              })}
             </div>
           )}
         </div>
