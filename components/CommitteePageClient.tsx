@@ -209,7 +209,7 @@ export default function CommitteePageClient({
         contentRef={sectionRef}
       >
         {/* Filter Tabs */}
-          <div className="relative mx-auto mb-12 flex justify-center">
+          <div className="relative mx-auto mb-6 flex justify-center">
             <div className="inline-flex flex-wrap justify-center gap-2 rounded-2xl bg-[#1e1e1e] p-3">
               <button
                 onClick={() => handleTabClick('all')}
