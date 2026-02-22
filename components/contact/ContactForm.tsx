@@ -121,7 +121,7 @@ export default function ContactForm() {
     <motion.form
       noValidate
       onSubmit={handleSendEmail}
-      className="p-8 rounded-lgw-full mx-auto bg-[#1D1D1D]"
+      className="p-8 rounded-lg w-full mx-auto bg-[#1D1D1D]"
       initial={{ opacity: 0, x: -50 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.6, delay: 0.15 }}
@@ -217,7 +217,7 @@ export default function ContactForm() {
             rows={8}
             value={formData.message}
             onChange={handleInputChange}
-            className={`w-full p-4 rounded-lgtext-[#3D3D3D] outline-1 outline-white/20 bg-[#FFFFFF] resize-none transition-all placeholder:text-[#3D3D3D]/40 ${
+            className={`w-full p-4 rounded-lg text-[#3D3D3D] outline-1 outline-white/20 bg-[#FFFFFF] resize-none transition-all placeholder:text-[#3D3D3D]/40 ${
               errors.message
                 ? "border border-red-500 focus:ring-2 focus:ring-red-500/30"
                 : "border border-white/10 focus:ring-2 focus:ring-gold-700/20"
@@ -310,7 +310,7 @@ export default function ContactForm() {
         
           <motion.button
           type="submit"
-          className="rounded-lgpx-6 py-4 bg-gold-700 text-black font-bold hover:bg-gold-800  active:scale-95"
+          className="rounded-lg px-6 py-4 bg-gold-700 text-black font-bold hover:bg-gold-800 active:scale-95"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
