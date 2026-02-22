@@ -42,16 +42,9 @@ export const homepageQuery = groq`
     sections[] {
       _key,
       _type,
-      // Sponsors section
+      // Sponsors section (data comes from sponsorPage, this is just a section marker)
       _type == "sponsorsSection" => {
-        heading,
-        description,
-        sponsors[] {
-          _key,
-          name,
-          x,
-          y
-        }
+        heading
       },
       // Events section
       _type == "eventsSection" => {

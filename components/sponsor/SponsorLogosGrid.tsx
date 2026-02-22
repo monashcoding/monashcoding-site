@@ -33,7 +33,7 @@ const defaultSponsors: SponsorLogo[] = [
   { _key: "6", name: "Sponsor 6", logo: defaultLogo },
 ];
 
-export function SponsorLogosGrid({ title = "2025 Sponsors", sponsors = defaultSponsors }: SponsorLogosGridProps) {
+export function SponsorLogosGrid({ title = "2026 Sponsors", sponsors = defaultSponsors }: SponsorLogosGridProps) {
   
   // 1. DUPLICATE DATA: We need two sets of sponsors to create the seamless loop.
   // When the first set finishes scrolling, we snap back to the start.

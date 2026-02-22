@@ -300,19 +300,10 @@ export interface CommunitySectionData {
 }
 
 // Homepage Sections
-export interface Sponsor {
-  _key: string
-  name: string
-  x: number
-  y: number
-}
-
 export interface SponsorsSectionData {
   _key: string
   _type: 'sponsorsSection'
   heading: string
-  description: string
-  sponsors: Sponsor[]
 }
 
 export interface FooterLink {

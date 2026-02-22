@@ -2,8 +2,8 @@ import { client } from '@/sanity/lib/client'
 
 // Static generation - revalidated via webhook on Sanity publish
 export const revalidate = false
-import { heroQuery, homepageQuery, upcomingEventsQuery, navigationQuery } from '@/sanity/lib/queries'
-import { HeroData, HomepageData, EventDocument, NavigationData } from '@/lib/sanity/types'
+import { heroQuery, homepageQuery, upcomingEventsQuery, navigationQuery, sponsorPageQuery } from '@/sanity/lib/queries'
+import { HeroData, HomepageData, EventDocument, NavigationData, SponsorPageData } from '@/lib/sanity/types'
 import { getSocialLinksData } from '@/lib/sanity/fetchers'
 import { Hero } from '@/components/hero/Hero'
 import { HomeContent } from '@/components/HomeContent'
@@ -46,14 +46,24 @@ async function getUpcomingEvents(limit: number = 20): Promise<EventDocument[]> {
   }
 }
 
+async function getSponsorPageData(): Promise<SponsorPageData | null> {
+  try {
+    return await client.fetch(sponsorPageQuery, {}, { next: { tags: ['sponsorPage'] } })
+  } catch (error) {
+    console.error('Failed to fetch sponsor page data:', error)
+    return null
+  }
+}
+
 export default async function Home() {
-  const [heroData, homepageData, events, socialLinksData, navigationData, youtubeVideos] = await Promise.all([
+  const [heroData, homepageData, events, socialLinksData, navigationData, youtubeVideos, sponsorPageData] = await Promise.all([
     getHeroData(),
     getHomepageData(),
     getUpcomingEvents(),
     getSocialLinksData(),
     getNavigationData(),
     fetchYouTubeVideos(),
+    getSponsorPageData(),
   ])
 
   // Determine maxEvents from the eventsSection config if present
@@ -75,6 +85,7 @@ export default async function Home() {
         events={limitedEvents}
         socialLinks={socialLinksData?.links || []}
         youtubeVideos={youtubeVideos}
+        sponsorPageData={sponsorPageData}
       />
     </main>
   )

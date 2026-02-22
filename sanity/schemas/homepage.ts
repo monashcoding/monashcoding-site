@@ -1,76 +1,24 @@
 import { defineType, defineField, defineArrayMember } from 'sanity'
 
-const sponsorSchema = {
-  type: 'object',
-  name: 'sponsor',
-  title: 'Sponsor',
-  fields: [
-    defineField({
-      name: 'name',
-      title: 'Sponsor Name',
-      type: 'string',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'x',
-      title: 'Initial X Position (%)',
-      type: 'number',
-      initialValue: 50,
-      validation: (Rule) => Rule.required().min(10).max(90),
-    }),
-    defineField({
-      name: 'y',
-      title: 'Initial Y Position (%)',
-      type: 'number',
-      initialValue: 50,
-      validation: (Rule) => Rule.required().min(10).max(90),
-    }),
-  ],
-  preview: {
-    select: {
-      name: 'name',
-    },
-    prepare({ name }: { name?: string }) {
-      return {
-        title: name || 'Sponsor',
-      }
-    },
-  },
-}
-
 const sponsorsSectionSchema = defineArrayMember({
   type: 'object',
   name: 'sponsorsSection',
   title: 'Sponsors Section',
+  description: 'Displays sponsors from the Sponsor Us page. Manage sponsor logos there.',
   fields: [
     defineField({
       name: 'heading',
       title: 'Section Heading',
       type: 'string',
-      initialValue: 'Our Sponsors',
-    }),
-    defineField({
-      name: 'description',
-      title: 'Description',
-      type: 'string',
-      initialValue: 'Drag and interact with our amazing partners',
-    }),
-    defineField({
-      name: 'sponsors',
-      title: 'Sponsors',
-      type: 'array',
-      of: [sponsorSchema],
+      initialValue: 'Sponsors Section',
+      hidden: true,
     }),
   ],
   preview: {
-    select: {
-      heading: 'heading',
-      sponsors: 'sponsors',
-    },
-    prepare({ heading, sponsors }: { heading?: string; sponsors?: unknown[] }) {
+    prepare() {
       return {
-        title: heading || 'Sponsors Section',
-        subtitle: `${sponsors?.length || 0} sponsors`,
+        title: 'Sponsors Section',
+        subtitle: 'Uses sponsors from the Sponsor Us page',
       }
     },
   },

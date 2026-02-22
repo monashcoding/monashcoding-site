@@ -1,8 +1,8 @@
 'use client'
 
-import { HomepageSection, EventDocument, SocialLink } from '@/lib/sanity/types'
+import { HomepageSection, EventDocument, SocialLink, SponsorPageData } from '@/lib/sanity/types'
 import type { YouTubeVideo } from '@/lib/youtube/feed'
-import { SponsorsSection } from './SponsorsSection'
+import { SponsorLogosGrid } from '@/components/sponsor/SponsorLogosGrid'
 import { EventsSection } from './EventsSection'
 import { CommunitySection } from './CommunitySection'
 
@@ -11,15 +11,16 @@ interface SectionRendererProps {
   events?: EventDocument[]
   socialLinks?: SocialLink[]
   youtubeVideos?: YouTubeVideo[]
+  sponsorPageData?: SponsorPageData | null
 }
 
-export function SectionRenderer({ sections, events, socialLinks, youtubeVideos }: SectionRendererProps) {
+export function SectionRenderer({ sections, events, socialLinks, youtubeVideos, sponsorPageData }: SectionRendererProps) {
   return (
     <>
       {sections.map((section) => {
         switch (section._type) {
           case 'sponsorsSection':
-            return <SponsorsSection key={section._key} data={section} />
+            return <SponsorLogosGrid key={section._key} title={sponsorPageData?.sponsorsTitle} sponsors={sponsorPageData?.sponsors} />
           case 'eventsSection':
             return <EventsSection key={section._key} data={section} events={events} />
           case 'communitySection':
