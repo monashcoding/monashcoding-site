@@ -182,7 +182,7 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
         </motion.div>
 
         {/* Bottom image - clipped to variant-3 blob */}
-        <div className="w-full -mb-8 md:-mb-24">
+        <div className="w-full -mb-24">
           {image && (
             <div className="relative aspect-1440/580 w-full md:mt-10">
               <svg className="absolute" width="0" height="0">

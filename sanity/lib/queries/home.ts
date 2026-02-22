@@ -62,7 +62,12 @@ export const homepageQuery = groq`
       _type == "communitySection" => {
         heading,
         subheading,
-        platforms
+        platforms,
+        instagramReels[] {
+          _key,
+          url,
+          pinned
+        }
       },
       // Footer section
       _type == "footerSection" => {
@@ -77,9 +82,7 @@ export const homepageQuery = groq`
             url,
             isExternal
           }
-        },
-        instagramUrl,
-        linkedinUrl
+        }
       }
     }
   }

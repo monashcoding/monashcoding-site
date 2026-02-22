@@ -158,16 +158,6 @@ const footerSectionSchema = defineArrayMember({
       type: 'array',
       of: [footerColumnSchema],
     }),
-    defineField({
-      name: 'instagramUrl',
-      title: 'Instagram URL',
-      type: 'url',
-    }),
-    defineField({
-      name: 'linkedinUrl',
-      title: 'LinkedIn URL',
-      type: 'url',
-    }),
   ],
   preview: {
     prepare() {
@@ -243,6 +233,56 @@ const communitySectionSchema = defineArrayMember({
               { title: 'LinkedIn', value: 'linkedin' },
               { title: 'Discord', value: 'discord' },
             ],
+          },
+        }),
+      ],
+    }),
+    defineField({
+      name: 'instagramReels',
+      title: 'Instagram Reels',
+      description:
+        'Paste Instagram reel or post URLs. Thumbnails and captions are fetched automatically.',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'instagramReelUrl',
+          title: 'Instagram Reel URL',
+          fields: [
+            defineField({
+              name: 'url',
+              title: 'URL',
+              type: 'url',
+              validation: (Rule) =>
+                Rule.required()
+                  .uri({ scheme: ['https'] })
+                  .custom((url) => {
+                    if (typeof url !== 'string') return true
+                    if (!url.match(/instagram\.com\/(reel|p)\//)) {
+                      return 'URL must be an Instagram reel or post URL'
+                    }
+                    return true
+                  }),
+            }),
+            defineField({
+              name: 'pinned',
+              title: 'Pinned',
+              type: 'boolean',
+              description: 'Pinned reels are shown first.',
+              initialValue: false,
+            }),
+          ],
+          preview: {
+            select: { url: 'url', pinned: 'pinned' },
+            prepare({ url, pinned }: { url?: string; pinned?: boolean }) {
+              const shortcode =
+                url?.match(/\/(reel|p)\/([A-Za-z0-9_-]+)/)?.[2] ?? ''
+              const type = url?.includes('/reel/') ? 'Reel' : 'Post'
+              return {
+                title: `${pinned ? '(Pinned) ' : ''}${shortcode || 'No URL'}`,
+                subtitle: type,
+              }
+            },
           },
         }),
       ],

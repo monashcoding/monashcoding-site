@@ -139,9 +139,16 @@ export interface TimelineEvent {
   description?: string
 }
 
+export interface TeamDescription {
+  _key: string
+  team: TeamSlug
+  description: string
+}
+
 export interface CommitteePageData {
   pageTitle: string
   pageSubtitle?: string
+  teamDescriptions?: TeamDescription[]
   timeline?: TimelineEvent[]
 }
 
@@ -196,6 +203,12 @@ export interface SponsorTier {
   features: string[]
 }
 
+export interface SponsorLogo {
+  _key: string
+  name: string
+  logo: SanityImage
+}
+
 export interface Benefit {
   _key: string
   icon: string
@@ -204,16 +217,23 @@ export interface Benefit {
 }
 
 export interface SponsorPageData {
+  heroImage?: SanityImage
   pageTitle: string
   pageSubtitle: string
+  reasons: {
+    _key: string
+    title: string
+    description: string
+    image?: SanityImage
+  }[]
   stats: Stat[]
-  tiersTitle: string
-  tiersSubtitle: string
-  tiers: SponsorTier[]
   benefitsTitle: string
   benefits: Benefit[]
+  sponsorsTitle: string
+  sponsors: SponsorLogo[]
   ctaTitle: string
   ctaDescription: string
+  contactImage?: SanityImage
   ctaButtonText: string
   ctaButtonLink: string
 }
@@ -263,12 +283,19 @@ export interface EventsSectionData {
   maxEvents: number
 }
 
+export interface InstagramReelUrl {
+  _key: string
+  url: string
+  pinned?: boolean
+}
+
 export interface CommunitySectionData {
   _key: string
   _type: 'communitySection'
   heading: string
   subheading?: string
   platforms?: SocialPlatform[]
+  instagramReels?: InstagramReelUrl[]
 }
 
 // Homepage Sections
@@ -306,8 +333,6 @@ export interface FooterSectionData {
   brandName: string
   tagline: string
   columns: FooterColumn[]
-  instagramUrl?: string
-  linkedinUrl?: string
 }
 
 export type HomepageSection =

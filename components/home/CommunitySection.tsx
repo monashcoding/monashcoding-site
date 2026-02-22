@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useMemo, useRef, useEffect } from 'react'
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
 import { CommunitySectionData, SocialLink } from '@/lib/sanity/types'
 import type { YouTubeVideo } from '@/lib/youtube/feed'
+import type { InstagramReel } from '@/lib/instagram/feed'
 import {
   PLATFORM_ICONS,
   PLATFORM_LABELS,
@@ -230,6 +231,69 @@ function VideoCard({ video }: { video: YouTubeVideo }) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Instagram reel card                                                */
+/* ------------------------------------------------------------------ */
+
+function InstagramReelCard({ reel }: { reel: InstagramReel }) {
+  return (
+    <a
+      href={reel.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group relative block h-full overflow-hidden rounded-2xl border border-white/10 bg-[rgba(28,28,28,0.8)] no-underline transition-border-color duration-300 hover:border-white/20"
+    >
+      <div className="relative w-full overflow-hidden" style={{ paddingBottom: '100%' }}>
+        <img
+          src={reel.thumbnail}
+          alt={reel.caption}
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          loading="lazy"
+        />
+        {/* Likes & comments overlay - top-left */}
+        <div className="absolute top-2.5 left-2.5 flex items-center gap-2.5 rounded-lg bg-black/55 px-2.5 py-1.5 backdrop-blur-sm">
+          <span className="flex items-center gap-1 text-[0.68rem] font-semibold text-white/90">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="text-red-400">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+            {reel.likes}
+          </span>
+          <span className="flex items-center gap-1 text-[0.68rem] font-semibold text-white/90">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="text-white/70">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            {reel.comments}
+          </span>
+        </div>
+        {/* Pinned indicator - top-right */}
+        {reel.pinned && (
+          <div className="absolute top-2.5 right-2.5 flex h-7 w-7 items-center justify-center rounded-full bg-accent shadow-lg">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="#252525">
+              <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z" />
+            </svg>
+          </div>
+        )}
+        {/* Play icon for reels */}
+        {reel.type === 'reel' && (
+          <div className="absolute right-2.5 bottom-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-lg transition-transform duration-300 group-hover:scale-110">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="#252525" className="ml-0.5">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </div>
+          </div>
+        )}
+      </div>
+      {/* Caption */}
+      <div className="border-t border-white/10 px-4 py-3">
+        <p className="line-clamp-2 text-sm leading-snug text-white/85">
+          {reel.caption || `Instagram ${reel.type}`}
+        </p>
+      </div>
+    </a>
+  )
+}
+
+/* ------------------------------------------------------------------ */
 /*  Yellow fizzle/sparkle canvas on the left or right edge             */
 /* ------------------------------------------------------------------ */
 
@@ -402,6 +466,8 @@ const itemVariants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 }
 
+const REELS_PER_PAGE = 12
+
 interface CommunitySectionProps {
   data?: CommunitySectionData
   socialLinks?: SocialLink[]
@@ -425,9 +491,62 @@ export function CommunitySection({
   const subheading = data?.subheading ?? 'Connect with us on social media'
   const allowedPlatforms = data?.platforms ?? DEFAULT_PLATFORMS
 
+  // Instagram reels - fetched client-side in batches from Sanity entries
+  const reelEntries = useMemo(() => {
+    const entries = data?.instagramReels ?? []
+    return [...entries].reverse().sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0))
+  }, [data?.instagramReels])
+
+  const [loadedReels, setLoadedReels] = useState<InstagramReel[]>([])
+  const [reelsLoading, setReelsLoading] = useState(false)
+  const [fetchedUpTo, setFetchedUpTo] = useState(0)
+  const loadingRef = useRef(false)
+
+  const hasMoreReels = fetchedUpTo < reelEntries.length
+  const hasReels = reelEntries.length > 0
+
+  const loadReels = useCallback(async (startFrom: number) => {
+    if (loadingRef.current) return
+    if (startFrom >= reelEntries.length) return
+    loadingRef.current = true
+    setReelsLoading(true)
+
+    const nextEnd = Math.min(startFrom + REELS_PER_PAGE, reelEntries.length)
+    const nextBatch = reelEntries.slice(startFrom, nextEnd)
+    setFetchedUpTo(nextEnd)
+
+    try {
+      const res = await fetch('/api/instagram', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ urls: nextBatch.map((e) => e.url) }),
+      })
+      const { reels } = (await res.json()) as { reels: InstagramReel[] }
+      const merged = reels.map((reel) => {
+        const entry = nextBatch.find((e) => e.url === reel.url)
+        return { ...reel, pinned: entry?.pinned ?? false }
+      })
+      setLoadedReels((prev) => [...prev, ...merged])
+    } catch {
+      // Silently skip failed batch
+    }
+    loadingRef.current = false
+    setReelsLoading(false)
+  }, [reelEntries])
+
+  // Load first batch on mount
+  const mountedRef = useRef(false)
+  useEffect(() => {
+    if (reelEntries.length > 0 && !mountedRef.current) {
+      mountedRef.current = true
+      loadReels(0)
+    }
+  }, [reelEntries, loadReels])
   const hasVideos = youtubeVideos.length > 0
+  const [socialsOpen, setSocialsOpen] = useState(true)
+  const [reelsOpen, setReelsOpen] = useState(true)
   const [videosOpen, setVideosOpen] = useState(true)
-  const [activeTab, setActiveTab] = useState<'socials' | 'videos'>('socials')
+  const [activeTab, setActiveTab] = useState<'socials' | 'reels' | 'videos'>('socials')
   const [selectedYear, setSelectedYear] = useState<number | 'all'>('all')
 
   const filteredLinks = socialLinks.filter((link) =>
@@ -458,14 +577,27 @@ export function CommunitySection({
     return youtubeVideos.filter((v) => v.year === selectedYear)
   }, [youtubeVideos, selectedYear])
 
-  /* ---- Mobile content (tabs, same as before) ---- */
+  /* ---- Mobile content (tabs) ---- */
+  const mobileTabs = useMemo(() => {
+    const tabs: ('socials' | 'reels' | 'videos')[] = ['socials']
+    if (hasReels) tabs.push('reels')
+    if (hasVideos) tabs.push('videos')
+    return tabs
+  }, [hasReels, hasVideos])
+
+  const tabLabels: Record<'socials' | 'reels' | 'videos', string> = {
+    socials: 'Socials',
+    reels: 'Reels',
+    videos: 'Videos',
+  }
+
   const mobileContent = (
     <div className="lg:hidden">
       {/* Mobile tabs */}
-      {hasVideos && (
+      {mobileTabs.length > 1 && (
         <div className="mb-6 flex flex-wrap items-center gap-3">
           <div className="inline-flex gap-1.5 rounded-[0.95rem] border border-white/10 bg-white/[0.03] p-1.5">
-            {(['socials', 'videos'] as const).map((tab) => (
+            {mobileTabs.map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -483,7 +615,7 @@ export function CommunitySection({
                   />
                 )}
                 <span className="relative z-10">
-                  {tab === 'socials' ? 'Socials' : 'Videos'}
+                  {tabLabels[tab]}
                 </span>
               </button>
             ))}
@@ -515,7 +647,7 @@ export function CommunitySection({
 
       {/* Mobile content */}
       <AnimatePresence mode="wait">
-        {activeTab === 'socials' ? (
+        {activeTab === 'socials' && (
           <motion.div
             key="socials-mobile"
             initial={{ opacity: 0, y: 12 }}
@@ -535,7 +667,46 @@ export function CommunitySection({
               />
             ))}
           </motion.div>
-        ) : (
+        )}
+
+        {activeTab === 'reels' && (
+          <motion.div
+            key="reels-mobile"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+              {loadedReels.map((reel) => (
+                <div key={reel.shortcode} className="animate-fade-in-up">
+                  <InstagramReelCard reel={reel} />
+                </div>
+              ))}
+            </div>
+            {hasMoreReels && (
+              <button
+                onClick={() => loadReels(fetchedUpTo)}
+                disabled={reelsLoading}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/3 py-3 text-xs font-semibold tracking-[0.12em] uppercase text-white/60 transition-colors hover:border-accent hover:text-accent disabled:pointer-events-none disabled:opacity-60"
+              >
+                {reelsLoading ? (
+                  <>
+                    <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Loading...
+                  </>
+                ) : (
+                  'Load more reels'
+                )}
+              </button>
+            )}
+          </motion.div>
+        )}
+
+        {activeTab === 'videos' && (
           <motion.div
             key="videos-mobile"
             initial={{ opacity: 0, y: 12 }}
@@ -597,6 +768,42 @@ export function CommunitySection({
           </div>
         </div>
       </div>
+
+      {/* Reels panel */}
+      {hasReels && (
+        <CollapsiblePanel
+          label="Reels"
+          isOpen={reelsOpen}
+          onToggle={() => setReelsOpen((v) => !v)}
+        >
+          <div className="grid grid-cols-4 gap-4">
+            {loadedReels.map((reel) => (
+              <div key={reel.shortcode} className="animate-fade-in-up transition-transform duration-300 hover:-translate-y-1">
+                <InstagramReelCard reel={reel} />
+              </div>
+            ))}
+          </div>
+          {hasMoreReels && (
+            <button
+              onClick={() => loadReels(fetchedUpTo)}
+              disabled={reelsLoading}
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/3 py-3 text-xs font-semibold tracking-[0.12em] uppercase text-white/60 transition-colors hover:border-accent hover:text-accent disabled:pointer-events-none disabled:opacity-60"
+            >
+              {reelsLoading ? (
+                <>
+                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  Loading...
+                </>
+              ) : (
+                'Load more reels'
+              )}
+            </button>
+          )}
+        </CollapsiblePanel>
+      )}
 
       {/* Videos panel */}
       {hasVideos && (
