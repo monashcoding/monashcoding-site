@@ -66,7 +66,11 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
     <main className="flex flex-col">
 
         {/* Section 1 div at the top of the page */}
-        <div className="w-full text-center bg-background h-[30vh] flex px-4 md:px-32 lg:px-36 py-8">
+        <RibbonAwareSection
+          backgroundClassName="bg-background"
+          className="w-full text-center h-[30vh] flex px-4 md:px-32 lg:px-36 py-8"
+          as="div"
+        >
           <div className="w-full px-[5vw] flex">
             {/* Box inside */}
             <motion.div
@@ -84,9 +88,9 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
               >
                 {/* Individual characters bouncing. This is inheriting the animations from the parent container. Thus doing "hidden" and "visible" */}
                 {Array.from(pageTitle).map((char, i) => (
-                  <motion.span 
-                    key={i} 
-                    variants={wordOrCharAnimations} 
+                  <motion.span
+                    key={i}
+                    variants={wordOrCharAnimations}
                     className="inline-block whitespace-pre text-background" // Preserve spaces between words for bounciness
                     >
                     {char}
@@ -95,20 +99,26 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
               </motion.h1>
             </motion.div>
           </div>
-        </div>
+        </RibbonAwareSection>
 
-        {/* Section 2 div - form and newsletter*/}
-        <div className="bg-blue w-full flex items-center justify-center px-4 md:px-32 lg:px-36 py-8">
+        {/* Section 2 div - form */}
+        <RibbonAwareSection
+          backgroundClassName="bg-blue"
+          className="w-full flex items-center justify-center px-4 md:px-32 lg:px-36 py-8"
+          as="div"
+        >
           <div className="w-full flex flex-col gap-12 my-12 px-[5vw]">
             <motion.div className="w-full rounded-xl overflow-y-auto" >
                 <ContactForm/>
             </motion.div>
           </div>
-        </div>
+        </RibbonAwareSection>
 
         {/* Section 3 - Socials */}
-        <motion.div
-          className="bg-background flex flex-col justify-center items-center py-12 gap-6"
+        <RibbonAwareSection
+          backgroundClassName="bg-background"
+          className="flex flex-col justify-center items-center py-12 gap-6"
+          as="div"
         >
           <motion.div className="text-base font-semibold text-white text-[clamp(2rem,3vw,6rem)]">
             Talk to us
@@ -128,7 +138,7 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
               ))}
             </div>
           </div>
-        </motion.div>
+        </RibbonAwareSection>
 
         {/* Bottom image - clipped to variant-3 blob */}
         <div className="w-full -mb-24">
