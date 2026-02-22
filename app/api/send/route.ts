@@ -88,8 +88,7 @@ export async function POST(req: Request) {
 
       const { data, error } = await resend.emails.send({
         from: 'noreply@monashcoding.com',
-        // TODO change to sponsorship email
-        to: 'projects@monashcoding.com',
+        to: 'sponsorship@monashcoding.com',
         replyTo: (email as string).trim(),
         subject: `Sponsorship Inquiry from ${companyName}`,
         react: EmailTemplate({
