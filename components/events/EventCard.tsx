@@ -37,9 +37,10 @@ function formatEventDate(dateStr: string, endDateStr?: string): string {
 interface EventCardProps {
   event: EventDocument
   index: number
+  disableGreyOut?: boolean
 }
 
-export function EventCard({ event, index }: EventCardProps) {
+export function EventCard({ event, index, disableGreyOut = false }: EventCardProps) {
   const isFeatured = event.isPinned || index === 0
   const [isPast, setIsPast] = useState(false)
 
@@ -48,7 +49,7 @@ export function EventCard({ event, index }: EventCardProps) {
   }, [event.date])
 
   return (
-    <Link href={`/events/${event.slug.current}`} className={`group block h-full no-underline ${isPast ? 'opacity-50 grayscale-40' : ''}`}>
+    <Link href={`/events/${event.slug.current}`} className={`group block h-full no-underline ${isPast && !disableGreyOut ? 'opacity-50 grayscale-40' : ''}`}>
       <motion.article
         className="relative isolate h-full overflow-hidden rounded-[1.6rem] bg-[#f0f0f0] transition-colors duration-300"
         initial={{ opacity: 0, y: 28 }}
