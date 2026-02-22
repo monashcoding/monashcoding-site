@@ -257,7 +257,7 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
             {hasMore && (
               <button
                 onClick={() => setVisibleCount((prev) => prev + LOAD_MORE_COUNT)}
-                className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/3 py-3 text-xs font-semibold tracking-[0.12em] uppercase text-white/60 transition-colors hover:border-accent hover:text-accent"
+                className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-white/3 py-3 text-xs font-semibold tracking-[0.12em] uppercase text-white/60 transition-colors hover:text-accent"
               >
                 Load more events
               </button>
