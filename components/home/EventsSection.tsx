@@ -123,9 +123,13 @@ interface EventsSectionProps {
   events?: EventDocument[]
 }
 
+const INITIAL_GRID_COUNT = 3
+const LOAD_MORE_COUNT = 6
+
 export function EventsSection({ data, events = [] }: EventsSectionProps) {
   const heading = data?.heading ?? 'Events & Announcements'
   const [activeTag, setActiveTag] = useState<EventTag | 'all'>('all')
+  const [visibleCount, setVisibleCount] = useState(INITIAL_GRID_COUNT)
 
   const filteredEvents =
     activeTag === 'all'
@@ -137,14 +141,24 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
   const isArchivesView = activeTag === 'archives'
 
   const featuredEvent = useMemo(() => {
-    if (filteredEvents.length === 0) return null
+    if (filteredEvents.length === 0 || isArchivesView) return null
     return filteredEvents.find((event) => event.isPinned) ?? filteredEvents[0]
-  }, [filteredEvents])
+  }, [filteredEvents, isArchivesView])
 
   const remainingEvents = useMemo(() => {
+    if (isArchivesView) return filteredEvents
     if (!featuredEvent) return []
     return filteredEvents.filter((event) => event._id !== featuredEvent._id)
-  }, [filteredEvents, featuredEvent])
+  }, [filteredEvents, featuredEvent, isArchivesView])
+
+  const visibleRemaining = remainingEvents.slice(0, visibleCount)
+  const hasMore = visibleCount < remainingEvents.length
+
+  // Reset visible count when switching tabs
+  const handleTagChange = (tag: EventTag | 'all') => {
+    setActiveTag(tag)
+    setVisibleCount(INITIAL_GRID_COUNT)
+  }
 
   return (
     <RibbonAwareSection
@@ -181,7 +195,7 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
             return (
               <motion.button
                 key={filter.value}
-                onClick={() => setActiveTag(filter.value)}
+                onClick={() => handleTagChange(filter.value)}
                 className={`relative overflow-hidden rounded-xl px-4 py-2.5 text-xs font-semibold tracking-[0.11em] uppercase transition-colors duration-300 md:text-[0.78rem] ${
                   active ? 'text-[#252525]' : 'text-white/65 hover:text-white'
                 }`}
@@ -201,54 +215,52 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
           })}
         </motion.div>
 
-        {featuredEvent ? (
+        {filteredEvents.length > 0 ? (
           <div key={activeTag}>
-            {isArchivesView ? (
+            {/* Featured hero (non-archive views only) */}
+            {featuredEvent && (
+              <motion.div
+                variants={itemVariants}
+                className="mb-7"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <div className="mb-3 flex items-center justify-between gap-4">
+                  <p className="text-[0.72rem] font-semibold tracking-[0.16em] uppercase text-accent/90">
+                    Featured event
+                  </p>
+                  <span className="text-xs text-white/45">
+                    {filteredEvents.length} {filteredEvents.length === 1 ? 'result' : 'results'}
+                  </span>
+                </div>
+                <EventCard event={featuredEvent} index={0} />
+              </motion.div>
+            )}
+
+            {/* Grid of remaining events */}
+            {visibleRemaining.length > 0 && (
               <motion.div
                 variants={itemVariants}
                 className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
+                transition={{ duration: 0.4, delay: featuredEvent ? 0.08 : 0 }}
               >
-                {filteredEvents.map((event, index) => (
-                  <EventCard key={event._id} event={event} index={index + 1} disableGreyOut />
+                {visibleRemaining.map((event, index) => (
+                  <EventCard key={event._id} event={event} index={index + 1} disableGreyOut={isArchivesView} />
                 ))}
               </motion.div>
-            ) : (
-              <>
-                <motion.div
-                  variants={itemVariants}
-                  className="mb-7"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <div className="mb-3 flex items-center justify-between gap-4">
-                    <p className="text-[0.72rem] font-semibold tracking-[0.16em] uppercase text-accent/90">
-                      Featured event
-                    </p>
-                    <span className="text-xs text-white/45">
-                      {filteredEvents.length} {filteredEvents.length === 1 ? 'result' : 'results'}
-                    </span>
-                  </div>
-                  <EventCard event={featuredEvent} index={0} />
-                </motion.div>
+            )}
 
-                {remainingEvents.length > 0 && (
-                  <motion.div
-                    variants={itemVariants}
-                    className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: 0.08 }}
-                  >
-                    {remainingEvents.map((event, index) => (
-                      <EventCard key={event._id} event={event} index={index + 1} />
-                    ))}
-                  </motion.div>
-                )}
-              </>
+            {/* Load more button */}
+            {hasMore && (
+              <button
+                onClick={() => setVisibleCount((prev) => prev + LOAD_MORE_COUNT)}
+                className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/3 py-3 text-xs font-semibold tracking-[0.12em] uppercase text-white/60 transition-colors hover:border-accent hover:text-accent"
+              >
+                Load more events
+              </button>
             )}
           </div>
         ) : (
