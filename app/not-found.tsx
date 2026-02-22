@@ -5,8 +5,8 @@ export default function NotFound() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-6 px-4 text-center">
       <Image
-        src="/mascot/min-sad.svg"
-        alt="Sad mascot"
+        src="/mascot/min-404.svg"
+        alt="404 mascot"
         width={200}
         height={200}
       />
