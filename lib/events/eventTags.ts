@@ -23,6 +23,13 @@ export const EVENT_TAGS: EventTagConfig[] = [
       'border border-accent bg-accent text-[#252525]',
   },
   {
+    value: 'industry',
+    label: 'Industry',
+    filterLabel: 'Industry',
+    style:
+      'border border-[#4CAF50] bg-[#4CAF50] text-white',
+  },
+  {
     value: 'social',
     label: 'Social',
     filterLabel: 'Social',
@@ -35,13 +42,6 @@ export const EVENT_TAGS: EventTagConfig[] = [
     filterLabel: 'Recruitment',
     style:
       'border border-[#FFE330] bg-[#FFE330] text-[#252525]',
-  },
-  {
-    value: 'industry',
-    label: 'Industry',
-    filterLabel: 'Industry',
-    style:
-      'border border-[#4CAF50] bg-[#4CAF50] text-white',
   },
   {
     value: 'archives',
