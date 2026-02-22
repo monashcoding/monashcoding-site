@@ -128,6 +128,7 @@ export function Hero({ data }: HeroProps) {
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0)
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
   const [isLogoHovered, setIsLogoHovered] = useState(false)
+  const [isMemberHovered, setIsMemberHovered] = useState(false)
   const [mobileTextHeight, setMobileTextHeight] = useState(220)
   const prefersReducedMotion = useReducedMotion()
 
@@ -304,22 +305,48 @@ export function Hero({ data }: HeroProps) {
             <MacLogo3D className="w-48 h-64 md:w-64 md:h-80 lg:w-72 lg:h-96 pointer-events-none" />
           </motion.div>
 
-          <motion.a
-            href={MEMBER_SIGNUP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative z-40 mt-8 hidden lg:inline-flex w-[min(90vw,22rem)] items-center justify-center overflow-hidden rounded-md border-2 border-accent bg-accent px-8 py-3 text-base font-extrabold uppercase tracking-[0.09em] text-accent-foreground hover:border-white/40 lg:w-auto lg:px-10 lg:text-lg"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.95, duration: 0.5 }}
-            whileHover={{ y: -2, scale: 1.02 }}
+          <div
+            className="relative z-40 mt-8 hidden lg:inline-flex"
+            onMouseEnter={() => setIsMemberHovered(true)}
+            onMouseLeave={() => setIsMemberHovered(false)}
           >
-            <span className="pointer-events-none absolute inset-0 -translate-x-full bg-[#252525] transition-transform duration-300 ease-out group-hover:translate-x-0" />
-            <span className="pointer-events-none absolute inset-0 -translate-x-[130%] bg-[linear-gradient(120deg,transparent_25%,rgba(255,255,255,0.35)_50%,transparent_75%)] transition-transform duration-700 ease-out group-hover:translate-x-[130%]" />
-            <span className="relative z-10 transition-colors duration-300 group-hover:text-white">
-              Become a Member
-            </span>
-          </motion.a>
+            <motion.a
+              href={MEMBER_SIGNUP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative inline-flex w-[min(90vw,22rem)] items-center justify-center overflow-hidden rounded-md border-2 border-accent bg-accent px-8 py-3 text-base font-extrabold uppercase tracking-[0.09em] text-accent-foreground hover:border-white/40 lg:w-auto lg:px-10 lg:text-lg"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.95, duration: 0.5 }}
+              whileHover={{ y: -2, scale: 1.02 }}
+            >
+              <span className="pointer-events-none absolute inset-0 -translate-x-full bg-[#252525] transition-transform duration-300 ease-out group-hover:translate-x-0" />
+              <span className="pointer-events-none absolute inset-0 -translate-x-[130%] bg-[linear-gradient(120deg,transparent_25%,rgba(255,255,255,0.35)_50%,transparent_75%)] transition-transform duration-700 ease-out group-hover:translate-x-[130%]" />
+              <span className="relative z-10 transition-colors duration-300 group-hover:text-white">
+                Become a Member
+              </span>
+            </motion.a>
+            <div className="absolute -top-20 -right-8 -z-10 pointer-events-none">
+              <AnimatePresence>
+                {isMemberHovered && (
+                  <motion.div
+                    style={{ rotate: 20 }}
+                    initial={{ opacity: 0, y: 60 }}
+                    animate={{ opacity: 1, y: 5 }}
+                    exit={{ opacity: 0, y: 50 }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 20 }}
+                  >
+                    <Image
+                      src="/mascot/max-join-mac.svg"
+                      alt=""
+                      width={100}
+                      height={100}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
         </div>
 
         {/* Text Content Section - Desktop */}
