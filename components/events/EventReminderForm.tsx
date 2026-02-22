@@ -51,7 +51,7 @@ export function EventReminderForm({ label, eventTitle, eventDate, eventSlug }: E
   if (status === 'success') {
     return (
       <div className="rounded-xl border border-green-500/30 bg-green-500/10 px-4 py-3 text-center text-sm text-green-400">
-        Reminder set! Check your inbox.
+        You're signed up! We'll email you closer to the event.
       </div>
     )
   }
