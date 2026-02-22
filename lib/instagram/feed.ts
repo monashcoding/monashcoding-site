@@ -1,5 +1,3 @@
-import { getInstagramShortcode } from '@/lib/content/parsers'
-
 export interface InstagramReel {
   url: string
   shortcode: string
@@ -109,7 +107,7 @@ async function fetchSingleReel(url: string): Promise<InstagramReel | null> {
 
     if (!thumbnail) return null
 
-    const shortcode = getInstagramShortcode(url) ?? ''
+    const shortcode = url.match(/\/(p|reel)\/([^/?]+)/)?.[2] ?? ''
     const type = url.includes('/reel/') ? 'reel' : 'post'
     const parsed = description ? parseOgDescription(description) : null
 
