@@ -49,7 +49,7 @@ export default function ScrollZoomHero({
               {stats.map((stat, i) => (
                 <motion.div
                   key={stat._key}
-                  className="p-4 md:p-5 bg-white/5 rounded-2xl"
+                  className="p-4 md:p-5 bg-white/5 rounded-lg"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}

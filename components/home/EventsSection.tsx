@@ -188,7 +188,7 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
 
         <motion.div
           variants={itemVariants}
-          className="mb-10 inline-flex flex-wrap items-center gap-2 rounded-[1.2rem] bg-[#1e1e1e] p-2"
+          className="mb-10 inline-flex flex-wrap items-center gap-2 rounded-lg bg-[#1e1e1e] p-2"
         >
           {FILTER_OPTIONS.map((filter) => {
             const active = activeTag === filter.value
@@ -196,7 +196,7 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
               <motion.button
                 key={filter.value}
                 onClick={() => handleTagChange(filter.value)}
-                className={`relative overflow-hidden rounded-xl px-4 py-2.5 text-xs font-semibold tracking-[0.11em] uppercase transition-colors duration-300 md:text-[0.78rem] ${
+                className={`relative overflow-hidden rounded-lg px-4 py-2.5 text-xs font-semibold tracking-[0.11em] uppercase transition-colors duration-300 md:text-[0.78rem] ${
                   active ? 'text-[#252525]' : 'text-white/65 hover:text-white'
                 }`}
                 whileHover={{ y: -1 }}
@@ -205,7 +205,7 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
                 {active && (
                   <motion.span
                     layoutId="events-active-filter"
-                    className="absolute inset-0 rounded-xl border border-accent/60 bg-accent"
+                    className="absolute inset-0 rounded-lg border border-accent/60 bg-accent"
                     transition={{ type: 'spring', stiffness: 340, damping: 32 }}
                   />
                 )}
@@ -257,7 +257,7 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
             {hasMore && (
               <button
                 onClick={() => setVisibleCount((prev) => prev + LOAD_MORE_COUNT)}
-                className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/3 py-3 text-xs font-semibold tracking-[0.12em] uppercase text-white/60 transition-colors hover:border-accent hover:text-accent"
+                className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/3 py-3 text-xs font-semibold tracking-[0.12em] uppercase text-white/60 transition-colors hover:border-accent hover:text-accent"
               >
                 Load more events
               </button>
@@ -269,7 +269,7 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35 }}
-            className="rounded-[1.5rem] border border-dashed border-white/20 bg-white/[0.02] py-14 text-center text-white/45"
+            className="rounded-lg border border-dashed border-white/20 bg-white/[0.02] py-14 text-center text-white/45"
           >
             No upcoming events in this category.
           </motion.p>

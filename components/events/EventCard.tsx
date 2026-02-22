@@ -51,7 +51,7 @@ export function EventCard({ event, index, disableGreyOut = false }: EventCardPro
   return (
     <Link href={`/events/${event.slug.current}`} className={`group block h-full no-underline ${isPast && !disableGreyOut ? 'opacity-50 grayscale-40' : ''}`}>
       <motion.article
-        className="relative isolate h-full overflow-hidden rounded-[1.6rem] bg-[#f0f0f0] transition-colors duration-300"
+        className="relative isolate h-full overflow-hidden rounded-lg bg-[#f0f0f0] transition-colors duration-300"
         initial={{ opacity: 0, y: 28 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.24 }}
@@ -59,7 +59,7 @@ export function EventCard({ event, index, disableGreyOut = false }: EventCardPro
         whileHover={{ y: -5, scale: 1.005 }}
       >
 
-        <div className="relative mx-3 mt-3 overflow-hidden rounded-xl aspect-2/1 bg-[#444040]">
+        <div className="relative mx-3 mt-3 overflow-hidden rounded-lg aspect-2/1 bg-[#444040]">
           {/* Mascot placeholder - visible when no image or while image loads */}
           <div className="absolute inset-0 flex items-center justify-center">
             <Image

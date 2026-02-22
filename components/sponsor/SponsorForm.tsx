@@ -121,7 +121,7 @@ export default function SponsorForm() {
     <motion.form
       noValidate
       onSubmit={handleSendEmail}
-      className="p-8 rounded-3xl w-full mx-auto bg-white"
+      className="p-8 rounded-lgw-full mx-auto bg-white"
       initial={{ opacity: 0, x: -50 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.6, delay: 0.15 }}
@@ -139,7 +139,7 @@ export default function SponsorForm() {
             name="subject"
             value={formData.subject}
             onChange={handleInputChange}
-            className={`w-full p-4 rounded-4xl  bg-gray-900/15 text-background transition-all placeholder:text-black/40 ${
+            className={`w-full p-4 rounded-lg bg-gray-900/15 text-background transition-all placeholder:text-black/40 ${
               errors.subject
                 ? "border border-red-500 focus:ring-2 focus:ring-red-500/30"
                 : "border border-black/10 focus:ring-2 focus:ring-gold-700/20"
@@ -166,7 +166,7 @@ export default function SponsorForm() {
             name="name"
             value={formData.name}
             onChange={handleInputChange}
-            className={`w-full p-4 rounded-4xl  bg-gray-900/15 text-background transition-all placeholder:text-black/40 ${
+            className={`w-full p-4 rounded-lg bg-gray-900/15 text-background transition-all placeholder:text-black/40 ${
               errors.name
                 ? "border border-red-500 focus:ring-2 focus:ring-red-500/30"
                 : "border border-black/10 focus:ring-2 focus:ring-gold-700/20"
@@ -193,7 +193,7 @@ export default function SponsorForm() {
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            className={`w-full p-4 rounded-4xl  bg-gray-900/15 text-background transition-all placeholder:text-black/40 ${
+            className={`w-full p-4 rounded-lg bg-gray-900/15 text-background transition-all placeholder:text-black/40 ${
               errors.email
                 ? "border border-red-500 focus:ring-2 focus:ring-red-500/30"
                 : "border border-black/10 focus:ring-2 focus:ring-gold-700/20"
@@ -223,7 +223,7 @@ export default function SponsorForm() {
             rows={5}
             value={formData.message}
             onChange={handleInputChange}
-            className={`w-full p-4 rounded-4xl text-background outline-1 outline-gray-500 bg-white/80 resize-none transition-all placeholder:text-black/40 ${
+            className={`w-full p-4 rounded-lgtext-background outline-1 outline-gray-500 bg-white/80 resize-none transition-all placeholder:text-black/40 ${
               errors.message
                 ? "border border-red-500 focus:ring-2 focus:ring-red-500/30"
                 : "border border-black/10 focus:ring-2 focus:ring-gold-700/20"
@@ -316,7 +316,7 @@ export default function SponsorForm() {
         
           <motion.button
           type="submit"
-          className="rounded-4xl px-6 py-4 bg-gold-700 text-background font-medium hover:bg-gold-800  active:scale-95"
+          className="rounded-lgpx-6 py-4 bg-gold-700 text-background font-medium hover:bg-gold-800  active:scale-95"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >

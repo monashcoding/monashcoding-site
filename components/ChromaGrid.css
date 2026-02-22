@@ -39,7 +39,7 @@
   flex-direction: column;
   width: 320px;
   height: auto;
-  border-radius: 20px;
+  border-radius: 8px;
   overflow: hidden;
   border: 1px solid #333;
   transition: border-color 0.3s ease;

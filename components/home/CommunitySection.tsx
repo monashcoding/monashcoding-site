@@ -92,7 +92,7 @@ export function SocialTiltCard({
       onMouseLeave={() => setHover({ x: 0.5, y: 0.5, active: false })}
     >
       <div
-        className="relative h-full overflow-hidden rounded-2xl"
+        className="relative h-full overflow-hidden rounded-lg"
         style={{
           transform: `rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(${hover.active && !isPlaceholder ? 1.03 : 1})`,
           transition:
@@ -197,7 +197,7 @@ function VideoCard({ video }: { video: YouTubeVideo }) {
       href={`https://www.youtube.com/watch?v=${video.videoId}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative block h-full overflow-hidden rounded-2xl border border-white/10 bg-[rgba(28,28,28,0.8)] no-underline transition-border-color duration-300 hover:border-white/20"
+      className="group relative block h-full overflow-hidden rounded-lg border border-white/10 bg-[rgba(28,28,28,0.8)] no-underline transition-border-color duration-300 hover:border-white/20"
     >
       <div className="relative w-full overflow-hidden" style={{ paddingBottom: '56.25%' }}>
         <img
@@ -240,7 +240,7 @@ function InstagramReelCard({ reel }: { reel: InstagramReel }) {
       href={reel.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative block h-full overflow-hidden rounded-2xl border border-white/10 bg-[rgba(28,28,28,0.8)] no-underline transition-border-color duration-300 hover:border-white/20"
+      className="group relative block h-full overflow-hidden rounded-lg border border-white/10 bg-[rgba(28,28,28,0.8)] no-underline transition-border-color duration-300 hover:border-white/20"
     >
       <div className="relative w-full overflow-hidden" style={{ paddingBottom: '100%' }}>
         <img
@@ -393,7 +393,7 @@ function CollapsiblePanel({
   children: React.ReactNode
 }) {
   return (
-    <div className="rounded-2xl overflow-hidden">
+    <div className="rounded-lg overflow-hidden">
       <div className="flex">
         {/* Vertical label strip */}
         <button
@@ -596,12 +596,12 @@ export function CommunitySection({
       {/* Mobile tabs */}
       {mobileTabs.length > 1 && (
         <div className="mb-6 flex flex-wrap items-center gap-3">
-          <div className="inline-flex gap-1.5 rounded-[0.95rem] border border-white/10 bg-white/[0.03] p-1.5">
+          <div className="inline-flex gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] p-1.5">
             {mobileTabs.map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`relative overflow-hidden rounded-[0.8rem] px-4 py-2.5 text-xs font-semibold tracking-[0.12em] uppercase transition-colors duration-300 ${
+                className={`relative overflow-hidden rounded-md px-4 py-2.5 text-xs font-semibold tracking-[0.12em] uppercase transition-colors duration-300 ${
                   activeTab === tab
                     ? 'text-[#252525]'
                     : 'text-white/65 hover:text-white'
@@ -610,7 +610,7 @@ export function CommunitySection({
                 {activeTab === tab && (
                   <motion.span
                     layoutId="community-tab-mobile"
-                    className="absolute inset-0 rounded-[0.8rem] bg-accent"
+                    className="absolute inset-0 rounded-md bg-accent"
                     transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                   />
                 )}
@@ -688,7 +688,7 @@ export function CommunitySection({
               <button
                 onClick={() => loadReels(fetchedUpTo)}
                 disabled={reelsLoading}
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/3 py-3 text-xs font-semibold tracking-[0.12em] uppercase text-white/60 transition-colors hover:border-accent hover:text-accent disabled:pointer-events-none disabled:opacity-60"
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/3 py-3 text-xs font-semibold tracking-[0.12em] uppercase text-white/60 transition-colors hover:border-accent hover:text-accent disabled:pointer-events-none disabled:opacity-60"
               >
                 {reelsLoading ? (
                   <>
@@ -729,7 +729,7 @@ export function CommunitySection({
                 ))}
               </div>
             ) : (
-              <p className="rounded-2xl border border-dashed border-white/20 bg-white/[0.02] py-14 text-center text-white/45">
+              <p className="rounded-lg border border-dashed border-white/20 bg-white/[0.02] py-14 text-center text-white/45">
                 No videos to display.
               </p>
             )}
@@ -743,7 +743,7 @@ export function CommunitySection({
   const desktopContent = (
     <div className="hidden lg:flex flex-col gap-4">
       {/* Socials panel (always open, no collapse) */}
-      <div className="rounded-2xl overflow-hidden">
+      <div className="rounded-xl overflow-hidden">
         <div className="flex">
           <div className="relative shrink-0 w-16 flex items-center justify-center bg-white/3 py-6">
             <span
@@ -787,7 +787,7 @@ export function CommunitySection({
             <button
               onClick={() => loadReels(fetchedUpTo)}
               disabled={reelsLoading}
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/3 py-3 text-xs font-semibold tracking-[0.12em] uppercase text-white/60 transition-colors hover:border-accent hover:text-accent disabled:pointer-events-none disabled:opacity-60"
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/3 py-3 text-xs font-semibold tracking-[0.12em] uppercase text-white/60 transition-colors hover:border-accent hover:text-accent disabled:pointer-events-none disabled:opacity-60"
             >
               {reelsLoading ? (
                 <>
