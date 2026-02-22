@@ -9,6 +9,7 @@ import { EventDocument } from '@/lib/sanity/types'
 import { TAG_STYLES, TAG_LABELS } from '@/lib/events/eventTags'
 import { EventBody } from '@/lib/sanity/eventPortableText'
 import { urlFor } from '@/sanity/lib/image'
+import { EventReminderForm } from '@/components/events/EventReminderForm'
 
 function formatEventDate(dateStr: string, endDateStr?: string): string {
   const date = new Date(dateStr)
@@ -179,28 +180,38 @@ export function EventPageClient({ event }: EventPageClientProps) {
 
               {event.links && event.links.length > 0 && (
                 <div className="space-y-3">
-                  {event.links.map((link) => (
-                    <a
-                      key={link._key}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group flex w-full items-center justify-center gap-2 rounded-md border border-accent/70 bg-accent px-5 py-3 text-center text-sm font-semibold tracking-[0.08em] uppercase text-accent-foreground no-underline transition-transform duration-300 hover:-translate-y-0.5"
-                    >
-                      <span>{link.label}</span>
-                      <svg
-                        width="15"
-                        height="15"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        className="shrink-0 transition-transform duration-300 group-hover:translate-x-0.5"
+                  {event.links.map((link) =>
+                    link.linkType === 'emailReminder' ? (
+                      <EventReminderForm
+                        key={link._key}
+                        label={link.label}
+                        eventTitle={event.title}
+                        eventDate={event.date}
+                        eventSlug={event.slug.current}
+                      />
+                    ) : (
+                      <a
+                        key={link._key}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex w-full items-center justify-center gap-2 rounded-md border border-accent/70 bg-accent px-5 py-3 text-center text-sm font-semibold tracking-[0.08em] uppercase text-accent-foreground no-underline transition-transform duration-300 hover:-translate-y-0.5"
                       >
-                        <path d="M7 17L17 7M17 7H7M17 7V17" />
-                      </svg>
-                    </a>
-                  ))}
+                        <span>{link.label}</span>
+                        <svg
+                          width="15"
+                          height="15"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          className="shrink-0 transition-transform duration-300 group-hover:translate-x-0.5"
+                        >
+                          <path d="M7 17L17 7M17 7H7M17 7V17" />
+                        </svg>
+                      </a>
+                    )
+                  )}
                 </div>
               )}
             </div>

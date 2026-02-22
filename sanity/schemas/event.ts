@@ -77,15 +77,40 @@ export const event = defineType({
               validation: (Rule) => Rule.required(),
             }),
             defineField({
+              name: 'linkType',
+              title: 'Link Type',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'URL Redirect', value: 'url' },
+                  { title: 'Email Reminder Sign-up', value: 'emailReminder' },
+                ],
+                layout: 'radio',
+              },
+              initialValue: 'url',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
               name: 'url',
               title: 'URL',
               type: 'url',
               validation: (Rule) =>
-                Rule.required().uri({ scheme: ['http', 'https'], allowRelative: true }),
+                Rule.custom((value, context) => {
+                  const parent = context.parent as { linkType?: string }
+                  if (parent?.linkType === 'url' && !value) return 'URL is required'
+                  return true
+                }).uri({ scheme: ['http', 'https'], allowRelative: true }),
+              hidden: ({ parent }) => parent?.linkType !== 'url',
             }),
           ],
           preview: {
-            select: { title: 'label', subtitle: 'url' },
+            select: { title: 'label', linkType: 'linkType', url: 'url' },
+            prepare({ title, linkType, url }: { title?: string; linkType?: string; url?: string }) {
+              return {
+                title: title || 'Untitled',
+                subtitle: linkType === 'emailReminder' ? 'Email Reminder' : url || '',
+              }
+            },
           },
         }),
       ],

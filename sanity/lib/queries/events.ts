@@ -1,7 +1,7 @@
 import { groq } from 'next-sanity'
 
 export const upcomingEventsQuery = groq`
-  *[_type == "event" && date >= now()] | order(isPinned desc, date asc) [0...$limit] {
+  *[_type == "event"] | order(isPinned desc, date asc) [0...$limit] {
     _id,
     title,
     slug,
@@ -15,7 +15,7 @@ export const upcomingEventsQuery = groq`
     date,
     endDate,
     location,
-    links[] { _key, label, url },
+    links[] { _key, label, linkType, url },
     tag,
     isPinned,
     hideDate
@@ -37,7 +37,7 @@ export const eventBySlugQuery = groq`
     date,
     endDate,
     location,
-    links[] { _key, label, url },
+    links[] { _key, label, linkType, url },
     tag,
     isPinned,
     hideDate,
