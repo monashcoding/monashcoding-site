@@ -28,7 +28,8 @@ async function withRetry<T>(fn: () => Promise<T>): Promise<T> {
   throw new Error('Max retries exceeded');
 }
 
-function isResendRateLimited(error: { statusCode?: number; name?: string } | null): boolean {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function isResendRateLimited(error: any): boolean {
   return error?.statusCode === 429 || error?.name === 'rate_limit_exceeded';
 }
 
