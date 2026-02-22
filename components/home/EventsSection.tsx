@@ -130,7 +130,11 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
   const filteredEvents =
     activeTag === 'all'
       ? events
-      : events.filter((e) => e.tag === activeTag)
+      : activeTag === 'archives'
+        ? events.filter((e) => new Date(e.date) < new Date())
+        : events.filter((e) => e.tag === activeTag)
+
+  const isArchivesView = activeTag === 'archives'
 
   const featuredEvent = useMemo(() => {
     if (filteredEvents.length === 0) return null
@@ -214,7 +218,7 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
                   {filteredEvents.length} {filteredEvents.length === 1 ? 'result' : 'results'}
                 </span>
               </div>
-              <EventCard event={featuredEvent} index={0} />
+              <EventCard event={featuredEvent} index={0} disableGreyOut={isArchivesView} />
             </motion.div>
 
             {remainingEvents.length > 0 && (
@@ -226,7 +230,7 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
                 transition={{ duration: 0.4, delay: 0.08 }}
               >
                 {remainingEvents.map((event, index) => (
-                  <EventCard key={event._id} event={event} index={index + 1} />
+                  <EventCard key={event._id} event={event} index={index + 1} disableGreyOut={isArchivesView} />
                 ))}
               </motion.div>
             )}
