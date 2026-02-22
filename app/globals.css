@@ -73,6 +73,35 @@
   color: #252525;
 }
 
+/* Custom scrollbar - overlay, no gutter */
+html {
+  overflow-y: overlay;
+  scrollbar-width: thin;
+  scrollbar-color: #404040 #252525;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background: #252525;
+}
+
+::-webkit-scrollbar-track {
+  background: #252525;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FFE330;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 /* Quick Links expandable cards */
 .quick-link-card {
   flex: 1;
