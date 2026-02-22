@@ -69,21 +69,6 @@ export const homepageQuery = groq`
           pinned
         }
       },
-      // Footer section
-      _type == "footerSection" => {
-        brandName,
-        tagline,
-        columns[] {
-          _key,
-          title,
-          links[] {
-            _key,
-            label,
-            url,
-            isExternal
-          }
-        }
-      }
     }
   }
 `

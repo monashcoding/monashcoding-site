@@ -76,98 +76,6 @@ const sponsorsSectionSchema = defineArrayMember({
   },
 })
 
-const footerLinkSchema = {
-  type: 'object',
-  name: 'footerLink',
-  title: 'Footer Link',
-  fields: [
-    defineField({
-      name: 'label',
-      title: 'Label',
-      type: 'string',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'url',
-      title: 'URL',
-      type: 'string',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'isExternal',
-      title: 'Opens in New Tab',
-      type: 'boolean',
-      initialValue: false,
-    }),
-  ],
-}
-
-const footerColumnSchema = {
-  type: 'object',
-  name: 'footerColumn',
-  title: 'Footer Column',
-  fields: [
-    defineField({
-      name: 'title',
-      title: 'Column Title',
-      type: 'string',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'links',
-      title: 'Links',
-      type: 'array',
-      of: [footerLinkSchema],
-    }),
-  ],
-  preview: {
-    select: {
-      title: 'title',
-      links: 'links',
-    },
-    prepare({ title, links }: { title?: string; links?: unknown[] }) {
-      return {
-        title: title || 'Column',
-        subtitle: `${links?.length || 0} links`,
-      }
-    },
-  },
-}
-
-const footerSectionSchema = defineArrayMember({
-  type: 'object',
-  name: 'footerSection',
-  title: 'Footer',
-  fields: [
-    defineField({
-      name: 'brandName',
-      title: 'Brand Name',
-      type: 'string',
-      initialValue: 'MAC',
-    }),
-    defineField({
-      name: 'tagline',
-      title: 'Tagline',
-      type: 'text',
-      rows: 2,
-      initialValue: 'Monash Association of Coding - Empowering students through code since 2019.',
-    }),
-    defineField({
-      name: 'columns',
-      title: 'Footer Columns',
-      type: 'array',
-      of: [footerColumnSchema],
-    }),
-  ],
-  preview: {
-    prepare() {
-      return {
-        title: 'Footer',
-      }
-    },
-  },
-})
-
 const eventsSectionSchema = defineArrayMember({
   type: 'object',
   name: 'eventsSection',
@@ -319,7 +227,6 @@ export const homepage = defineType({
         sponsorsSectionSchema,
         eventsSectionSchema,
         communitySectionSchema,
-        footerSectionSchema,
       ],
     }),
   ],
