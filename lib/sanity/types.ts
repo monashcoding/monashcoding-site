@@ -230,7 +230,8 @@ export type ContactSocialLink = SocialLink
 export interface ContactPageData {
   pageTitle: string
   pageSubtitle: string
-  email: string
+  senderEmail: string
+  recipientEmail: string
   location: string
   locationMapLink: string
   bottomImage: SanityImage

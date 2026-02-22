@@ -1,12 +1,12 @@
 "use client";
 
-import { RefObject, useRef, useState } from "react";
-import { motion, AnimatePresence, Variants } from "framer-motion";
+
+import { motion, Variants } from "framer-motion";
 import { ContactPageData, SocialLink } from "@/lib/sanity/types";
-import { PLATFORM_ICONS, PLATFORM_LABELS } from "@/lib/socialPlatforms";
+
 import { RibbonAwareSection } from "@/components/RibbonAwareSection";
 import ContactForm from "@/components/contact/ContactForm";
-import { set } from "sanity";
+import { SocialTiltCard } from "@/components/home/CommunitySection";
 
 // Fallback data
 const defaultSocialLinks: SocialLink[] = [
@@ -25,21 +25,11 @@ interface ContactPageClientProps {
 
 
 export default function ContactPageClient({ data, socialLinks: socialLinksProp }: ContactPageClientProps) {
-  const [emailCopied, setEmailCopied] = useState(false);
-
   // Use Sanity data or fallbacks
   const pageTitle = data?.pageTitle || "Get in Touch";
   const pageSubtitle = data?.pageSubtitle || "Have a question or want to collaborate? We'd love to hear from you.";
-  const email = data?.email || "coding@monash.clubs.org";
   const socialLinks = socialLinksProp || defaultSocialLinks;
   const image = data?.bottomImage || null;
-
-  const handleEmailCopy = () => {
-    navigator.clipboard.writeText(email);
-    setEmailCopied(true);
-    setTimeout(() => setEmailCopied(false), 5000); // Reset after 5 seconds
-  };
-``
 
   // Motion variants for the heading animation
   const headingAnimations: Variants = {
@@ -77,6 +67,7 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
 
         {/* Section 1 div at the top of the page */}
         <div className="w-full text-center bg-background h-[30vh] flex px-4 md:px-32 lg:px-36 py-8">
+          <div className="w-full px-[5vw] flex">
             {/* Box inside */}
             <motion.div
               className="w-full bg-gold-700 flex items-center justify-center mt-16 rounded-3xl"
@@ -103,27 +94,28 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
                 ))}
               </motion.h1>
             </motion.div>
+          </div>
         </div>
 
         {/* Section 2 div - form and newsletter*/}
         <div className="bg-blue w-full flex items-center justify-center px-4 md:px-32 lg:px-36 py-8">
           {/* Form and newsletter horizontal section */}
-          <div className="w-full flex flex-col gap-12 lg:flex-row my-12 px-[5vw] lg:items-center">
+          <div className="w-full flex flex-col gap-12 lg:flex-row my-12 px-[5vw] lg:items-stretch">
             {/* Left side - Form */}
-            <motion.div className="flex-2  rounded-4xl  overflow-y-auto outline-black outline-2  shadow-lg shadow-accent" > 
+            <motion.div className="lg:w-[55%]  rounded-4xl  overflow-y-auto" >
                 <ContactForm/>
             </motion.div>
 
             {/* Right side - Newsletter*/}
             {/* TODO make sanity and fallbacks for this */}
-            <motion.div className="flex-1  bg-white shadow-lg shadow-accent rounded-4xl text-center px-12 py-8 flex flex-col items-center justify-center outline-black outline-2 overflow-hidden gap-4 " >
-              <motion.h2 className="text-2xl font-bold text-gray-800"
+            <motion.div className="lg:w-[45%]  bg-white rounded-4xl text-center px-12 py-8 flex flex-col items-center justify-center overflow-hidden gap-4" >
+              <motion.h2 className="text-4xl font-bold text-gray-800"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.15 }}
               
               >
-                Join our Newsletter!
+                Join our<br/> Newsletter!
               </motion.h2>
 
               <motion.p className=" text-gray-600"
@@ -154,7 +146,7 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
               transition={{ duration: 0.6, delay: 0.15 }}
               >
                 <motion.button 
-                  className="flex justify-center max-w-md px-6 py-2 bg-background text-white rounded-3xl  transition-colors duration-300"
+                  className="flex justify-center max-w-md px-10 py-4 text-lg font-bold bg-background text-white rounded-3xl  transition-colors duration-300"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -168,71 +160,25 @@ export default function ContactPageClient({ data, socialLinks: socialLinksProp }
         {/* Section 3 - Socials */}
         <motion.div
           className="bg-background flex flex-col justify-center items-center py-12 gap-6"
-          
         >
           <motion.div className="text-base font-semibold text-white text-[clamp(2rem,3vw,6rem)]">
             Talk to us
           </motion.div>
 
-          <motion.div className="flex justify-center gap-6 flex-wrap"
-          >
-            {socialLinks.map((link, index) => {
-              const IconComponent = PLATFORM_ICONS[link.platform];
-              const label = PLATFORM_LABELS[link.platform] || link.platform;
-              const description = link.description ? `${link.description}` : "";
-              return (
-                <motion.a
+          <div className="w-full px-[5vw]">
+            <div className="mx-auto max-w-310 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              {socialLinks.map((link, index) => (
+                <SocialTiltCard
                   key={link._key}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-36 h-30 flex flex-col items-center justify-center gap-2 bg-white/5 border border-white/10 rounded-2xl text-white/50 transition-all  hover:bg-gold-700/10 hover:border-gold-700/30 hover:text-gold-700 no-underline"
-                  aria-label={label}
-                  whileHover={{ scale: 1.05 }}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{once: true}}
-                  transition={{ duration: 0.2, delay: index * 0.2 }}
-                  >
-                  {IconComponent && <IconComponent className="w-8 h-8" />}
-                  <span className="text-xs text-center font-medium capitalize">{label}</span>
-                  <span className="text-xs text-center">{description}</span>
-                </motion.a>
-              );
-            })}
-
-            {/* Email copy*/}
-            {(() => {
-              const EmailIconComponent = PLATFORM_ICONS["email" as const];
-              return (
-                <motion.button
-                  onClick={handleEmailCopy}
-                  className="px-5 py-2 w-50 h-30 flex flex-col items-center justify-center gap-2 bg-white/5 border rounded-2xl text-white/50 duration-100 hover:bg-gold-700/10 hover:border-gold-700/30 hover:text-gold-700 cursor-pointer"
-                  aria-label="Copy email"
-                  whileHover={{ scale: 1.05 }}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{once: true}}
-                  transition={{ duration: 0.2, delay: 1 }}>
-                  <EmailIconComponent className="w-8 h-8" />
-                  <AnimatePresence mode="wait">
-                    <motion.span 
-                      key={emailCopied ? "copied" : "email"}
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      transition={{ duration: 0.2 }}
-                      className="text-xs text-center font-medium"
-                    >
-                      {emailCopied ? "Copied to clipboard!" : "Email coding@monashclubs.org"}
-                    </motion.span>
-                  </AnimatePresence>
-                </motion.button>
-              );
-            })()}       
-
-
-          </motion.div>
+                  platform={link.platform}
+                  url={link.url}
+                  description={link.description}
+                  isPlaceholder={false}
+                  index={index}
+                />
+              ))}
+            </div>
+          </div>
         </motion.div>
 
         {/* Bottom image - clipped to variant-3 blob */}

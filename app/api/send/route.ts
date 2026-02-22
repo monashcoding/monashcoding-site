@@ -1,5 +1,7 @@
 import { EmailTemplate } from '@/components/contact/EmailTemplate';
 import { Resend } from 'resend';
+import { client } from '@/sanity/lib/client';
+import { groq } from 'next-sanity';
 
 // Validate RESEND_API_KEY is configured
 const apiKey = process.env.RESEND_API_KEY;
@@ -10,6 +12,11 @@ if (!apiKey || apiKey.trim().length === 0) {
 }
 
 const resend = new Resend(apiKey);
+
+const FALLBACK_FROM = 'noreply@monashcoding.com';
+const FALLBACK_TO = 'projects@monashcoding.com';
+
+const emailConfigQuery = groq`*[_type == "contactPage"][0]{ senderEmail, recipientEmail }`;
 
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
@@ -68,17 +75,21 @@ export async function POST(req: Request) {
       );
     }
 
+    // Fetch email config from Sanity
+    const config = await client.fetch<{ senderEmail?: string; recipientEmail?: string } | null>(emailConfigQuery);
+    const fromEmail = config?.senderEmail || FALLBACK_FROM;
+    const toEmail = config?.recipientEmail || FALLBACK_TO;
+
     const normalizedSubject =
       typeof subject === 'string' && subject.trim().length > 0
         ? subject
         : 'New Message from Monash Coding Site';
 
     const { data, error } = await resend.emails.send({
-      from: 'noreply@monashcoding.com', 
-      // to: 'coding@monashclubs.org',
-      to: 'projects@monashcoding.com',
+      from: fromEmail,
+      to: toEmail,
       replyTo: (emailAddress as string).trim(), // User's email will be set as reply-to
-      subject: normalizedSubject, 
+      subject: normalizedSubject,
       react: EmailTemplate({
         name: (name as string).trim(),
         emailAddress: (emailAddress as string).trim(),

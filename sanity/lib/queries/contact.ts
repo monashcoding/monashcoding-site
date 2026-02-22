@@ -4,7 +4,8 @@ export const contactPageQuery = groq`
   *[_type == "contactPage"][0] {
     pageTitle,
     pageSubtitle,
-    email,
+    senderEmail,
+    recipientEmail,
     location,
     locationMapLink,
     bottomImage {
