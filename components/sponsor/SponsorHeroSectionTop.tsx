@@ -25,7 +25,7 @@ export default function ScrollZoomHero({
   heroImageAlt = "Hero Background",
 }: ScrollZoomHeroProps) {
   return (
-    <section className="relative min-h-screen flex items-center bg-background overflow-hidden px-8 py-24 pt-32">
+    <section className="relative min-h-screen flex items-center overflow-hidden px-8 py-24 pt-32">
       <div className="w-full grid grid-cols-1 lg:grid-cols-[40%_60%] gap-8 items-center">
         {/* Left: Text Content */}
         <motion.div
