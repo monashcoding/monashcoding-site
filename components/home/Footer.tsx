@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
 import { RibbonBlock } from '@/components/RibbonText'
-import { FooterSectionData, FooterColumn, NavItem, SocialLink } from '@/lib/sanity/types'
+import { FooterColumn, NavItem, SocialLink } from '@/lib/sanity/types'
 import { PLATFORM_ICONS, PLATFORM_LABELS } from '@/lib/socialPlatforms'
 
 const defaultColumns: FooterColumn[] = [
@@ -18,20 +18,16 @@ const defaultColumns: FooterColumn[] = [
 ]
 
 interface FooterProps {
-  data?: FooterSectionData
   navItems?: NavItem[]
   socialLinks?: SocialLink[]
 }
 
-export function Footer({ data, navItems, socialLinks }: FooterProps) {
-  const brandName = data?.brandName ?? 'MAC'
-  const tagline = data?.tagline ?? 'Monash Association of Coding - Empowering students through code since 2019.'
+export function Footer({ navItems, socialLinks }: FooterProps) {
+  const brandName = 'MAC'
+  const tagline = 'Monash Association of Coding - Empowering students through code since 2019.'
 
-  // Build columns: use Sanity data if available, otherwise build from nav items + defaults
   let columns: FooterColumn[]
-  if (data?.columns) {
-    columns = data.columns
-  } else if (navItems && navItems.length > 0) {
+  if (navItems && navItems.length > 0) {
     columns = [
       {
         _key: 'nav',

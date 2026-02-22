@@ -328,19 +328,10 @@ export interface FooterColumn {
   links: FooterLink[]
 }
 
-export interface FooterSectionData {
-  _key: string
-  _type: 'footerSection'
-  brandName: string
-  tagline: string
-  columns: FooterColumn[]
-}
-
 export type HomepageSection =
   | SponsorsSectionData
   | EventsSectionData
   | CommunitySectionData
-  | FooterSectionData
 
 export interface HomepageData {
   sections: HomepageSection[]
