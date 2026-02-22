@@ -203,36 +203,52 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
 
         {featuredEvent ? (
           <div key={activeTag}>
-            <motion.div
-              variants={itemVariants}
-              className="mb-7"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-            >
-              <div className="mb-3 flex items-center justify-between gap-4">
-                <p className="text-[0.72rem] font-semibold tracking-[0.16em] uppercase text-accent/90">
-                  Featured event
-                </p>
-                <span className="text-xs text-white/45">
-                  {filteredEvents.length} {filteredEvents.length === 1 ? 'result' : 'results'}
-                </span>
-              </div>
-              <EventCard event={featuredEvent} index={0} disableGreyOut={isArchivesView} />
-            </motion.div>
-
-            {remainingEvents.length > 0 && (
+            {isArchivesView ? (
               <motion.div
                 variants={itemVariants}
                 className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.08 }}
+                transition={{ duration: 0.4 }}
               >
-                {remainingEvents.map((event, index) => (
-                  <EventCard key={event._id} event={event} index={index + 1} disableGreyOut={isArchivesView} />
+                {filteredEvents.map((event, index) => (
+                  <EventCard key={event._id} event={event} index={index + 1} disableGreyOut />
                 ))}
               </motion.div>
+            ) : (
+              <>
+                <motion.div
+                  variants={itemVariants}
+                  className="mb-7"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <div className="mb-3 flex items-center justify-between gap-4">
+                    <p className="text-[0.72rem] font-semibold tracking-[0.16em] uppercase text-accent/90">
+                      Featured event
+                    </p>
+                    <span className="text-xs text-white/45">
+                      {filteredEvents.length} {filteredEvents.length === 1 ? 'result' : 'results'}
+                    </span>
+                  </div>
+                  <EventCard event={featuredEvent} index={0} />
+                </motion.div>
+
+                {remainingEvents.length > 0 && (
+                  <motion.div
+                    variants={itemVariants}
+                    className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.08 }}
+                  >
+                    {remainingEvents.map((event, index) => (
+                      <EventCard key={event._id} event={event} index={index + 1} />
+                    ))}
+                  </motion.div>
+                )}
+              </>
             )}
           </div>
         ) : (
