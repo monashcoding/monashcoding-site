@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import { NavPreviewConfig } from "./navPreviewConfig";
 
 interface NavPreviewCardProps {
@@ -76,6 +77,36 @@ export default function NavPreviewCard({ preview, isVisible }: NavPreviewCardPro
             variants={frameAnimation}
           >
             <div className="relative h-full overflow-hidden rounded-t-xl border-2 border-b-0 border-white bg-black/95">
+              {/* Loading mascot placeholder */}
+              <AnimatePresence>
+                {!isCurrentLoaded && (
+                  <motion.div
+                    className="absolute inset-0 z-1 flex items-center justify-center"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0, transition: { duration: 0.4 } }}
+                  >
+                    <motion.div
+                      animate={{ opacity: [0.15, 0.35, 0.15] }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                    >
+                      <Image
+                        src="/mascot/min-max.svg"
+                        alt=""
+                        width={160}
+                        height={160}
+                        className="grayscale brightness-75"
+                        priority
+                      />
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               {/* Iframe layer */}
               <div className="absolute inset-0 overflow-hidden rounded-t-xl">
                 <AnimatePresence mode="wait">
