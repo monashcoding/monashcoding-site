@@ -78,6 +78,7 @@ export interface NavItem {
   _key: string
   label: string
   href: string
+  image?: SanityImage
 }
 
 export interface SocialLink {
@@ -251,7 +252,7 @@ export interface ContactPageData {
 }
 
 // Event types
-export type EventTag = 'event' | 'hackathon' | 'social' | 'recruitment'
+export type EventTag = 'event' | 'hackathon' | 'social' | 'recruitment' | 'industry' | 'archives'
 
 export interface EventLink {
   _key: string
@@ -297,47 +298,7 @@ export interface CommunitySectionData {
   instagramReels?: InstagramReelUrl[]
 }
 
-export type ContentPlatform = 'instagram' | 'youtube'
-
-export interface ContentItem {
-  _key: string
-  url: string
-  title: string
-  platform: ContentPlatform
-  year: number
-}
-
-export interface ContentStreamSectionData {
-  _key: string
-  _type: 'contentStreamSection'
-  heading: string
-  items: ContentItem[]
-}
-
 // Homepage Sections
-export interface StoryItem {
-  _key: string
-  year: string
-  title: string
-  content: string
-}
-
-export interface StorySectionData {
-  _key: string
-  _type: 'storySection'
-  heading: string
-  items: StoryItem[]
-}
-
-export interface InstagramSectionData {
-  _key: string
-  _type: 'instagramSection'
-  heading: string
-  handle: string
-  url: string
-  postCount: number
-}
-
 export interface Sponsor {
   _key: string
   name: string
@@ -375,12 +336,9 @@ export interface FooterSectionData {
 }
 
 export type HomepageSection =
-  | StorySectionData
-  | InstagramSectionData
   | SponsorsSectionData
   | EventsSectionData
   | CommunitySectionData
-  | ContentStreamSectionData
   | FooterSectionData
 
 export interface HomepageData {

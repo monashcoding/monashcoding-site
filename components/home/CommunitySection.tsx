@@ -742,24 +742,32 @@ export function CommunitySection({
   /* ---- Desktop content (collapsible panels with vertical labels) ---- */
   const desktopContent = (
     <div className="hidden lg:flex flex-col gap-4">
-      {/* Socials panel */}
-      <CollapsiblePanel
-        label="Socials"
-        isOpen={socialsOpen}
-        onToggle={() => setSocialsOpen((v) => !v)}
-      >
-        <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${Math.min(tiles.length, 4)}, 1fr)` }}>
-          {tiles.map((tile, index) => (
-            <SocialTiltCard
-              key={tile._key}
-              platform={tile.platform}
-              url={tile.url}
-              isPlaceholder={tile.isPlaceholder}
-              index={index}
-            />
-          ))}
+      {/* Socials panel (always open, no collapse) */}
+      <div className="rounded-2xl overflow-hidden">
+        <div className="flex">
+          <div className="relative shrink-0 w-16 flex items-center justify-center bg-white/3 py-6">
+            <span
+              className="text-[0.8rem] font-bold uppercase tracking-[0.2em] text-white/60 whitespace-nowrap"
+              style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+            >
+              Socials
+            </span>
+          </div>
+          <div className="flex-1 min-w-0 p-6">
+            <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${Math.min(tiles.length, 4)}, 1fr)` }}>
+              {tiles.map((tile, index) => (
+                <SocialTiltCard
+                  key={tile._key}
+                  platform={tile.platform}
+                  url={tile.url}
+                  isPlaceholder={tile.isPlaceholder}
+                  index={index}
+                />
+              ))}
+            </div>
+          </div>
         </div>
-      </CollapsiblePanel>
+      </div>
 
       {/* Reels panel */}
       {hasReels && (
@@ -874,9 +882,6 @@ export function CommunitySection({
           className="mb-8 flex flex-wrap items-end justify-between gap-4"
         >
           <div className="space-y-3">
-            <span className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[0.65rem] font-semibold tracking-[0.15em] uppercase text-white/70">
-              Community channels
-            </span>
             <h2 className="text-[clamp(2.2rem,4.6vw,3.8rem)] font-semibold leading-[1.01] text-foreground">
               {heading}
             </h2>

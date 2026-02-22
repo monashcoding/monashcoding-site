@@ -42,23 +42,6 @@ export const homepageQuery = groq`
     sections[] {
       _key,
       _type,
-      // Story section
-      _type == "storySection" => {
-        heading,
-        items[] {
-          _key,
-          year,
-          title,
-          content
-        }
-      },
-      // Instagram section
-      _type == "instagramSection" => {
-        heading,
-        handle,
-        url,
-        postCount
-      },
       // Sponsors section
       _type == "sponsorsSection" => {
         heading,
@@ -84,17 +67,6 @@ export const homepageQuery = groq`
           _key,
           url,
           pinned
-        }
-      },
-      // Content stream section
-      _type == "contentStreamSection" => {
-        heading,
-        items[] {
-          _key,
-          url,
-          title,
-          platform,
-          year
         }
       },
       // Footer section

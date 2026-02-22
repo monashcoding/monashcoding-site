@@ -68,11 +68,11 @@ export function EventCard({ event, index }: EventCardProps) {
           )}
 
           <div className="absolute left-4 right-4 top-4 flex items-start justify-between gap-3">
-            <span className={`inline-flex items-center justify-center rounded-full px-3 pt-[0.3rem] pb-[0.22rem] text-[0.68rem] leading-none font-semibold tracking-[0.12em] uppercase ${TAG_STYLES[event.tag]}`}>
+            <span className={`inline-flex items-center justify-center rounded-md px-3 pt-[0.3rem] pb-[0.22rem] text-[0.68rem] leading-none font-semibold tracking-[0.12em] uppercase ${TAG_STYLES[event.tag]}`}>
               {TAG_LABELS[event.tag]}
             </span>
             {isFeatured && (
-              <span className="inline-flex items-center justify-center rounded-full border border-accent bg-accent px-3 pt-[0.3rem] pb-[0.22rem] text-[0.63rem] leading-none font-semibold tracking-[0.14em] uppercase text-[#252525]">
+              <span className="inline-flex items-center justify-center rounded-md border border-accent bg-accent px-3 pt-[0.3rem] pb-[0.22rem] text-[0.63rem] leading-none font-semibold tracking-[0.14em] uppercase text-[#252525]">
                 Featured
               </span>
             )}
@@ -84,14 +84,16 @@ export function EventCard({ event, index }: EventCardProps) {
             <h3 className={`font-semibold leading-[1.14] text-[#1a1a1a] ${isFeatured ? 'text-[clamp(1.5rem,2.1vw,2.2rem)]' : 'text-[clamp(1.15rem,1.4vw,1.45rem)]'}`}>
               {event.title}
             </h3>
-            <p className={`text-black/55 leading-relaxed ${isFeatured ? 'line-clamp-3 text-[clamp(0.92rem,1.1vw,1.04rem)]' : 'line-clamp-2 text-[0.92rem]'}`}>
-              {event.description}
-            </p>
+            {index === 0 && (
+              <p className="text-black/55 leading-relaxed line-clamp-3 text-[clamp(0.92rem,1.1vw,1.04rem)]">
+                {event.description}
+              </p>
+            )}
           </div>
 
           <div className="flex flex-wrap gap-2.5 text-[0.74rem] text-black/60">
             {!event.hideDate && (
-              <span className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-black/5 px-3 py-1.5">
+              <span className="inline-flex items-center gap-2 rounded-md border border-black/10 bg-black/5 px-3 py-1.5">
                 <svg
                   width="14"
                   height="14"
@@ -111,7 +113,7 @@ export function EventCard({ event, index }: EventCardProps) {
               </span>
             )}
             {event.location && (
-              <span className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-black/5 px-3 py-1.5">
+              <span className="inline-flex items-center gap-2 rounded-md border border-black/10 bg-black/5 px-3 py-1.5">
                 <svg
                   width="14"
                   height="14"
