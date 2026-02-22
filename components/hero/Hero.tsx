@@ -87,7 +87,7 @@ const fallbackData: HeroData = {
 function getImageUrl(image: SanityImage | undefined): string {
   if (!image?.asset?.url) return '/hero-image-optimized.jpg'
   if (image.asset.url.startsWith('/')) return image.asset.url
-  return urlFor(image).width(1200).height(1600).fit('crop').url()
+  return urlFor(image).width(1920).height(1080).fit('crop').url()
 }
 
 // Type guard to check if media is an image
