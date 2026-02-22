@@ -200,7 +200,7 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
               alt="MAC Logo"
               width={48}
               height={48}
-              className="w-12 h-12 rounded-full object-cover transition-transform duration-300 hover:scale-105"
+              className="w-12 h-12 rounded-full object-cover"
               priority
             />
           </Link>
@@ -216,30 +216,22 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
             href={MEMBER_SIGNUP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative lg:hidden min-w-0 flex-1 overflow-hidden rounded-full border border-accent/45 bg-black px-4 py-3 text-xs font-semibold uppercase tracking-[0.09em] text-accent"
+            className="lg:hidden min-w-0 flex-1 flex items-center justify-center rounded-md bg-accent px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.09em] text-accent-foreground truncate h-10.5"
             transition={{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }}
           >
-            <span className="pointer-events-none absolute inset-0 translate-y-full rounded-full bg-accent transition-transform duration-300 ease-out group-hover:translate-y-0" />
-            <span className="pointer-events-none absolute inset-0 -translate-x-[130%] bg-[linear-gradient(120deg,transparent_20%,rgba(255,255,255,0.4)_50%,transparent_80%)] transition-transform duration-700 ease-out group-hover:translate-x-[130%]" />
-            <span className="relative z-10 block truncate text-center transition-colors duration-300 group-hover:text-accent-foreground">
-              Become a Member
-            </span>
+            Become a Member
           </motion.a>
 
           <motion.a
             href={JOB_BOARD_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative hidden lg:inline-flex items-center gap-2 overflow-hidden rounded-full border border-[#7070e0]/70 bg-[#161625] px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.07em] text-[#a9a9ff]"
-            animate={{ x: showMemberCta ? -14 : 0 }}
+            className="hidden lg:inline-flex items-center gap-2 rounded-md bg-[#2a2a52] px-4 py-2 text-sm font-semibold uppercase tracking-[0.07em] text-[#d2d2ff]"
+            animate={{ x: 0 }}
             whileHover={{ y: -2, scale: 1.02 }}
             transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
           >
-            <span className="pointer-events-none absolute inset-0 -translate-x-full bg-[linear-gradient(120deg,transparent_25%,rgba(112,112,224,0.25)_50%,transparent_75%)] transition-transform duration-500 ease-out group-hover:translate-x-[120%]" />
-            <span className="relative z-10">Job Board</span>
-            <span className="relative z-10 rounded-full border border-[#7c7cff]/60 bg-[#2a2a52] px-2 py-0.5 text-[10px] font-bold tracking-[0.14em] text-[#d2d2ff]">
-              PROJECT
-            </span>
+            Job Board
           </motion.a>
 
           <AnimatePresence initial={false} mode="popLayout">
@@ -250,18 +242,14 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
                 href={MEMBER_SIGNUP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative hidden lg:inline-flex overflow-hidden rounded-full border border-accent/45 bg-black px-5 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-accent"
+                className="hidden lg:inline-flex items-center rounded-md bg-accent px-5 py-2 text-sm font-semibold uppercase tracking-[0.08em] text-accent-foreground"
                 initial={{ y: -24, opacity: 0, scale: 0.97 }}
                 animate={{ y: 0, opacity: 1, scale: 1 }}
                 exit={{ y: -24, opacity: 0, scale: 0.97 }}
                 whileHover={{ y: -2, scale: 1.02 }}
                 transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
               >
-                <span className="pointer-events-none absolute inset-0 translate-y-full rounded-full bg-accent transition-transform duration-300 ease-out group-hover:translate-y-0" />
-                <span className="pointer-events-none absolute inset-0 -translate-x-[130%] bg-[linear-gradient(120deg,transparent_20%,rgba(255,255,255,0.4)_50%,transparent_80%)] transition-transform duration-700 ease-out group-hover:translate-x-[130%]" />
-                <span className="relative z-10 transition-colors duration-300 group-hover:text-accent-foreground">
-                  Become a Member
-                </span>
+                Become a Member
               </motion.a>
             )}
           </AnimatePresence>
@@ -269,10 +257,10 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
           {/* Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className={`relative shrink-0 flex items-center gap-3 py-3 px-5 rounded-full border cursor-pointer transition-all duration-300 ${
+            className={`relative shrink-0 flex items-center gap-3 py-2.5 px-5 rounded-md border cursor-pointer transition-all duration-300 h-10.5 lg:h-auto lg:py-2 ${
               isOpen
                 ? "bg-accent border-accent text-accent-foreground hover:bg-[#e6c800]"
-                : "bg-black border-accent/30 text-accent hover:bg-black hover:border-accent/50"
+                : "bg-[#2a2a2e] border-white/20 text-white hover:border-white/40"
             }`}
           >
             <span className="text-sm font-medium tracking-[0.05em] uppercase">

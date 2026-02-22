@@ -308,7 +308,7 @@ export function Hero({ data }: HeroProps) {
             href={MEMBER_SIGNUP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative z-40 mt-8 hidden lg:inline-flex w-[min(90vw,22rem)] items-center justify-center overflow-hidden rounded-full border-2 border-accent bg-accent px-8 py-4 text-base font-extrabold uppercase tracking-[0.09em] text-accent-foreground lg:w-auto lg:px-10 lg:text-lg"
+            className="group relative z-40 mt-8 hidden lg:inline-flex w-[min(90vw,22rem)] items-center justify-center overflow-hidden rounded-md border-2 border-accent bg-accent px-8 py-3 text-base font-extrabold uppercase tracking-[0.09em] text-accent-foreground hover:border-white/40 lg:w-auto lg:px-10 lg:text-lg"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.95, duration: 0.5 }}

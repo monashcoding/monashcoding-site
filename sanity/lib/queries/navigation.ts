@@ -5,7 +5,8 @@ export const navigationQuery = groq`
     navItems[] {
       _key,
       label,
-      href
+      href,
+      image { asset->, hotspot, crop }
     },
     "pageVisibility": {
       "oWeek": *[_type == "oweekPage"][0].shown

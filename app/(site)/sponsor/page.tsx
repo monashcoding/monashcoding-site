@@ -4,7 +4,7 @@ import { client } from "@/sanity/lib/client";
 export const revalidate = false;
 import { sponsorPageQuery } from "@/sanity/lib/queries";
 import { SponsorPageData } from "@/lib/sanity/types";
-import SponsorPageClient from "@/components/SponsorPageClient";
+import SponsorPageClient from "@/components/sponsor/SponsorPageClient";
 
 async function getSponsorPageData(): Promise<SponsorPageData | null> {
   try {

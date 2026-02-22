@@ -1,5 +1,7 @@
 import { EmailTemplate } from '@/components/contact/EmailTemplate';
 import { Resend } from 'resend';
+import { client } from '@/sanity/lib/client';
+import { groq } from 'next-sanity';
 
 // Validate RESEND_API_KEY is configured
 const apiKey = process.env.RESEND_API_KEY;
@@ -10,6 +12,11 @@ if (!apiKey || apiKey.trim().length === 0) {
 }
 
 const resend = new Resend(apiKey);
+
+const FALLBACK_FROM = 'noreply@monashcoding.com';
+const FALLBACK_TO = 'projects@monashcoding.com';
+
+const emailConfigQuery = groq`*[_type == "contactPage"][0]{ senderEmail, recipientEmail }`;
 
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
@@ -35,6 +42,72 @@ export async function POST(req: Request) {
       );
     }
 
+    const formType = body.type as string | undefined;
+
+    // Handle sponsor form
+    if (formType === 'sponsor') {
+      const {
+        companyName,
+        contactName,
+        email,
+        message,
+      } = body as {
+        companyName?: unknown;
+        contactName?: unknown;
+        email?: unknown;
+        message?: unknown;
+      };
+
+      if (!isNonEmptyString(companyName)) {
+        return Response.json(
+          { error: 'Field "companyName" is required and must be a non-empty string.' },
+          { status: 400 },
+        );
+      }
+
+      if (!isNonEmptyString(contactName)) {
+        return Response.json(
+          { error: 'Field "contactName" is required and must be a non-empty string.' },
+          { status: 400 },
+        );
+      }
+
+      if (!isValidEmail(email)) {
+        return Response.json(
+          { error: 'Field "email" is required and must be a valid email address.' },
+          { status: 400 },
+        );
+      }
+
+      if (!isNonEmptyString(message)) {
+        return Response.json(
+          { error: 'Field "message" is required and must be a non-empty string.' },
+          { status: 400 },
+        );
+      }
+
+      const { data, error } = await resend.emails.send({
+        from: 'noreply@monashcoding.com',
+        to: 'sponsorship@monashcoding.com',
+        replyTo: (email as string).trim(),
+        subject: `Sponsorship Inquiry from ${companyName}`,
+        react: EmailTemplate({
+          name: `${contactName} (${companyName})`,
+          emailAddress: (email as string).trim(),
+          subject: `Sponsorship Inquiry from ${companyName}`,
+          message: (message as string).trim(),
+        }),
+      });
+
+      if (error) {
+        console.error('Resend API error:', error);
+        return Response.json({ error }, { status: 500 });
+      }
+
+      return Response.json(data);
+    }
+
+    // Handle regular contact form (default)
     const {
       name,
       emailAddress,
@@ -68,17 +141,21 @@ export async function POST(req: Request) {
       );
     }
 
+    // Fetch email config from Sanity
+    const config = await client.fetch<{ senderEmail?: string; recipientEmail?: string } | null>(emailConfigQuery);
+    const fromEmail = config?.senderEmail || FALLBACK_FROM;
+    const toEmail = config?.recipientEmail || FALLBACK_TO;
+
     const normalizedSubject =
       typeof subject === 'string' && subject.trim().length > 0
         ? subject
         : 'New Message from Monash Coding Site';
 
     const { data, error } = await resend.emails.send({
-      from: 'noreply@monashcoding.com', 
-      // to: 'coding@monashclubs.org',
-      to: 'projects@monashcoding.com',
+      from: fromEmail,
+      to: toEmail,
       replyTo: (emailAddress as string).trim(), // User's email will be set as reply-to
-      subject: normalizedSubject, 
+      subject: normalizedSubject,
       react: EmailTemplate({
         name: (name as string).trim(),
         emailAddress: (emailAddress as string).trim(),

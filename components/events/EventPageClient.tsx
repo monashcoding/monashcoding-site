@@ -85,7 +85,7 @@ export function EventPageClient({ event }: EventPageClientProps) {
               >
                 <Link
                   href="/"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/60 px-3.5 py-2 text-xs font-semibold tracking-[0.1em] uppercase text-white/75 no-underline transition-colors duration-300 hover:border-white/35 hover:text-white"
+                  className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-black/60 px-3.5 py-2 text-xs font-semibold tracking-[0.1em] uppercase text-white/75 no-underline transition-colors duration-300 hover:border-white/35 hover:text-white"
                 >
                   <svg
                     width="14"
@@ -109,11 +109,11 @@ export function EventPageClient({ event }: EventPageClientProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.52, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
               >
-                <span className={`inline-flex items-center justify-center rounded-full px-3 pt-[0.3rem] pb-[0.22rem] text-[0.67rem] leading-none font-semibold tracking-[0.13em] uppercase ${TAG_STYLES[event.tag]}`}>
+                <span className={`inline-flex items-center justify-center rounded-md px-3 pt-[0.3rem] pb-[0.22rem] text-[0.67rem] leading-none font-semibold tracking-[0.13em] uppercase ${TAG_STYLES[event.tag]}`}>
                   {TAG_LABELS[event.tag]}
                 </span>
                 {event.isPinned && (
-                  <span className="inline-flex items-center justify-center rounded-full border border-accent bg-accent px-3 pt-[0.3rem] pb-[0.22rem] text-[0.67rem] leading-none font-semibold tracking-[0.13em] uppercase text-[#252525]">
+                  <span className="inline-flex items-center justify-center rounded-md border border-accent bg-accent px-3 pt-[0.3rem] pb-[0.22rem] text-[0.67rem] leading-none font-semibold tracking-[0.13em] uppercase text-[#252525]">
                     Featured
                   </span>
                 )}
@@ -147,7 +147,7 @@ export function EventPageClient({ event }: EventPageClientProps) {
       >
         <div className="relative mx-auto grid max-w-[1200px] gap-8 lg:grid-cols-[minmax(0,340px)_minmax(0,1fr)]">
           <motion.aside
-            className="h-fit overflow-hidden rounded-[1.45rem] border border-white/12 bg-[#1e1e1e]/95 p-5 md:p-6"
+            className="h-fit overflow-hidden rounded-xl border border-white/12 bg-[#1e1e1e]/95 p-5 md:p-6"
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
@@ -195,7 +195,7 @@ export function EventPageClient({ event }: EventPageClientProps) {
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group flex w-full items-center justify-center gap-2 rounded-full border border-accent/70 bg-accent px-5 py-3 text-center text-sm font-semibold tracking-[0.08em] uppercase text-accent-foreground no-underline transition-transform duration-300 hover:-translate-y-0.5"
+                        className="group flex w-full items-center justify-center gap-2 rounded-md border border-accent/70 bg-accent px-5 py-3 text-center text-sm font-semibold tracking-[0.08em] uppercase text-accent-foreground no-underline transition-transform duration-300 hover:-translate-y-0.5"
                       >
                         <span>{link.label}</span>
                         <svg
@@ -218,7 +218,7 @@ export function EventPageClient({ event }: EventPageClientProps) {
           </motion.aside>
 
           <motion.article
-            className="overflow-hidden rounded-[1.45rem] border border-white/12 bg-[#1a1a1a]/95 p-6 md:p-8"
+            className="overflow-hidden rounded-xl border border-white/12 bg-[#1a1a1a]/95 p-6 md:p-8"
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.16 }}
@@ -227,12 +227,9 @@ export function EventPageClient({ event }: EventPageClientProps) {
             <h2 className="text-[clamp(1.45rem,2.8vw,2.2rem)] font-semibold text-foreground">
               Overview
             </h2>
-            <p className="mt-4 text-[clamp(0.98rem,1.25vw,1.12rem)] leading-relaxed text-white/72">
-              {event.description}
-            </p>
 
             {event.body && event.body.length > 0 && (
-              <div className="mt-8 border-t border-white/10 pt-8">
+              <div className="mt-6">
                 <EventBody value={event.body} className="text-white/80" />
               </div>
             )}

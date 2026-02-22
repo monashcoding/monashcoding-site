@@ -36,6 +36,20 @@ export const EVENT_TAGS: EventTagConfig[] = [
     style:
       'border border-[#FFE330] bg-[#FFE330] text-[#252525]',
   },
+  {
+    value: 'industry',
+    label: 'Industry',
+    filterLabel: 'Industry',
+    style:
+      'border border-[#4CAF50] bg-[#4CAF50] text-white',
+  },
+  {
+    value: 'archives',
+    label: 'Archives',
+    filterLabel: 'Archives',
+    style:
+      'border border-white/30 bg-white/10 text-white',
+  },
 ]
 
 export const TAG_STYLES: Record<EventTag, string> = Object.fromEntries(

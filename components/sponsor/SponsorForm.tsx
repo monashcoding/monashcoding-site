@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function ContactForm() {
+export default function SponsorForm() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -121,22 +121,28 @@ export default function ContactForm() {
     <motion.form
       noValidate
       onSubmit={handleSendEmail}
-      className="p-8 rounded-3xl w-full mx-auto bg-[#1D1D1D]"
+      className="p-8 rounded-3xl w-full mx-auto bg-white"
       initial={{ opacity: 0, x: -50 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.6, delay: 0.15 }}
     >
       <div className="flex flex-col gap-6">
+        {/* Heading */}
+        <div className="text-center"> 
+          <h2 className="text-2xl font-bold text-background">sponsorship@monashcoding.com</h2>
+
+        </div>
+
         {/* SUBJECT */}
         <div>
           <input
             name="subject"
             value={formData.subject}
             onChange={handleInputChange}
-            className={`w-full p-4 rounded-4xl  bg-[#DADADA] text-[#3D3D3D] transition-all placeholder:text-[#3D3D3D]/40 ${
+            className={`w-full p-4 rounded-4xl  bg-gray-900/15 text-background transition-all placeholder:text-black/40 ${
               errors.subject
                 ? "border border-red-500 focus:ring-2 focus:ring-red-500/30"
-                : "border border-white/10 focus:ring-2 focus:ring-gold-700/20"
+                : "border border-black/10 focus:ring-2 focus:ring-gold-700/20"
             }`}
             placeholder="Subject"
           />
@@ -160,12 +166,12 @@ export default function ContactForm() {
             name="name"
             value={formData.name}
             onChange={handleInputChange}
-            className={`w-full p-4 rounded-4xl  bg-[#DADADA] text-[#3D3D3D] transition-all placeholder:text-[#3D3D3D]/40 ${
+            className={`w-full p-4 rounded-4xl  bg-gray-900/15 text-background transition-all placeholder:text-black/40 ${
               errors.name
                 ? "border border-red-500 focus:ring-2 focus:ring-red-500/30"
-                : "border border-white/10 focus:ring-2 focus:ring-gold-700/20"
+                : "border border-black/10 focus:ring-2 focus:ring-gold-700/20"
             }`}
-            placeholder="Name"
+            placeholder="Company Name"
           />
           <AnimatePresence>
             {errors.name && (
@@ -187,10 +193,10 @@ export default function ContactForm() {
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            className={`w-full p-4 rounded-4xl  bg-[#DADADA] text-[#3D3D3D] transition-all placeholder:text-[#3D3D3D]/40 ${
+            className={`w-full p-4 rounded-4xl  bg-gray-900/15 text-background transition-all placeholder:text-black/40 ${
               errors.email
                 ? "border border-red-500 focus:ring-2 focus:ring-red-500/30"
-                : "border border-white/10 focus:ring-2 focus:ring-gold-700/20"
+                : "border border-black/10 focus:ring-2 focus:ring-gold-700/20"
             }`}
             placeholder="Email"
           />
@@ -214,13 +220,13 @@ export default function ContactForm() {
         <div>
           <textarea
             name="message"
-            rows={8}
+            rows={5}
             value={formData.message}
             onChange={handleInputChange}
-            className={`w-full p-4 rounded-4xl text-[#3D3D3D] outline-1 outline-white/20 bg-[#FFFFFF] resize-none transition-all placeholder:text-[#3D3D3D]/40 ${
+            className={`w-full p-4 rounded-4xl text-background outline-1 outline-gray-500 bg-white/80 resize-none transition-all placeholder:text-black/40 ${
               errors.message
                 ? "border border-red-500 focus:ring-2 focus:ring-red-500/30"
-                : "border border-white/10 focus:ring-2 focus:ring-gold-700/20"
+                : "border border-black/10 focus:ring-2 focus:ring-gold-700/20"
             }`}
             placeholder="Message"
           />
@@ -264,7 +270,7 @@ export default function ContactForm() {
             >
               {status.type === "success" ? (
                 <svg
-                  className="w-5 h-5 text-white"
+                  className="w-5 h-5 text-background"
                   fill="none"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -276,7 +282,7 @@ export default function ContactForm() {
                 </svg>
               ) : (
                 <svg
-                  className="w-5 h-5 text-white"
+                  className="w-5 h-5 text-background"
                   fill="none"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -310,7 +316,7 @@ export default function ContactForm() {
         
           <motion.button
           type="submit"
-          className="rounded-4xl px-6 py-4 bg-gold-700 text-black font-bold hover:bg-gold-800  active:scale-95"
+          className="rounded-4xl px-6 py-4 bg-gold-700 text-background font-medium hover:bg-gold-800  active:scale-95"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
