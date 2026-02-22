@@ -197,7 +197,7 @@ function VideoCard({ video }: { video: YouTubeVideo }) {
       href={`https://www.youtube.com/watch?v=${video.videoId}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative block h-full overflow-hidden rounded-lg border border-white/10 bg-[rgba(28,28,28,0.8)] no-underline transition-border-color duration-300 hover:border-white/20"
+      className="group relative block h-full overflow-hidden rounded-lg bg-[rgba(28,28,28,0.8)] no-underline"
     >
       <div className="relative w-full overflow-hidden" style={{ paddingBottom: '56.25%' }}>
         <img
@@ -215,14 +215,14 @@ function VideoCard({ video }: { video: YouTubeVideo }) {
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-between gap-3 border-t border-white/10 px-4 py-3">
+      <div className="flex items-center justify-between gap-3 px-4 py-3">
         <div className="min-w-0">
           <p className="truncate text-sm font-medium text-white/85">{video.title}</p>
           <p className="mt-0.5 text-[0.65rem] font-semibold tracking-[0.14em] uppercase text-white/45">
             {video.views > 0 ? `${video.views.toLocaleString()} views` : 'YouTube video'}
           </p>
         </div>
-        <span className="shrink-0 rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-[0.62rem] font-semibold tracking-[0.12em] uppercase text-white/65">
+        <span className="shrink-0 rounded-full bg-white/5 px-2.5 py-1 text-[0.62rem] font-semibold tracking-[0.12em] uppercase text-white/65">
           {video.year}
         </span>
       </div>
@@ -240,7 +240,7 @@ function InstagramReelCard({ reel }: { reel: InstagramReel }) {
       href={reel.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative block h-full overflow-hidden rounded-lg border border-white/10 bg-[rgba(28,28,28,0.8)] no-underline transition-border-color duration-300 hover:border-white/20"
+      className="group relative block h-full overflow-hidden rounded-lg bg-[rgba(28,28,28,0.8)] no-underline"
     >
       <div className="relative w-full overflow-hidden" style={{ paddingBottom: '100%' }}>
         <img
@@ -284,7 +284,7 @@ function InstagramReelCard({ reel }: { reel: InstagramReel }) {
         )}
       </div>
       {/* Caption */}
-      <div className="border-t border-white/10 px-4 py-3">
+      <div className="px-4 py-3">
         <p className="line-clamp-2 text-sm leading-snug text-white/85">
           {reel.caption || `Instagram ${reel.type}`}
         </p>
@@ -688,7 +688,7 @@ export function CommunitySection({
               <button
                 onClick={() => loadReels(fetchedUpTo)}
                 disabled={reelsLoading}
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/3 py-3 text-xs font-semibold tracking-[0.12em] uppercase text-white/60 transition-colors hover:border-accent hover:text-accent disabled:pointer-events-none disabled:opacity-60"
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-white/3 py-3 text-xs font-semibold tracking-[0.12em] uppercase text-white/60 transition-colors hover:text-accent disabled:pointer-events-none disabled:opacity-60"
               >
                 {reelsLoading ? (
                   <>
@@ -787,7 +787,7 @@ export function CommunitySection({
             <button
               onClick={() => loadReels(fetchedUpTo)}
               disabled={reelsLoading}
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/3 py-3 text-xs font-semibold tracking-[0.12em] uppercase text-white/60 transition-colors hover:border-accent hover:text-accent disabled:pointer-events-none disabled:opacity-60"
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-white/3 py-3 text-xs font-semibold tracking-[0.12em] uppercase text-white/60 transition-colors hover:text-accent disabled:pointer-events-none disabled:opacity-60"
             >
               {reelsLoading ? (
                 <>
