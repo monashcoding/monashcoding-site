@@ -75,9 +75,9 @@ export default function NavPreviewCard({ preview, isVisible }: NavPreviewCardPro
             exit="exit"
             variants={frameAnimation}
           >
-            <div className="relative h-full overflow-hidden rounded-t-3xl border-2 border-b-0 border-white bg-black/95">
+            <div className="relative h-full overflow-hidden rounded-t-xl border-2 border-b-0 border-white bg-black/95">
               {/* Iframe layer */}
-              <div className="absolute inset-0 overflow-hidden rounded-t-3xl">
+              <div className="absolute inset-0 overflow-hidden rounded-t-xl">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={preview.href}

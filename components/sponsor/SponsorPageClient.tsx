@@ -232,7 +232,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
           
           {/* Form container with image on left */}
           <motion.div
-            className="max-w-[900px] mx-auto mb-12 grid grid-cols-1 lg:grid-cols-2 bg-white/5 border border-white/10 rounded-3xl overflow-hidden"
+            className="max-w-[900px] mx-auto mb-12 grid grid-cols-1 lg:grid-cols-2 bg-white/5 border border-white/10 rounded-xl overflow-hidden"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}

@@ -659,7 +659,7 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
             {page.whereAreWeNow && page.whereAreWeNow.length > 0 && (
               <motion.div
                 variants={itemVariants}
-                className="mt-16 rounded-[2.5rem] bg-accent/20 px-8 py-10 md:px-14 md:py-12"
+                className="mt-16 rounded-xl bg-accent/20 px-8 py-10 md:px-14 md:py-12"
               >
                 <h3 className="text-[clamp(1.6rem,3vw,2rem)] font-semibold text-accent">
                   Where are we now?
