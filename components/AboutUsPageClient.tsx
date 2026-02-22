@@ -448,6 +448,19 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
                       </clipPath>
                     </defs>
                   </svg>
+                  {/* Mascots peeking behind the blob */}
+                  <img
+                    src="/mascot/max-arms-up.svg"
+                    alt="Max mascot"
+                    className="pointer-events-none absolute w-[12%]"
+                    style={{ top: '3%', left: '23%', transform: 'rotate(-50deg)' }}
+                  />
+                  <img
+                    src="/mascot/min-arms-up.svg"
+                    alt="Min mascot"
+                    className="pointer-events-none absolute w-[10%]"
+                    style={{ top: '15%', left: '19%', transform: 'rotate(-55deg)' }}
+                  />
                   <div className="absolute inset-0" style={{ clipPath: 'url(#blob-mission)' }}>
                     <FadeInImage
                       src={urlFor(page.missionImage).width(1440).height(1070).fit('crop').url()}
