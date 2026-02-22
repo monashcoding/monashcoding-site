@@ -134,8 +134,8 @@ export default function NavPreviewCard({ preview, isVisible }: NavPreviewCardPro
               <motion.div
                 className="absolute left-0 right-0 z-10 px-8 lg:px-10 bg-gradient-to-t from-black/90 via-black/60 to-transparent py-10"
                 style={{ bottom: "10vh", x: 0 }}
-                initial={{ y: "-30vh" }}
-                animate={{ y: hasLoaded ? 0 : "-30vh" }}
+                initial={{ y: 0 }}
+                animate={{ y: 0 }}
                 transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
               >
                 <AnimatePresence mode="wait">
