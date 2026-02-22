@@ -74,7 +74,7 @@ export function EventReminderForm({ label, eventTitle, eventDate, eventSlug }: E
       <button
         type="submit"
         disabled={status === 'loading'}
-        className="group flex w-full items-center justify-center gap-2 rounded-full border border-accent/70 bg-accent px-5 py-3 text-center text-sm font-semibold tracking-[0.08em] uppercase text-accent-foreground transition-transform duration-300 hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0"
+        className="group flex w-full items-center justify-center gap-2 rounded-md border border-blue-light bg-blue px-5 py-3 text-center text-sm font-semibold tracking-[0.08em] uppercase text-white transition-transform duration-300 hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0"
       >
         <span>{status === 'loading' ? 'Signing up...' : label}</span>
         <svg
