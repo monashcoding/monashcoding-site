@@ -59,6 +59,7 @@ export function Footer({ navItems, socialLinks }: FooterProps) {
               {brandName}
             </div>
             <p className="text-white/60 leading-relaxed">{tagline}</p>
+            <Image src="/mascot/min-mac-linked.svg" alt="" width={80} height={80} className="mt-4" />
           </div>
           {columns.map((column) => (
             <div key={column._key}>
