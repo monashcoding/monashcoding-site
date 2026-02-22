@@ -9,6 +9,9 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
+  other: {
+    "darkreader-lock": "",
+  },
   title: "Monash Association of Coding",
   description: "At MAC, we aim to impart technical skills and industry-relevant experiences to students to bridge the gap between the classroom and industry. We want to make coding a fun experience for all—regardless of degree, year level, and experience—by providing collaborative learning opportunities for our members.",
   openGraph: {
