@@ -131,12 +131,18 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
   const [activeTag, setActiveTag] = useState<EventTag | 'all'>('all')
   const [visibleCount, setVisibleCount] = useState(INITIAL_GRID_COUNT)
 
-  const filteredEvents =
-    activeTag === 'all'
-      ? events
-      : activeTag === 'archives'
-        ? events.filter((e) => new Date(e.date) < new Date())
-        : events.filter((e) => e.tag === activeTag)
+  const filteredEvents = useMemo(() => {
+    if (activeTag === 'all') return events
+    if (activeTag !== 'archives') return events.filter((e) => e.tag === activeTag)
+
+    const now = new Date()
+    const todayMelbourne = now.toLocaleDateString('en-CA', { timeZone: 'Australia/Melbourne' })
+    return events.filter((e) => {
+      if (e.endDate) return new Date(e.endDate) < now
+      const eventDay = new Date(e.date).toLocaleDateString('en-CA', { timeZone: 'Australia/Melbourne' })
+      return todayMelbourne > eventDay
+    })
+  }, [activeTag, events])
 
   const isArchivesView = activeTag === 'archives'
 

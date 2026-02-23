@@ -45,8 +45,17 @@ export function EventCard({ event, index, disableGreyOut = false }: EventCardPro
   const [isPast, setIsPast] = useState(false)
 
   useEffect(() => {
-    setIsPast(new Date(event.date) < new Date())
-  }, [event.date])
+    const now = new Date()
+    if (event.endDate) {
+      // If the event has an end time, only archive after the end time
+      setIsPast(new Date(event.endDate) < now)
+    } else {
+      // If the event only has a start time, archive after that day ends in Melbourne
+      const eventDay = new Date(event.date).toLocaleDateString('en-CA', { timeZone: 'Australia/Melbourne' })
+      const todayMelbourne = now.toLocaleDateString('en-CA', { timeZone: 'Australia/Melbourne' })
+      setIsPast(todayMelbourne > eventDay)
+    }
+  }, [event.date, event.endDate])
 
   return (
     <Link href={`/events/${event.slug.current}`} className={`group block h-full no-underline ${isPast && !disableGreyOut ? 'opacity-50 grayscale-40' : ''}`}>
