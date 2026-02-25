@@ -4,6 +4,12 @@ export const committeePageQuery = groq`
   *[_type == "committeePage"][0] {
     pageTitle,
     pageSubtitle,
+    heroImage {
+      asset->,
+      alt,
+      hotspot,
+      crop
+    },
     teamDescriptions[] {
       _key,
       team,

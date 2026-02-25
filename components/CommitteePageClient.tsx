@@ -57,6 +57,10 @@ export default function CommitteePageClient({
 
 
   const title = pageData?.pageTitle || 'Meet the Team'
+  const heroImageUrl = pageData?.heroImage?.asset
+    ? urlFor(pageData.heroImage).width(1920).quality(80).url()
+    : '/MAC_FULLCOMM-2.jpg'
+  const heroImageAlt = pageData?.heroImage?.alt || 'MAC Team'
   const teamDescription = selectedTeam !== 'all' && selectedTeam !== 'alumni'
     ? pageData?.teamDescriptions?.find((td) => td.team === selectedTeam)?.description
     : undefined
@@ -160,8 +164,8 @@ export default function CommitteePageClient({
         {/* Image layer - below ribbon (z-0) */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/MAC_FULLCOMM-2.jpg"
-            alt="MAC Team"
+            src={heroImageUrl}
+            alt={heroImageAlt}
             fill
             className="object-cover"
             priority

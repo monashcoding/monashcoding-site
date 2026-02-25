@@ -148,6 +148,7 @@ export interface TeamDescription {
 export interface CommitteePageData {
   pageTitle: string
   pageSubtitle?: string
+  heroImage?: SanityImage
   teamDescriptions?: TeamDescription[]
   timeline?: TimelineEvent[]
 }

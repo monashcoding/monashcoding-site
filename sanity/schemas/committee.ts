@@ -163,6 +163,22 @@ export const committeePage = defineType({
       type: 'string',
     }),
     defineField({
+      name: 'heroImage',
+      title: 'Hero Image',
+      description: 'Background image for the hero section at the top of the page',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alt Text',
+          type: 'string',
+        }),
+      ],
+    }),
+    defineField({
       name: 'teamDescriptions',
       title: 'Team Descriptions',
       description: 'Description shown beneath the team selector when a team is selected',
