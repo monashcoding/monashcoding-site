@@ -1,9 +1,9 @@
 'use client'
 
 import { motion, useScroll, useTransform } from 'framer-motion'
-import Link from 'next/link'
 import Image from 'next/image'
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
 import { EventDocument } from '@/lib/sanity/types'
 import { TAG_STYLES, TAG_LABELS } from '@/lib/events/eventTags'
@@ -45,7 +45,21 @@ interface EventPageClientProps {
 }
 
 export function EventPageClient({ event }: EventPageClientProps) {
+  const router = useRouter()
   const heroRef = useRef<HTMLDivElement>(null)
+  const [isPast, setIsPast] = useState(false)
+
+  useEffect(() => {
+    const now = new Date()
+    if (event.endDate) {
+      setIsPast(new Date(event.endDate) < now)
+    } else {
+      const eventDay = new Date(event.date).toLocaleDateString('en-CA', { timeZone: 'Australia/Melbourne' })
+      const todayMelbourne = now.toLocaleDateString('en-CA', { timeZone: 'Australia/Melbourne' })
+      setIsPast(todayMelbourne > eventDay)
+    }
+  }, [event.date, event.endDate])
+
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ['start start', 'end start'],
@@ -83,9 +97,9 @@ export function EventPageClient({ event }: EventPageClientProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               >
-                <Link
-                  href="/"
-                  className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-black/60 px-3.5 py-2 text-xs font-semibold tracking-[0.1em] uppercase text-white/75 no-underline transition-colors duration-300 hover:border-white/35 hover:text-white"
+                <button
+                  onClick={() => router.back()}
+                  className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-black/60 px-3.5 py-2 text-xs font-semibold tracking-[0.1em] uppercase text-white/75 transition-colors duration-300 hover:border-white/35 hover:text-white cursor-pointer"
                 >
                   <svg
                     width="14"
@@ -99,8 +113,8 @@ export function EventPageClient({ event }: EventPageClientProps) {
                   >
                     <path d="M19 12H5M12 19l-7-7 7-7" />
                   </svg>
-                  Back to Home
-                </Link>
+                  Back
+                </button>
               </motion.div>
 
               <motion.div
@@ -115,6 +129,11 @@ export function EventPageClient({ event }: EventPageClientProps) {
                 {event.isPinned && (
                   <span className="inline-flex items-center justify-center rounded-md border border-accent bg-accent px-3 pt-[0.3rem] pb-[0.22rem] text-[0.67rem] leading-none font-semibold tracking-[0.13em] uppercase text-[#252525]">
                     Featured
+                  </span>
+                )}
+                {isPast && (
+                  <span className="inline-flex items-center justify-center rounded-md border border-white/30 bg-white/10 px-3 pt-[0.3rem] pb-[0.22rem] text-[0.67rem] leading-none font-semibold tracking-[0.13em] uppercase text-white/70">
+                    Archived
                   </span>
                 )}
               </motion.div>
