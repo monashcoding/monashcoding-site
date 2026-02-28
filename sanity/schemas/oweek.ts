@@ -9,9 +9,9 @@ export const oweekPage = defineType({
   fields: [
     defineField({
       name: 'shown',
-      title: 'Show Page',
+      title: 'Show in Navigation',
       type: 'boolean',
-      description: 'When disabled, the page returns 404 and is hidden from navigation',
+      description: 'When disabled, the page is hidden from navigation but still accessible via direct links',
       initialValue: false,
     }),
     defineField({
@@ -35,7 +35,7 @@ export const oweekPage = defineType({
     prepare({ shown }) {
       return {
         title: 'O Week Page Settings',
-        subtitle: shown ? 'Visible' : 'Hidden',
+        subtitle: shown ? 'Visible in Navigation' : 'Hidden from Navigation (Accessible via link)',
       }
     },
   },

@@ -19,7 +19,8 @@ async function getOWeekPageData(): Promise<OWeekPageData | null> {
 export default async function OWeekPage() {
   const data = await getOWeekPageData();
 
-  if (!data || data.shown !== true) {
+  // Page is always accessible directly, only navigation visibility is controlled by 'shown'
+  if (!data) {
     notFound();
   }
 
