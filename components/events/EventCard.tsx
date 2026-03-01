@@ -91,7 +91,7 @@ export function EventCard({ event, index, disableGreyOut = false }: EventCardPro
             />
           )}
 
-          <div className="absolute left-4 right-4 top-4 flex items-start justify-between gap-3">
+          <div className="absolute left-4 right-4 top-4 z-2 flex items-start justify-between gap-3">
             <span className={`inline-flex items-center justify-center rounded-md px-3 pt-[0.3rem] pb-[0.22rem] text-[0.68rem] leading-none font-semibold tracking-[0.12em] uppercase ${TAG_STYLES[event.tag]}`}>
               {TAG_LABELS[event.tag]}
             </span>
