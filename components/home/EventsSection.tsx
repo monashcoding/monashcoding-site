@@ -131,34 +131,48 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
   const [activeTag, setActiveTag] = useState<EventTag | 'all'>('all')
   const [visibleCount, setVisibleCount] = useState(INITIAL_GRID_COUNT)
 
-  const filteredEvents = useMemo(() => {
-    const now = new Date()
-    const todayMelbourne = now.toLocaleDateString('en-CA', { timeZone: 'Australia/Melbourne' })
+  const now = useMemo(() => new Date(), [])
+  const todayMelbourne = useMemo(
+    () => now.toLocaleDateString('en-CA', { timeZone: 'Australia/Melbourne' }),
+    [now],
+  )
 
-    const isPastEvent = (e: EventDocument) => {
+  const isPastEvent = useMemo(() => {
+    return (e: EventDocument) => {
       if (e.endDate) return new Date(e.endDate) < now
       const eventDay = new Date(e.date).toLocaleDateString('en-CA', { timeZone: 'Australia/Melbourne' })
       return todayMelbourne > eventDay
     }
+  }, [now, todayMelbourne])
 
+  const filteredEvents = useMemo(() => {
     if (activeTag === 'archives') return events.filter(isPastEvent)
 
-    // For "all" and category tabs, exclude past events
+    // "all" tab shows everything, with past events sorted to the end
+    if (activeTag === 'all') {
+      const upcoming = events.filter((e) => !isPastEvent(e))
+      const past = events.filter(isPastEvent)
+      return [...upcoming, ...past]
+    }
+
+    // Category tabs exclude past events
     const upcoming = events.filter((e) => !isPastEvent(e))
-    if (activeTag === 'all') return upcoming
     return upcoming.filter((e) => e.tag === activeTag)
-  }, [activeTag, events])
+  }, [activeTag, events, isPastEvent])
 
   const isArchivesView = activeTag === 'archives'
 
   const featuredEvent = useMemo(() => {
     if (filteredEvents.length === 0 || isArchivesView) return null
-    return filteredEvents.find((event) => event.isPinned) ?? filteredEvents[0]
-  }, [filteredEvents, isArchivesView])
+    // Only upcoming events can be featured
+    const upcomingEvents = filteredEvents.filter((e) => !isPastEvent(e))
+    if (upcomingEvents.length === 0) return null
+    return upcomingEvents.find((event) => event.isPinned) ?? upcomingEvents[0]
+  }, [filteredEvents, isArchivesView, isPastEvent])
 
   const remainingEvents = useMemo(() => {
     if (isArchivesView) return filteredEvents
-    if (!featuredEvent) return []
+    if (!featuredEvent) return filteredEvents
     return filteredEvents.filter((event) => event._id !== featuredEvent._id)
   }, [filteredEvents, featuredEvent, isArchivesView])
 
