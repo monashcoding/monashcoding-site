@@ -145,13 +145,16 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
     }
   }, [now, todayMelbourne])
 
-  const filteredEvents = useMemo(() => {
-    if (activeTag === 'archives') return events.filter(isPastEvent)
+  const sortByDateDesc = (a: EventDocument, b: EventDocument) =>
+    new Date(b.date).getTime() - new Date(a.date).getTime()
 
-    // "all" tab shows everything, with past events sorted to the end
+  const filteredEvents = useMemo(() => {
+    if (activeTag === 'archives') return events.filter(isPastEvent).sort(sortByDateDesc)
+
+    // "all" tab: upcoming (soonest first, pinned on top — server order), then past (most recent first)
     if (activeTag === 'all') {
       const upcoming = events.filter((e) => !isPastEvent(e))
-      const past = events.filter(isPastEvent)
+      const past = events.filter(isPastEvent).sort(sortByDateDesc)
       return [...upcoming, ...past]
     }
 
