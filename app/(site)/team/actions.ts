@@ -1,6 +1,6 @@
 'use server'
 
-import { client } from '@/sanity/lib/client'
+import { client, sanityFetchOptions } from '@/sanity/lib/client'
 import { CommitteeMember } from '@/lib/sanity/types'
 import { sortMembers } from '@/lib/committee-utils'
 import {
@@ -14,7 +14,7 @@ import { FilterOption, ALUMNI_PAGE_SIZE, PaginatedMembersResult } from './consta
 export async function fetchCommitteeMembersByFilter(
   filter: FilterOption
 ): Promise<CommitteeMember[]> {
-  const fetchOptions = { next: { tags: ['committeeMember'] } }
+  const fetchOptions = sanityFetchOptions(['committeeMember'])
 
   let members: CommitteeMember[]
 
@@ -41,7 +41,7 @@ export async function fetchCommitteeMembersByFilter(
 export async function fetchAlumniPaginated(
   page: number
 ): Promise<PaginatedMembersResult> {
-  const fetchOptions = { next: { tags: ['committeeMember'] } }
+  const fetchOptions = sanityFetchOptions(['committeeMember'])
   const start = page * ALUMNI_PAGE_SIZE
   const end = start + ALUMNI_PAGE_SIZE
 

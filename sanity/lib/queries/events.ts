@@ -1,7 +1,14 @@
 import { groq } from 'next-sanity'
 
 export const upcomingEventsQuery = groq`
-  *[_type == "event"] | order(isPinned desc, date asc) [0...$limit] {
+  *[_type == "event"] | order(
+    select(
+      coalesce(endDate, date) >= now() => 0,
+      1
+    ) asc,
+    isPinned desc,
+    date asc
+  ) {
     _id,
     title,
     slug,

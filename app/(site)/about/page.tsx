@@ -1,4 +1,4 @@
-import { client } from '@/sanity/lib/client'
+import { client, sanityFetchOptions } from '@/sanity/lib/client'
 
 // Static generation - revalidated via webhook on Sanity publish
 export const revalidate = false
@@ -9,7 +9,7 @@ import AboutUsPageClient from '@/components/AboutUsPageClient'
 
 async function getAboutUsPageData(): Promise<AboutUsPageData | null> {
   try {
-    return await client.fetch(aboutUsPageQuery, {}, { next: { tags: ['aboutUsPage'] } })
+    return await client.fetch(aboutUsPageQuery, {}, sanityFetchOptions(['aboutUsPage']))
   } catch (error) {
     console.error('Error fetching about us page data:', error)
     return null

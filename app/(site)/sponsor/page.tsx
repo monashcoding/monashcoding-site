@@ -1,4 +1,4 @@
-import { client } from "@/sanity/lib/client";
+import { client, sanityFetchOptions } from "@/sanity/lib/client";
 
 // Static generation - revalidated via webhook on Sanity publish
 export const revalidate = false;
@@ -8,7 +8,7 @@ import SponsorPageClient from "@/components/sponsor/SponsorPageClient";
 
 async function getSponsorPageData(): Promise<SponsorPageData | null> {
   try {
-    return await client.fetch(sponsorPageQuery, {}, { next: { tags: ['sponsorPage'] } });
+    return await client.fetch(sponsorPageQuery, {}, sanityFetchOptions(['sponsorPage']));
   } catch (error) {
     console.error("Error fetching sponsor page data:", error);
     return null;

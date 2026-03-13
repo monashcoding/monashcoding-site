@@ -2,14 +2,14 @@ import { notFound } from "next/navigation";
 
 // Static generation - revalidated via webhook on Sanity publish
 export const revalidate = false;
-import { client } from "@/sanity/lib/client";
+import { client, sanityFetchOptions } from "@/sanity/lib/client";
 import { oweekPageQuery } from "@/sanity/lib/queries";
 import { OWeekPageData } from "@/lib/sanity/types";
 import OWeekPageClient from "@/components/OWeekPageClient";
 
 async function getOWeekPageData(): Promise<OWeekPageData | null> {
   try {
-    return await client.fetch(oweekPageQuery, {}, { next: { tags: ['oWeekPage'] } });
+    return await client.fetch(oweekPageQuery, {}, sanityFetchOptions(['oWeekPage']));
   } catch (error) {
     console.error("Error fetching O Week page data:", error);
     return null;

@@ -1,4 +1,4 @@
-import { client } from "@/sanity/lib/client";
+import { client, sanityFetchOptions } from "@/sanity/lib/client";
 
 // Static generation - revalidated via webhook on Sanity publish
 export const revalidate = false;
@@ -9,7 +9,7 @@ import { getSocialLinksData } from "@/lib/sanity/fetchers";
 
 async function getContactPageData(): Promise<ContactPageData | null> {
   try {
-    return await client.fetch(contactPageQuery, {}, { next: { tags: ['contactPage'] } });
+    return await client.fetch(contactPageQuery, {}, sanityFetchOptions(['contactPage']));
   } catch (error) {
     console.error("Error fetching contact page data:", error);
     return null;

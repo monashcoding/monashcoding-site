@@ -2,14 +2,14 @@ import Navigation from "@/components/Navigation";
 import ClickSpark from "@/components/ClickSpark";
 import { RibbonProvider, GlobalRibbons } from "@/components/GlobalRibbons";
 import { Footer } from "@/components/home/Footer";
-import { client } from "@/sanity/lib/client";
+import { client, sanityFetchOptions } from "@/sanity/lib/client";
 import { navigationQuery } from "@/sanity/lib/queries";
 import { NavigationData } from "@/lib/sanity/types";
 import { getSocialLinksData } from "@/lib/sanity/fetchers";
 
 async function getNavigationData(): Promise<NavigationData | null> {
   try {
-    return await client.fetch(navigationQuery, {}, { next: { tags: ['navigation'] } });
+    return await client.fetch(navigationQuery, {}, sanityFetchOptions(['navigation']));
   } catch (error) {
     console.error("Error fetching navigation:", error);
     return null;

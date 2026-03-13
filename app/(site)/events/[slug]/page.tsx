@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { client } from '@/sanity/lib/client'
+import { client, sanityFetchOptions } from '@/sanity/lib/client'
 import { eventBySlugQuery, eventSlugsQuery } from '@/sanity/lib/queries'
 import { EventDocument } from '@/lib/sanity/types'
 import { EventPageClient } from '@/components/events/EventPageClient'
@@ -31,7 +31,7 @@ async function getEvent(slug: string): Promise<EventDocument | null> {
     return await client.fetch(
       eventBySlugQuery,
       { slug },
-      { next: { tags: ['event'] } }
+      sanityFetchOptions(['event'])
     )
   } catch (error) {
     console.error('Failed to fetch event:', error)

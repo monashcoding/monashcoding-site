@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 
 // Static generation - revalidated via webhook on Sanity publish
 export const revalidate = false
-import { client } from '@/sanity/lib/client'
+import { client, sanityFetchOptions } from '@/sanity/lib/client'
 import { committeePageQuery, activeCommitteeMembersQuery, committeeTeamSummaryQuery } from '@/sanity/lib/queries'
 import { CommitteeMember, CommitteePageData, TeamSlug } from '@/lib/sanity/types'
 import { sortMembers } from '@/lib/committee-utils'
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 async function getCommitteePageData(): Promise<CommitteePageData | null> {
   try {
-    return await client.fetch(committeePageQuery, {}, { next: { tags: ['committeePage'] } })
+    return await client.fetch(committeePageQuery, {}, sanityFetchOptions(['committeePage']))
   } catch (error) {
     console.error('Failed to fetch committee page data:', error)
     return null
@@ -24,7 +24,7 @@ async function getCommitteePageData(): Promise<CommitteePageData | null> {
 
 async function getInitialMembers(): Promise<CommitteeMember[]> {
   try {
-    const members = await client.fetch(activeCommitteeMembersQuery, {}, { next: { tags: ['committeeMember'] } })
+    const members = await client.fetch(activeCommitteeMembersQuery, {}, sanityFetchOptions(['committeeMember']))
     return sortMembers(members || [])
   } catch (error) {
     console.error('Failed to fetch initial committee members:', error)
@@ -34,7 +34,7 @@ async function getInitialMembers(): Promise<CommitteeMember[]> {
 
 async function getTeamSummary(): Promise<{ teams: TeamSlug[]; hasAlumni: boolean }> {
   try {
-    return await client.fetch(committeeTeamSummaryQuery, {}, { next: { tags: ['committeeMember'] } })
+    return await client.fetch(committeeTeamSummaryQuery, {}, sanityFetchOptions(['committeeMember']))
   } catch (error) {
     console.error('Failed to fetch team summary:', error)
     return { teams: [], hasAlumni: false }
