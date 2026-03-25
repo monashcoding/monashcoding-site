@@ -123,6 +123,7 @@ export const event = defineType({
         list: [
           { title: 'Event', value: 'event' },
           { title: 'Hackathon', value: 'hackathon' },
+          { title: 'Industry', value: 'industry' },
           { title: 'Social', value: 'social' },
           { title: 'Recruitment', value: 'recruitment' },
         ],
