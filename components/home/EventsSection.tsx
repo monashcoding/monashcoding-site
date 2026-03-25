@@ -158,9 +158,11 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
       return [...upcoming, ...past]
     }
 
-    // Category tabs exclude past events
-    const upcoming = events.filter((e) => !isPastEvent(e))
-    return upcoming.filter((e) => e.tag === activeTag)
+    // Category tabs: upcoming first, then past (same as "all" but filtered by tag)
+    const tagged = events.filter((e) => e.tag === activeTag)
+    const upcoming = tagged.filter((e) => !isPastEvent(e))
+    const past = tagged.filter(isPastEvent).sort(sortByDateDesc)
+    return [...upcoming, ...past]
   }, [activeTag, events, isPastEvent])
 
   const isArchivesView = activeTag === 'archives'
