@@ -16,13 +16,13 @@ export const client = createClient({
   projectId,
   dataset,
   apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || process.env.SANITY_STUDIO_API_VERSION || '2024-01-18',
-  useCdn: !isDev,
+  useCdn: false,
 })
 
 /**
  * Returns Next.js fetch options for Sanity queries.
  * - In dev: no caching, so fresh data is always fetched.
- * - In prod: tag-based revalidation via webhook.
+ * - In prod: tag-based revalidation via webhook, with fresh Sanity API reads after invalidation.
  */
 export function sanityFetchOptions(tags: string[]): { next: { tags: string[] } } | { cache: 'no-store' } {
   if (isDev) return { cache: 'no-store' }
