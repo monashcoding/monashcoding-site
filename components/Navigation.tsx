@@ -7,7 +7,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { NavigationData, PageVisibility, SocialLink } from "@/lib/sanity/types";
 import { PLATFORM_ICONS, PLATFORM_LABELS } from "@/lib/socialPlatforms";
-import { JOB_BOARD_URL, MEMBER_SIGNUP_URL } from "@/lib/links";
+import { JOB_BOARD_URL, MEMBER_SIGNUP_URL, MONMAP_URL } from "@/lib/links";
 import NavPreviewCard from "./navigation/NavPreviewCard";
 import { getPreviewConfig, DEFAULT_PREVIEW_HREF } from "./navigation/navPreviewConfig";
 
@@ -48,6 +48,31 @@ interface NavLinkProps {
   onClick: () => void;
   onHoverChange: (href: string | null) => void;
 }
+
+interface ExternalNavLink {
+  label: string;
+  href: string;
+  isNew?: boolean;
+  buttonClassName: string;
+  tagClassName?: string;
+}
+
+const externalNavLinks: ExternalNavLink[] = [
+  {
+    label: "Job Board",
+    href: JOB_BOARD_URL,
+    buttonClassName:
+      "border border-accent bg-accent text-accent-foreground hover:border-[#e6c800] hover:bg-[#e6c800]",
+  },
+  {
+    label: "MonMap",
+    href: MONMAP_URL,
+    isNew: true,
+    buttonClassName:
+      "border border-accent bg-accent text-accent-foreground hover:border-[#e6c800] hover:bg-[#e6c800]",
+    tagClassName: "bg-background text-white",
+  },
+];
 
 function NavLink({ item, onClick, onHoverChange }: NavLinkProps) {
   const [isHovered, setIsHovered] = useState(false);
@@ -222,17 +247,29 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
             Become a Member
           </motion.a>
 
-          <motion.a
-            href={JOB_BOARD_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden lg:inline-flex items-center gap-2 rounded-md bg-[#2a2a52] px-4 py-2 text-sm font-semibold uppercase tracking-[0.07em] text-[#d2d2ff]"
-            animate={{ x: 0 }}
-            whileHover={{ y: -2, scale: 1.02 }}
-            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-          >
-            Job Board
-          </motion.a>
+          {externalNavLinks.map((link) => (
+            <motion.a
+              key={`header-${link.href}`}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`hidden lg:inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold uppercase tracking-[0.07em] transition-colors duration-300 ${link.buttonClassName}`}
+              animate={{ x: 0 }}
+              whileHover={{ y: -2, scale: 1.02 }}
+              transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <span>{link.label}</span>
+              {link.isNew && (
+                <span
+                  className={`rounded-sm px-1.5 py-0.5 text-[0.62rem] font-bold leading-none tracking-[0.08em] ${
+                    link.tagClassName || "bg-accent text-accent-foreground"
+                  }`}
+                >
+                  New
+                </span>
+              )}
+            </motion.a>
+          ))}
 
           <AnimatePresence initial={false} mode="popLayout">
             {showMemberCta && (
@@ -315,14 +352,40 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
               transition={{ duration: 0.4, delay: 0.2 }}
             >
               {/* Top label */}
-              <motion.span
-                className="text-xs font-semibold tracking-[0.15em] uppercase text-white/50"
+              <motion.div
+                className="flex flex-col gap-4 lg:block"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.3 }}
               >
-                Navigation
-              </motion.span>
+                <span className="text-xs font-semibold tracking-[0.15em] uppercase text-white/50">
+                  Navigation
+                </span>
+
+                <div className="flex flex-wrap gap-2 lg:hidden">
+                  {externalNavLinks.map((link) => (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`inline-flex h-10 items-center gap-2 rounded-md px-3 text-xs font-semibold uppercase tracking-[0.08em] no-underline transition-colors duration-300 ${link.buttonClassName}`}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <span>{link.label}</span>
+                      {link.isNew && (
+                        <span
+                          className={`rounded-sm px-1.5 py-0.5 text-[0.6rem] font-bold leading-none tracking-[0.08em] ${
+                            link.tagClassName || "bg-accent text-accent-foreground"
+                          }`}
+                        >
+                          New
+                        </span>
+                      )}
+                    </a>
+                  ))}
+                </div>
+              </motion.div>
 
               {/* Main navigation links */}
               <div className="flex-1 flex flex-col justify-center">
