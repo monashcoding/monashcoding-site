@@ -1,0 +1,16 @@
+# Keep the build context small and avoid leaking local state into the image.
+.git
+.github
+node_modules
+.next
+npm-debug.log*
+.env
+.env.*
+!.env.example
+.husky
+.vscode
+.idea
+*.md
+docs
+Dockerfile
+.dockerignore
