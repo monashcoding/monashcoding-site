@@ -117,6 +117,28 @@ export const committeeMember = defineType({
       description: 'First day at MAC',
       type: 'string',
     }),
+    defineField({
+      name: 'notionId',
+      title: 'Notion Page ID',
+      description: 'Set by the Notion sync job',
+      type: 'string',
+      readOnly: true,
+      hidden: true,
+    }),
+    defineField({
+      name: 'notionEditedAt',
+      title: 'Notion Last Edited',
+      type: 'string',
+      readOnly: true,
+      hidden: true,
+    }),
+    defineField({
+      name: 'notionPhoto',
+      title: 'Notion Photo Key',
+      type: 'string',
+      readOnly: true,
+      hidden: true,
+    }),
   ],
   orderings: [
     {
