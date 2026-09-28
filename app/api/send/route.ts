@@ -1,17 +1,7 @@
 import { EmailTemplate } from '@/components/contact/EmailTemplate';
-import { Resend } from 'resend';
+import { getResend } from '@/lib/resend';
 import { client } from '@/sanity/lib/client';
 import { groq } from 'next-sanity';
-
-// Validate RESEND_API_KEY is configured
-const apiKey = process.env.RESEND_API_KEY;
-if (!apiKey || apiKey.trim().length === 0) {
-  throw new Error(
-    'RESEND_API_KEY is not configured. Please set the RESEND_API_KEY environment variable.'
-  );
-}
-
-const resend = new Resend(apiKey);
 
 const FALLBACK_FROM = 'noreply@monashcoding.com';
 const FALLBACK_TO = 'projects@monashcoding.com';
@@ -86,7 +76,7 @@ export async function POST(req: Request) {
         );
       }
 
-      const { data, error } = await resend.emails.send({
+      const { data, error } = await getResend().emails.send({
         from: 'noreply@monashcoding.com',
         to: 'sponsorship@monashcoding.com',
         replyTo: (email as string).trim(),
@@ -151,7 +141,7 @@ export async function POST(req: Request) {
         ? subject
         : 'New Message from Monash Coding Site';
 
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResend().emails.send({
       from: fromEmail,
       to: toEmail,
       replyTo: (emailAddress as string).trim(), // User's email will be set as reply-to

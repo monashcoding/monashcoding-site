@@ -1,13 +1,4 @@
-import { Resend } from 'resend';
-
-const apiKey = process.env.RESEND_API_KEY;
-if (!apiKey || apiKey.trim().length === 0) {
-  throw new Error(
-    'RESEND_API_KEY is not configured. Please set the RESEND_API_KEY environment variable.'
-  );
-}
-
-const resend = new Resend(apiKey);
+import { getResend } from '@/lib/resend';
 
 const segmentCache = new Map<string, string>();
 
@@ -47,7 +38,7 @@ async function findOrCreateSegment(slug: string): Promise<string> {
   if (cached) return cached;
 
   const { data: listData } = await withRetry(async () => {
-    const res = await resend.segments.list();
+    const res = await getResend().segments.list();
     if (isResendRateLimited(res.error)) throw new Error('rate_limit');
     if (res.error) throw new Error(`Failed to list segments: ${res.error.message}`);
     return res;
@@ -60,7 +51,7 @@ async function findOrCreateSegment(slug: string): Promise<string> {
   }
 
   const { data: createData } = await withRetry(async () => {
-    const res = await resend.segments.create({ name: segmentName });
+    const res = await getResend().segments.create({ name: segmentName });
     if (isResendRateLimited(res.error)) throw new Error('rate_limit');
     if (res.error) throw new Error(`Failed to create segment: ${res.error.message}`);
     return res;
@@ -103,7 +94,7 @@ export async function POST(req: Request) {
     const segmentId = await findOrCreateSegment(eventSlug.trim());
 
     const { data } = await withRetry(async () => {
-      const res = await resend.contacts.create({
+      const res = await getResend().contacts.create({
         email: (email as string).trim(),
         audienceId: segmentId,
         unsubscribed: false,
