@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 import withBundleAnalyzer from "@next/bundle-analyzer";
 
 const nextConfig: NextConfig = {
+  // Emit a self-contained server bundle (.next/standalone/server.js) so the
+  // Docker runtime image doesn't need node_modules or the package manager.
+  output: "standalone",
   images: {
     remotePatterns: [
       {

@@ -1,0 +1,98 @@
+name: Build & publish image
+
+# Build the site's Docker image OFF the Oracle box (GitHub's runners do the
+# heavy 2-4GB build) and push it to GHCR. Dokploy then just *pulls* the
+# prebuilt image and runs it — so the apps sharing the Oracle box don't fight
+# over RAM/CPU during builds. See docs/deploy.md.
+
+on:
+  push:
+    branches: [main]
+    # Only rebuild when something that affects the image changes.
+    paths:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "sanity/**"
+      - "public/**"
+      - "sanity.config.ts"
+      - "sanity.cli.ts"
+      - "next.config.ts"
+      - "postcss.config.mjs"
+      - "tailwind.config.ts"
+      - "tsconfig.json"
+      - "Dockerfile"
+      - ".dockerignore"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch: {} # allow manual "Run workflow"
+
+# NOTE: the deploy image is ghcr.io/monashcoding/monashcoding:latest, which is
+# deliberately NOT the repo name (monashcoding-site). It's set explicitly in the
+# metadata step below; the first push creates that GHCR package and links it here.
+
+jobs:
+  build:
+    # Native ARM64 runner — Oracle Ampere is arm64, and this is free on
+    # public repos. Avoids ~5x slower QEMU cross-compilation.
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      packages: write # push to GHCR
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Image metadata (tags)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          # Deploy target is ghcr.io/monashcoding/monashcoding:latest, which
+          # differs from the repo name (monashcoding-site), so set it explicitly.
+          images: ghcr.io/monashcoding/monashcoding
+          tags: |
+            type=raw,value=latest
+            type=sha,format=long
+
+      - name: Build & push (linux/arm64)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          # NEXT_PUBLIC_* are inlined into the client bundle at build time and
+          # the Sanity Studio config reads them at module load. They're all
+          # browser-public values (a Sanity project id/dataset are not secret),
+          # so configure them as repo *Variables* (Settings → Secrets and
+          # variables → Actions → Variables). Fallbacks keep the build working
+          # before you set them.
+          build-args: |
+            NEXT_PUBLIC_SANITY_DATASET=${{ vars.NEXT_PUBLIC_SANITY_DATASET || 'production' }}
+            NEXT_PUBLIC_SANITY_API_VERSION=${{ vars.NEXT_PUBLIC_SANITY_API_VERSION || '2024-01-18' }}
+            NEXT_PUBLIC_SANITY_PROJECT_ID=${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+
+      # Tell Dokploy to pull the new image and redeploy. Create the app in
+      # Dokploy with provider "Docker" pointing at
+      # ghcr.io/monashcoding/monashcoding:latest, then copy its deploy webhook
+      # URL into the repo secret DOKPLOY_DEPLOY_WEBHOOK. Skipped automatically
+      # until that secret exists.
+      - name: Trigger Dokploy redeploy
+        env:
+          # Secrets can't be used directly in `if:`, so hoist into env first.
+          DOKPLOY_DEPLOY_WEBHOOK: ${{ secrets.DOKPLOY_DEPLOY_WEBHOOK }}
+        if: ${{ env.DOKPLOY_DEPLOY_WEBHOOK != '' }}
+        run: curl -fsSL -X POST "$DOKPLOY_DEPLOY_WEBHOOK"
