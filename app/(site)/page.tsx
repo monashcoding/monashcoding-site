@@ -5,7 +5,7 @@ export const revalidate = false
 import { heroQuery, homepageQuery, upcomingEventsQuery, navigationQuery, sponsorPageQuery } from '@/sanity/lib/queries'
 import { HeroData, HomepageData, EventDocument, NavigationData, SponsorPageData } from '@/lib/sanity/types'
 import { getSocialLinksData } from '@/lib/sanity/fetchers'
-import { Hero } from '@/components/hero/Hero'
+import { Hero, type HeroEvent, type HeroMonth } from '@/components/hero/Hero'
 import { HomeContent } from '@/components/HomeContent'
 import { QuickLinksSection } from '@/components/home/QuickLinksSection'
 import { fetchYouTubeVideos } from '@/lib/youtube/feed'
@@ -55,6 +55,43 @@ async function getSponsorPageData(): Promise<SponsorPageData | null> {
   }
 }
 
+const MELBOURNE_MONTH = new Intl.DateTimeFormat('en-AU', { timeZone: 'Australia/Melbourne', year: 'numeric', month: '2-digit' })
+const MONTH_LABEL = new Intl.DateTimeFormat('en-AU', { timeZone: 'UTC', month: 'long', year: 'numeric' })
+const MONTH_SHORT = new Intl.DateTimeFormat('en-AU', { timeZone: 'UTC', month: 'short' })
+
+function monthKeyOf(date: Date): string {
+  const parts = MELBOURNE_MONTH.formatToParts(date)
+  const year = parts.find((part) => part.type === 'year')?.value
+  const month = parts.find((part) => part.type === 'month')?.value
+  return `${year}-${month}`
+}
+
+function buildEventTimeline(events: EventDocument[]): { events: HeroEvent[]; months: HeroMonth[] } {
+  const now = Date.now()
+  const withCover = events.filter((event) => event.image?.asset?.url)
+  const keys = [monthKeyOf(new Date(now)), ...withCover.map((event) => monthKeyOf(new Date(event.date)))]
+  const lastKey = keys.sort().at(-1)!
+  const [lastYear, lastMonth] = lastKey.split('-').map(Number)
+  const months: HeroMonth[] = Array.from({ length: 12 }, (_, i) => {
+    const date = new Date(Date.UTC(lastYear, lastMonth - 1 - i, 1))
+    return {
+      key: `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`,
+      label: MONTH_LABEL.format(date),
+      short: MONTH_SHORT.format(date),
+    }
+  })
+  const inWindow = new Set(months.map((month) => month.key))
+  const timelineEvents = withCover
+    .map((event) => ({
+      event,
+      monthKey: monthKeyOf(new Date(event.date)),
+      upcoming: Date.parse(event.endDate ?? event.date) >= now,
+    }))
+    .filter((entry) => inWindow.has(entry.monthKey))
+    .sort((a, b) => Date.parse(b.event.date) - Date.parse(a.event.date))
+  return { events: timelineEvents, months }
+}
+
 export default async function Home() {
   const [heroData, homepageData, events, socialLinksData, navigationData, youtubeVideos, sponsorPageData] = await Promise.all([
     getHeroData(),
@@ -68,7 +105,7 @@ export default async function Home() {
 
   return (
     <main className="bg-background">
-      <Hero data={heroData} />
+      <Hero data={heroData} timeline={buildEventTimeline(events)} />
       <QuickLinksSection data={navigationData} />
       <HomeContent
         sections={homepageData?.sections}

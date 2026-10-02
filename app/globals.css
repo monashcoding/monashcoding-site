@@ -169,6 +169,22 @@ html {
   animation: fade-in-up 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* Hero app rail: the active tab's progress bar drives the auto-advance */
+@keyframes hero-rail {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.hero-rail-progress {
+  animation-name: hero-rail;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .quick-link-card,
   .quick-link-title {
