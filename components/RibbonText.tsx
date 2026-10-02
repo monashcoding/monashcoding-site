@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { getRibbonPoints, getRibbonThickness, RibbonPoint } from '@/components/RibbonContext'
 
 // Generate SVG path from ribbon points (matches WebGL shader taper logic)
@@ -60,7 +60,7 @@ function generateRibbonPath(points: RibbonPoint[], thickness: number): string {
 // Shared hook for ribbon clip path
 function useRibbonClipPath(containerRef: React.RefObject<HTMLElement | null>) {
   const [clipPath, setClipPath] = useState<string>('')
-  const clipIdRef = useRef(`ribbon-clip-${Math.random().toString(36).slice(2)}`)
+  const clipId = `ribbon-clip-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
 
   useEffect(() => {
     let animationId: number
@@ -89,7 +89,7 @@ function useRibbonClipPath(containerRef: React.RefObject<HTMLElement | null>) {
     return () => cancelAnimationFrame(animationId)
   }, [containerRef])
 
-  return { clipPath, clipId: clipIdRef.current }
+  return { clipPath, clipId }
 }
 
 // Inline text that changes color where the ribbon overlaps
