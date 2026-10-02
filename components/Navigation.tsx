@@ -1,13 +1,16 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import Image from "next/image";
+import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
 import { NavigationData, PageVisibility, SocialLink } from "@/lib/sanity/types";
 import { PLATFORM_ICONS, PLATFORM_LABELS } from "@/lib/socialPlatforms";
-import { JOB_BOARD_URL, MEMBER_SIGNUP_URL, MONMAP_URL } from "@/lib/links";
+import { MEMBER_SIGNUP_URL } from "@/lib/links";
+import { AppLauncher } from "./launcher/AppLauncher";
+
+const MacLogo3D = dynamic(() => import("./MacLogo3D"), { ssr: false });
 import NavPreviewCard from "./navigation/NavPreviewCard";
 import { getPreviewConfig, DEFAULT_PREVIEW_HREF } from "./navigation/navPreviewConfig";
 
@@ -43,36 +46,44 @@ interface NavigationProps {
   socialLinks: SocialLink[] | null;
 }
 
+const MENU_LINES = [
+  {
+    top: 0,
+    delay: 0,
+    variants: {
+      closed: { y: 0, rotate: 0, scaleX: 1, opacity: 1 },
+      hover: { y: 0, rotate: 0, scaleX: 0.55, opacity: 1 },
+      open: { y: 6.25, rotate: 45, scaleX: 1, opacity: 1 },
+      openHover: { y: 6.25, rotate: 135, scaleX: 1, opacity: 1 },
+    },
+  },
+  {
+    top: 6.25,
+    delay: 0.05,
+    variants: {
+      closed: { scaleX: 0.6, opacity: 1 },
+      hover: { scaleX: 1, opacity: 1 },
+      open: { scaleX: 0, opacity: 0 },
+      openHover: { scaleX: 0, opacity: 0 },
+    },
+  },
+  {
+    top: 12.5,
+    delay: 0.1,
+    variants: {
+      closed: { y: 0, rotate: 0, scaleX: 0.8, opacity: 1 },
+      hover: { y: 0, rotate: 0, scaleX: 0.4, opacity: 1 },
+      open: { y: -6.25, rotate: -45, scaleX: 1, opacity: 1 },
+      openHover: { y: -6.25, rotate: 45, scaleX: 1, opacity: 1 },
+    },
+  },
+];
+
 interface NavLinkProps {
   item: NavItem;
   onClick: () => void;
   onHoverChange: (href: string | null) => void;
 }
-
-interface ExternalNavLink {
-  label: string;
-  href: string;
-  isNew?: boolean;
-  buttonClassName: string;
-  tagClassName?: string;
-}
-
-const externalNavLinks: ExternalNavLink[] = [
-  {
-    label: "Job Board",
-    href: JOB_BOARD_URL,
-    buttonClassName:
-      "border border-accent bg-accent text-accent-foreground hover:border-[#e6c800] hover:bg-[#e6c800]",
-  },
-  {
-    label: "MonMap",
-    href: MONMAP_URL,
-    isNew: true,
-    buttonClassName:
-      "border border-accent bg-accent text-accent-foreground hover:border-[#e6c800] hover:bg-[#e6c800]",
-    tagClassName: "bg-background text-white",
-  },
-];
 
 function NavLink({ item, onClick, onHoverChange }: NavLinkProps) {
   const [isHovered, setIsHovered] = useState(false);
@@ -131,7 +142,8 @@ function NavLink({ item, onClick, onHoverChange }: NavLinkProps) {
 
 export default function Navigation({ data, socialLinks }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isPastHero, setIsPastHero] = useState(false);
+  const [isLauncherOpen, setIsLauncherOpen] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [isDesktop, setIsDesktop] = useState(false);
   const pathname = usePathname();
@@ -176,19 +188,18 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
   }, [navItems, router]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      // Consider "past hero" when scrolled more than 80% of viewport height
-      setIsPastHero(window.scrollY > window.innerHeight * 0.8);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    handleScroll(); // Check initial state
+    const handleScroll = () => setHasScrolled(window.scrollY > 8);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Hide navbar on homepage until scrolled past hero
-  const showNavbar = !isHomePage || isPastHero || isOpen;
-  const showMemberCta = !isHomePage || isPastHero;
+  const showNavBacking = !isHomePage || hasScrolled || isOpen || isLauncherOpen;
+
+  const handleLauncherChange = useCallback((open: boolean) => {
+    setIsLauncherOpen(open);
+    if (open) setIsOpen(false);
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -205,37 +216,32 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
     <>
       {/* Fixed header bar */}
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center gap-3 pl-4 pr-6 py-4 lg:pl-10 lg:pr-12 lg:py-6 pointer-events-none">
-        {/* Logo - animates in/out */}
-        <motion.div
-          className="relative z-50 shrink-0 overflow-hidden"
-          initial={false}
-          animate={{
-            width: isDesktop ? 48 : showNavbar ? 48 : 0,
-            x: showNavbar ? 0 : isDesktop ? -80 : -20,
-            opacity: showNavbar ? 1 : 0,
-          }}
-          transition={{ duration: isDesktop ? 0.5 : 0.35, ease: [0.76, 0, 0.24, 1] }}
-        >
+        <div className="relative z-50 shrink-0">
           <Link
             href="/"
-            className={`no-underline flex items-center ${showNavbar ? "pointer-events-auto" : "pointer-events-none"}`}
+            aria-label="Monash Association of Coding home"
+            className="relative grid size-14 place-items-center no-underline pointer-events-auto lg:size-[4.5rem]"
           >
-            <Image
-              src="/logo/logo.jpg"
-              alt="MAC Logo"
-              width={48}
-              height={48}
-              className="w-12 h-12 rounded-full object-cover"
-              priority
+            <span
+              aria-hidden
+              className={`pointer-events-none absolute -inset-1.5 rounded-full border border-white/10 bg-[#0c0c0c] transition-opacity duration-300 lg:-inset-2 ${
+                isOpen ? "opacity-0" : "opacity-100"
+              }`}
             />
+            <MacLogo3D className="relative h-12 w-9 lg:h-16 lg:w-12" />
           </Link>
-        </motion.div>
+        </div>
 
         <motion.div
           layout
-          className="relative z-50 flex flex-1 items-center justify-end gap-3 pointer-events-auto"
+          className="relative z-50 flex flex-1 items-center justify-end pointer-events-auto"
           transition={{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }}
         >
+          <div
+            className={`flex min-w-0 flex-1 items-center gap-2 rounded-[14px] border p-1.5 transition-[background-color,border-color,backdrop-filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] lg:flex-none lg:gap-2.5 ${
+              showNavBacking ? "border-white/10 bg-[#0c0c0c]/90 backdrop-blur-sm" : "border-transparent bg-transparent"
+            }`}
+          >
           <motion.a
             layout
             href={MEMBER_SIGNUP_URL}
@@ -244,84 +250,71 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
             className="lg:hidden min-w-0 flex-1 flex items-center justify-center rounded-md bg-accent px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.09em] text-accent-foreground truncate h-10.5"
             transition={{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }}
           >
+            <span className="sm:hidden">Join MAC</span>
+            <span className="hidden sm:inline">Become a Member</span>
+          </motion.a>
+
+          <motion.a
+            key="header-member-cta"
+            layout
+            href={MEMBER_SIGNUP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden lg:inline-flex items-center rounded-md bg-accent px-5 py-2 text-sm font-semibold uppercase tracking-[0.08em] text-accent-foreground"
+            initial={{ y: -24, opacity: 0, scale: 0.97 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            whileHover={{ y: -2, scale: 1.02 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+          >
             Become a Member
           </motion.a>
 
-          {externalNavLinks.map((link) => (
-            <motion.a
-              key={`header-${link.href}`}
-              href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`hidden lg:inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold uppercase tracking-[0.07em] transition-colors duration-300 ${link.buttonClassName}`}
-              animate={{ x: 0 }}
-              whileHover={{ y: -2, scale: 1.02 }}
-              transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <span>{link.label}</span>
-              {link.isNew && (
-                <span
-                  className={`rounded-sm px-1.5 py-0.5 text-[0.62rem] font-bold leading-none tracking-[0.08em] ${
-                    link.tagClassName || "bg-accent text-accent-foreground"
-                  }`}
-                >
-                  New
-                </span>
-              )}
-            </motion.a>
-          ))}
+          <AppLauncher open={isLauncherOpen} onOpenChange={handleLauncherChange} />
 
-          <AnimatePresence initial={false} mode="popLayout">
-            {showMemberCta && (
-              <motion.a
-                key="header-member-cta"
-                layout
-                href={MEMBER_SIGNUP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden lg:inline-flex items-center rounded-md bg-accent px-5 py-2 text-sm font-semibold uppercase tracking-[0.08em] text-accent-foreground"
-                initial={{ y: -24, opacity: 0, scale: 0.97 }}
-                animate={{ y: 0, opacity: 1, scale: 1 }}
-                exit={{ y: -24, opacity: 0, scale: 0.97 }}
-                whileHover={{ y: -2, scale: 1.02 }}
-                transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-              >
-                Become a Member
-              </motion.a>
-            )}
-          </AnimatePresence>
-
-          {/* Menu Button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className={`relative shrink-0 flex items-center gap-3 py-2.5 px-5 rounded-md border cursor-pointer transition-all duration-300 h-10.5 lg:h-auto lg:py-2 ${
+          <motion.button
+            type="button"
+            onClick={() => {
+              setIsLauncherOpen(false);
+              setIsOpen(!isOpen);
+            }}
+            aria-label={isOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isOpen}
+            initial={false}
+            animate={isOpen ? "open" : "closed"}
+            whileHover={isOpen ? "openHover" : "hover"}
+            className={`relative shrink-0 flex items-center gap-3 py-2.5 px-3 sm:px-5 rounded-md border cursor-pointer transition-colors duration-300 h-10.5 lg:h-auto lg:py-2 ${
               isOpen
                 ? "bg-accent border-accent text-accent-foreground hover:bg-[#e6c800]"
-                : "bg-[#2a2a2e] border-white/20 text-white hover:border-white/40"
+                : "bg-white/[0.06] border-white/15 text-white hover:border-white/40"
             }`}
           >
-            <span className="text-sm font-medium tracking-[0.05em] uppercase">
-              {isOpen ? "Close" : "Menu"}
+            <span className="relative hidden h-5 w-[3.4rem] overflow-hidden text-sm font-medium uppercase leading-5 tracking-[0.05em] sm:block">
+              <AnimatePresence initial={false} mode="popLayout">
+                <motion.span
+                  key={isOpen ? "close" : "menu"}
+                  className="absolute inset-0 text-left"
+                  initial={{ y: "110%" }}
+                  animate={{ y: "0%" }}
+                  exit={{ y: "-110%" }}
+                  transition={{ duration: 0.45, ease: [0.76, 0, 0.24, 1] }}
+                >
+                  {isOpen ? "Close" : "Menu"}
+                </motion.span>
+              </AnimatePresence>
             </span>
-            <div className="relative w-5 h-5 flex items-center justify-center">
-              <motion.span
-                className="absolute w-5 h-0.5 rounded-sm bg-current"
-                animate={{
-                  rotate: isOpen ? 45 : 0,
-                  y: isOpen ? 0 : -4,
-                }}
-                transition={{ duration: 0.3 }}
-              />
-              <motion.span
-                className="absolute w-5 h-0.5 rounded-sm bg-current"
-                animate={{
-                  rotate: isOpen ? -45 : 0,
-                  y: isOpen ? 0 : 4,
-                }}
-                transition={{ duration: 0.3 }}
-              />
-            </div>
-          </button>
+            <span aria-hidden className="relative block h-3.5 w-5">
+              {MENU_LINES.map((line) => (
+                <motion.span
+                  key={line.top}
+                  className="absolute left-0 h-[1.5px] w-full rounded-full bg-current"
+                  style={{ top: line.top }}
+                  variants={line.variants}
+                  transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay: line.delay }}
+                />
+              ))}
+            </span>
+          </motion.button>
+          </div>
         </motion.div>
       </header>
 
@@ -353,7 +346,7 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
             >
               {/* Top label */}
               <motion.div
-                className="flex flex-col gap-4 lg:block"
+                className="block"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.3 }}
@@ -362,29 +355,6 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
                   Navigation
                 </span>
 
-                <div className="flex flex-wrap gap-2 lg:hidden">
-                  {externalNavLinks.map((link) => (
-                    <a
-                      key={link.href}
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`inline-flex h-10 items-center gap-2 rounded-md px-3 text-xs font-semibold uppercase tracking-[0.08em] no-underline transition-colors duration-300 ${link.buttonClassName}`}
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <span>{link.label}</span>
-                      {link.isNew && (
-                        <span
-                          className={`rounded-sm px-1.5 py-0.5 text-[0.6rem] font-bold leading-none tracking-[0.08em] ${
-                            link.tagClassName || "bg-accent text-accent-foreground"
-                          }`}
-                        >
-                          New
-                        </span>
-                      )}
-                    </a>
-                  ))}
-                </div>
               </motion.div>
 
               {/* Main navigation links */}
