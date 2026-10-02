@@ -1,6 +1,6 @@
 import Navigation from "@/components/Navigation";
 import ClickSpark from "@/components/ClickSpark";
-import { RibbonProvider, GlobalRibbons } from "@/components/GlobalRibbons";
+import { RibbonProvider } from "@/components/GlobalRibbons";
 import { Footer } from "@/components/home/Footer";
 import { client, sanityFetchOptions } from "@/sanity/lib/client";
 import { navigationQuery } from "@/sanity/lib/queries";
@@ -28,7 +28,6 @@ export default async function SiteLayout({
 
   return (
     <RibbonProvider>
-      <GlobalRibbons />
       <ClickSpark
         sparkColor="#FFE330"
         sparkSize={10}
