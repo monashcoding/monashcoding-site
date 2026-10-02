@@ -1,12 +1,12 @@
 "use client";
 
-import { useMemo } from "react";
-import { motion } from "framer-motion";
+import { useMemo, type CSSProperties } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { NavigationData, NavItem, PageVisibility } from "@/lib/sanity/types";
 import { NAV_PREVIEWS } from "@/components/navigation/navPreviewConfig";
-import { urlFor } from "@/sanity/lib/image";
 
 const defaultNavItems: Omit<NavItem, "_key">[] = [
   { label: "About Us", href: "/about" },
@@ -20,14 +20,152 @@ const visibilityMap: Record<string, keyof PageVisibility> = {
   "/o-week": "oWeek",
 };
 
-// The parallelogram skews 40px over 500px height ≈ 4.6°
-const SLANT_DEG = 4.6;
+type Decoration = "orbit" | "zigzag" | "triangle" | "arches" | "dots";
+
+interface ShapeStyle {
+  fill: string;
+  ink: string;
+  radius: string;
+  height: string;
+  grow: number;
+  tilt: number;
+  decoration: Decoration;
+  mascot: string;
+  mascotSize: string;
+  textInset: string;
+}
+
+const SHAPES: Record<string, ShapeStyle> = {
+  "/about": {
+    fill: "#DAD4FF",
+    ink: "#C3B8FF",
+    radius: "64px",
+    height: "lg:h-[350px]",
+    grow: 1.2,
+    tilt: -2.5,
+    decoration: "orbit",
+    mascot: "/mascot/min-max.svg",
+    mascotSize: "w-24 sm:w-28 lg:w-32",
+    textInset: "pt-8",
+  },
+  "/team": {
+    fill: "#FFF0A3",
+    ink: "#FFE36B",
+    radius: "56px 190px 56px 56px",
+    height: "lg:h-[300px]",
+    grow: 1.1,
+    tilt: 2,
+    decoration: "zigzag",
+    mascot: "/mascot/min-mac-linked.svg",
+    mascotSize: "w-40 sm:w-44 lg:w-52",
+    textInset: "pt-8",
+  },
+  "/sponsor": {
+    fill: "#C8EED9",
+    ink: "#A5E2C2",
+    radius: "190px 56px 56px 56px",
+    height: "lg:h-[370px]",
+    grow: 1.05,
+    tilt: -1.5,
+    decoration: "triangle",
+    mascot: "/mascot/max-arms-up.svg",
+    mascotSize: "w-28 sm:w-32 lg:w-36",
+    textInset: "pt-16 lg:pt-24",
+  },
+  "/contact": {
+    fill: "#FFD3C2",
+    ink: "#FFBBA1",
+    radius: "999px 999px 56px 56px",
+    height: "lg:h-[330px]",
+    grow: 0.95,
+    tilt: 2.5,
+    decoration: "arches",
+    mascot: "/mascot/min-arms-up.svg",
+    mascotSize: "w-28 sm:w-32 lg:w-36",
+    textInset: "pt-20 lg:pt-24",
+  },
+  "/o-week": {
+    fill: "#CDE6FF",
+    ink: "#A9D3FF",
+    radius: "48px",
+    height: "lg:h-[290px]",
+    grow: 0.95,
+    tilt: -2,
+    decoration: "dots",
+    mascot: "/mascot/max-join-mac.svg",
+    mascotSize: "w-24 sm:w-28 lg:w-32",
+    textInset: "pt-8",
+  },
+};
+
+const FALLBACK_SHAPES = Object.values(SHAPES);
+
+function Decoration({ kind, color }: { kind: Decoration; color: string }) {
+  switch (kind) {
+    case "orbit":
+      return (
+        <svg aria-hidden viewBox="0 0 200 200" className="pointer-events-none absolute -right-20 -top-20 size-72">
+          <circle cx="100" cy="100" r="62" fill={color} />
+          <circle cx="100" cy="100" r="88" fill="none" stroke={color} strokeWidth="7" />
+        </svg>
+      );
+    case "zigzag":
+      return (
+        <svg
+          aria-hidden
+          viewBox="0 0 300 40"
+          preserveAspectRatio="none"
+          className="pointer-events-none absolute inset-x-0 top-[58%] h-14 w-full"
+        >
+          <polyline
+            points="-10,32 20,8 50,32 80,8 110,32 140,8 170,32 200,8 230,32 260,8 290,32 320,8"
+            fill="none"
+            stroke={color}
+            strokeWidth="9"
+            strokeLinejoin="round"
+            strokeLinecap="round"
+          />
+        </svg>
+      );
+    case "triangle":
+      return (
+        <svg aria-hidden viewBox="0 0 100 100" className="pointer-events-none absolute -bottom-14 left-[28%] size-56 -rotate-6">
+          <path
+            d="M50 8c4 0 7 2 9 6l36 66c4 7-1 14-9 14H14C6 94 1 87 5 80l36-66c2-4 5-6 9-6z"
+            fill={color}
+          />
+        </svg>
+      );
+    case "arches":
+      return (
+        <svg
+          aria-hidden
+          viewBox="0 0 200 100"
+          className="pointer-events-none absolute -bottom-1 left-1/2 h-40 w-[130%] -translate-x-1/2"
+        >
+          <path d="M18 100a82 82 0 0 1 164 0" fill="none" stroke={color} strokeWidth="13" />
+          <path d="M48 100a52 52 0 0 1 104 0" fill="none" stroke={color} strokeWidth="13" />
+          <path d="M78 100a22 22 0 0 1 44 0z" fill={color} />
+        </svg>
+      );
+    case "dots":
+      return (
+        <svg aria-hidden viewBox="0 0 48 48" className="pointer-events-none absolute right-7 top-7 size-24">
+          {Array.from({ length: 16 }, (_, i) => (
+            <circle key={i} cx={6 + (i % 4) * 12} cy={6 + Math.floor(i / 4) * 12} r="3.4" fill={color} />
+          ))}
+        </svg>
+      );
+  }
+}
 
 interface QuickLinksSectionProps {
   data: NavigationData | null;
 }
 
 export function QuickLinksSection({ data }: QuickLinksSectionProps) {
+  const prefersReducedMotion = useReducedMotion();
+
   const navItems = useMemo(() => {
     const raw = (data?.navItems?.filter((i) => i.href !== "/") ?? defaultNavItems) as NavItem[];
     const pageVisibility = data?.pageVisibility;
@@ -41,142 +179,63 @@ export function QuickLinksSection({ data }: QuickLinksSectionProps) {
   }, [data]);
 
   return (
-    <section className="relative w-full">
-
-
-      {/* Desktop: expandable parallelogram row */}
-      <div className="hidden lg:flex h-[500px] overflow-hidden">
+    <section
+      aria-label="Explore MAC"
+      className="relative z-20 -mb-12 w-full overflow-x-clip pb-6 pt-8 lg:-mb-16 lg:pb-6 lg:pt-12"
+    >
+      <ul className="-ml-4 flex w-[calc(100%+2rem)] flex-col lg:-ml-10 lg:w-[calc(100%+5rem)] lg:flex-row lg:items-end">
         {navItems.map((item, index) => {
-          const preview = NAV_PREVIEWS[item.href];
+          const shape = SHAPES[item.href] ?? FALLBACK_SHAPES[index % FALLBACK_SHAPES.length];
+          const description = NAV_PREVIEWS[item.href]?.description;
           const isFirst = index === 0;
           const isLast = index === navItems.length - 1;
-
-          const clipPath = isFirst
-            ? "polygon(0 0, calc(100% + 1px) 0, calc(100% - 40px) 100%, 0 100%)"
-            : isLast
-              ? "polygon(40px 0, 100% 0, 100% 100%, -1px 100%)"
-              : "polygon(40px 0, calc(100% + 1px) 0, calc(100% - 39px) 100%, -1px 100%)";
-
           return (
-            <motion.div
+            <motion.li
               key={item.href}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{
-                duration: 0.5,
-                delay: index * 0.06,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="quick-link-card group relative"
-              style={{
-                clipPath,
-                marginLeft: isFirst ? 0 : -41,
-                zIndex: index + 1,
-              }}
+              className={`relative h-[230px] sm:h-[240px] lg:min-w-0 lg:[flex:var(--grow)_1_0%] ${shape.height} ${index > 0 ? "-mt-6 lg:-ml-10 lg:mt-0" : ""}`}
+              style={{ "--grow": shape.grow, zIndex: index + 1 } as CSSProperties}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 60, rotate: 0 }}
+              whileInView={{ opacity: 1, y: 0, rotate: shape.tilt }}
+              whileHover={prefersReducedMotion ? undefined : { y: -10, transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } }}
+              viewport={{ once: true, amount: 0.25 }}
+              transition={{ duration: 0.7, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
             >
               <Link
                 href={item.href}
-                className="absolute inset-0 flex items-center overflow-hidden no-underline"
+                className={`group relative isolate flex h-full flex-col px-11 pb-7 no-underline outline-none focus-visible:ring-4 focus-visible:ring-accent lg:px-9 lg:pb-9 ${isFirst ? "lg:pl-[4.75rem]" : ""} ${shape.textInset}`}
+                style={{
+                  backgroundColor: shape.fill,
+                  borderRadius: shape.radius,
+                  clipPath: `inset(0 round ${shape.radius})`,
+                }}
               >
-                {/* Background image */}
-                {item.image?.asset && (
-                  <>
-                    <Image
-                      src={urlFor(item.image).width(800).height(500).fit("crop").url()}
-                      alt={item.label}
-                      fill
-                      className="object-cover"
-                    />
-                    {/* Dark overlay — fades out on hover */}
-                    <span
-                      aria-hidden
-                      className="pointer-events-none absolute inset-0 bg-[#1a1a1a]/80 transition-opacity duration-500 group-hover:opacity-0"
-                    />
-                    {/* Gradient overlay — fades in on hover */}
-                    <span
-                      aria-hidden
-                      className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100 bg-[linear-gradient(95deg,rgba(26,26,26,0.7)_40%,transparent_100%)]"
-                    />
-                  </>
-                )}
-                {/* Vertical slanted title — slides right on hover */}
-                <span
-                  className="quick-link-title absolute left-1/2 top-1/2 z-10 text-[clamp(1rem,1.2vw,1.5rem)] font-bold uppercase tracking-[0.2em] text-white/70 whitespace-nowrap transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:text-accent group-hover:translate-x-[60%]"
-                  style={{
-                    transform: `translate(-50%, -50%) rotate(${-90 + SLANT_DEG}deg)`,
-                  }}
-                >
+                <Decoration kind={shape.decoration} color={shape.ink} />
+
+                <span className="relative z-10 block text-[clamp(1.6rem,2.3vw,2.5rem)] font-extrabold leading-[1.02] tracking-[-0.03em] text-[#252525]">
                   {item.label}
                 </span>
-
-                {/* Expanded content — fades in on hover */}
-                <div className="relative z-10 flex flex-col justify-center h-full w-full px-12 opacity-0 translate-x-[-20px] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:opacity-100 group-hover:translate-x-0">
-                  <h3 className="text-2xl font-bold text-accent uppercase tracking-[0.08em] mb-3">
-                    {item.label}
-                  </h3>
-                  <p className="text-sm text-white/50 leading-relaxed max-w-[280px]">
-                    {preview?.description ?? ""}
-                  </p>
-                </div>
-              </Link>
-            </motion.div>
-          );
-        })}
-      </div>
-
-      {/* Mobile: 2-column grid */}
-      <div className="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-3 px-4 py-6">
-        {navItems.map((item, index) => {
-          const preview = NAV_PREVIEWS[item.href];
-          return (
-            <motion.div
-              key={item.href}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{
-                duration: 0.4,
-                delay: index * 0.05,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-            >
-              <Link
-                href={item.href}
-                className="group relative block rounded-xl border border-white/[0.08] p-5 no-underline overflow-hidden transition-colors duration-300 hover:border-accent/[0.3]"
-              >
-                {/* Background image */}
-                {item.image?.asset && (
-                  <>
-                    <Image
-                      src={urlFor(item.image).width(600).height(300).fit("crop").url()}
-                      alt={item.label}
-                      fill
-                      className="object-cover rounded-xl"
-                    />
-                    <span
-                      aria-hidden
-                      className="pointer-events-none absolute inset-0 bg-black/75 rounded-xl"
-                    />
-                  </>
+                {description && (
+                  <span className="relative z-10 mt-2 block max-w-[24ch] text-sm leading-snug text-[#252525]/70">
+                    {description}
+                  </span>
                 )}
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 bg-accent/0 transition-colors duration-300 group-hover:bg-accent/5"
+
+                <span className="relative z-10 mt-auto grid size-11 shrink-0 place-items-center rounded-full bg-[#252525] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-45 group-focus-visible:rotate-45">
+                  <ArrowUpRight size={20} strokeWidth={2.5} style={{ color: shape.fill }} />
+                </span>
+
+                <Image
+                  src={shape.mascot}
+                  alt=""
+                  width={160}
+                  height={160}
+                  className={`pointer-events-none absolute -bottom-5 right-8 z-10 h-auto transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-3 group-hover:-rotate-6 lg:-bottom-6 ${isLast ? "lg:right-[3.75rem]" : "lg:right-5"} ${shape.mascotSize}`}
                 />
-                <div className="relative z-10">
-                  <h3 className="text-sm font-bold uppercase tracking-[0.1em] text-white/90 transition-colors duration-300 group-hover:text-accent">
-                    {item.label}
-                  </h3>
-                  <p className="mt-2 text-xs text-white/60 leading-relaxed line-clamp-2">
-                    {preview?.description ?? ""}
-                  </p>
-                </div>
               </Link>
-            </motion.div>
+            </motion.li>
           );
         })}
-      </div>
+      </ul>
     </section>
   );
 }
