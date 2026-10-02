@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
 import { CommunitySectionData, SocialLink } from '@/lib/sanity/types'
 import type { YouTubeVideo } from '@/lib/youtube/feed'
@@ -191,48 +191,269 @@ export function SocialTiltCard({
 /*  YouTube video card                                                 */
 /* ------------------------------------------------------------------ */
 
+/* ------------------------------------------------------------------ */
+/*  Social receipts                                                    */
+/* ------------------------------------------------------------------ */
+
+const PLATFORM_PASTELS: Partial<Record<SocialPlatform, { fill: string; ink: string; action: string }>> = {
+  instagram: { fill: '#FFD6E7', ink: '#D62976', action: 'Follow us' },
+  discord: { fill: '#DCDDFF', ink: '#5865F2', action: 'Join the server' },
+  linkedin: { fill: '#D2E6FA', ink: '#0A66C2', action: 'Follow the page' },
+  youtube: { fill: '#FFD9D3', ink: '#E62117', action: 'Subscribe' },
+  facebook: { fill: '#D9E3FF', ink: '#1877F2', action: 'Follow the page' },
+  tiktok: { fill: '#C8F2EC', ink: '#111111', action: 'Follow us' },
+  github: { fill: '#E6E1F2', ink: '#24292F', action: 'See our code' },
+  twitter: { fill: '#DDE7EE', ink: '#111111', action: 'Follow us' },
+  website: { fill: '#FFF0A3', ink: '#252525', action: 'Visit' },
+  email: { fill: '#FFE6C7', ink: '#C5221F', action: 'Email us' },
+}
+
+function handleFrom(url?: string) {
+  if (!url) return null
+  try {
+    const path = new URL(url).pathname.split('/').filter(Boolean)[0]
+    return path && !path.startsWith('company') && !path.startsWith('channel') ? `@${path.replace(/^@/, '')}` : null
+  } catch {
+    return null
+  }
+}
+
+function Barcode({ seed, color, className = 'h-7' }: { seed: string; color: string; className?: string }) {
+  const bars: { x: number; w: number }[] = []
+  let x = 0
+  let hash = 7
+  for (let i = 0; i < 34; i++) {
+    hash = (hash * 31 + seed.charCodeAt(i % seed.length) + i) % 101
+    const width = 1 + (hash % 3)
+    if (i % 2 === 0) bars.push({ x, w: width })
+    x += width + 1 + (hash % 2)
+  }
+  return (
+    <svg viewBox={`0 0 ${x} 20`} preserveAspectRatio="none" className={`w-full ${className}`} aria-hidden>
+      {bars.map((bar) => (
+        <rect key={bar.x} x={bar.x} y="0" width={bar.w} height="20" fill={color} />
+      ))}
+    </svg>
+  )
+}
+
+const receiptListVariants = {
+  hidden: {},
+  shown: {},
+}
+
+const receiptVariants = {
+  hidden: { y: '-102%' },
+  shown: (order: number) => ({
+    y: '0%',
+    transition: { duration: 0.9, delay: 0.1 + order * 0.12, ease: [0.22, 1, 0.36, 1] as const },
+  }),
+}
+
+function ReceiptCard({
+  tile,
+  index,
+  count,
+  variant,
+}: {
+  tile: CommunityTile
+  index: number
+  count: number
+  variant: 'hanging' | 'grid'
+}) {
+  const palette = PLATFORM_PASTELS[tile.platform] ?? { fill: '#EDEDED', ink: '#252525', action: 'Follow us' }
+  const Icon = PLATFORM_ICONS[tile.platform]
+  const label = PLATFORM_LABELS[tile.platform] ?? tile.platform
+  const handle = tile.platform === 'instagram' || tile.platform === 'tiktok' ? handleFrom(tile.url) : null
+  const subtitle = tile.description || (handle ? `${palette.action} ${handle}` : palette.action)
+  const rank = Math.min(index, count - 1 - index)
+  const fromCenter = Math.floor((count - 1) / 2) - rank
+  const live = Boolean(tile.url && !tile.isPlaceholder)
+
+  const fullBody = (wrapperClass: string) => (
+    <span className={wrapperClass}>
+      {Icon && (
+        <Icon
+          size={120}
+          className="pointer-events-none absolute -right-7 top-[38%] -z-10 opacity-[0.12] transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-rotate-6"
+        />
+      )}
+      <span className="flex items-start justify-between">
+        <span className="grid size-10 place-items-center rounded-full bg-white" style={{ color: palette.ink }}>
+          {Icon ? <Icon size={20} /> : null}
+        </span>
+        <span className="grid size-8 place-items-center rounded-full bg-[#252525] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-45">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={palette.fill} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M7 17 17 7M8 7h9v9" />
+          </svg>
+        </span>
+      </span>
+      <span className="mt-4 block text-lg font-extrabold leading-tight tracking-[-0.02em] text-[#252525]">{label}</span>
+      <span className="mt-0.5 block text-xs leading-snug text-[#252525]/70">{subtitle}</span>
+      <span className="mt-auto block pt-5">
+        <span className="flex items-center justify-between border-t-2 border-dashed border-[#252525]/25 pt-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#252525]/60">
+          <span>No. {String(index + 1).padStart(2, '0')}</span>
+          <span>Free</span>
+        </span>
+        <span className="mt-2 block opacity-75">
+          <Barcode seed={tile.platform} color="#252525" />
+        </span>
+      </span>
+    </span>
+  )
+
+  const compactBody = (
+    <span className="flex h-full flex-col items-center xl:hidden">
+      <span className="grid size-9 shrink-0 place-items-center rounded-full bg-white" style={{ color: palette.ink }}>
+        {Icon ? <Icon size={18} /> : null}
+      </span>
+      <span
+        className="mt-2.5 text-xs font-extrabold uppercase leading-none tracking-[0.14em] text-[#252525]"
+        style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+      >
+        {label}
+      </span>
+      <span className="mt-auto block w-full border-t-2 border-dashed border-[#252525]/25 pt-1.5 opacity-75">
+        <Barcode seed={tile.platform} color="#252525" className="h-5" />
+      </span>
+    </span>
+  )
+
+  const slotShade = (
+    <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-3 bg-gradient-to-b from-black/20 to-transparent" />
+  )
+
+  const isGrid = variant === 'grid'
+  const className = isGrid
+    ? 'receipt-tear group relative isolate flex min-h-[14rem] flex-col overflow-hidden rounded-t-[18px] px-4 pb-7 pt-4 no-underline outline-none focus-visible:brightness-95'
+    : 'receipt-tear group relative isolate flex h-[calc(var(--h-compact)+1.25rem)] flex-col overflow-hidden px-2.5 pb-5 pt-3 no-underline outline-none focus-visible:brightness-95 xl:h-[var(--h-full)] xl:px-4 xl:pb-7 xl:pt-4'
+  const style = {
+    backgroundColor: palette.fill,
+    '--h-compact': `${12.5 + rank * 1.5}rem`,
+    '--h-full': `${15.5 + rank * 2.5}rem`,
+  } as React.CSSProperties
+  const body = isGrid ? (
+    fullBody('flex h-full flex-col')
+  ) : (
+    <>
+      {slotShade}
+      {compactBody}
+      {fullBody('hidden h-full flex-col xl:flex')}
+    </>
+  )
+  const inner = live ? (
+    <a href={tile.url} target="_blank" rel="noopener noreferrer" aria-label={`${label}: ${subtitle}`} className={className} style={style}>
+      {body}
+    </a>
+  ) : (
+    <div className={`${className} opacity-60`} style={style}>
+      {body}
+    </div>
+  )
+
+  if (isGrid) {
+    return (
+      <motion.li
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.5, delay: (index % 2) * 0.06, ease: [0.22, 1, 0.36, 1] }}
+      >
+        {inner}
+      </motion.li>
+    )
+  }
+
+  return (
+    <motion.li className="min-w-0 flex-1 xl:w-[9.5rem] xl:flex-none" variants={receiptVariants} custom={fromCenter}>
+      <motion.div whileHover={{ y: 10 }} transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}>
+        {inner}
+      </motion.div>
+    </motion.li>
+  )
+}
+
+function ReceiptStrip({
+  tiles,
+  reduced,
+  heading,
+  subheading,
+}: {
+  tiles: CommunityTile[]
+  reduced: boolean
+  heading: string
+  subheading: string
+}) {
+  return (
+    <>
+      <div className="relative z-0 mx-auto hidden w-[var(--slot-width,100%)] max-w-full overflow-hidden md:block">
+        <motion.ul
+          className="flex gap-2.5 px-3 pb-6 xl:justify-center xl:gap-3.5"
+          variants={receiptListVariants}
+          initial={reduced ? false : 'hidden'}
+          whileInView="shown"
+          viewport={{ once: true, amount: 0.05 }}
+        >
+          {tiles.map((tile, index) => (
+            <ReceiptCard key={tile._key} tile={tile} index={index} count={tiles.length} variant="hanging" />
+          ))}
+        </motion.ul>
+      </div>
+
+      <div className="mt-14 px-5 md:hidden">
+        <h2 className="text-[2.1rem] font-extrabold leading-none tracking-[-0.03em] text-white">{heading}</h2>
+        <p className="mt-2 text-sm text-white/65">{subheading}</p>
+        <ul className="mt-6 grid grid-cols-2 gap-3">
+          {tiles.map((tile, index) => (
+            <ReceiptCard key={tile._key} tile={tile} index={index} count={tiles.length} variant="grid" />
+          ))}
+        </ul>
+      </div>
+    </>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  Media cards                                                        */
+/* ------------------------------------------------------------------ */
+
+function StatChip({ children, fill }: { children: React.ReactNode; fill: string }) {
+  return (
+    <span
+      className="inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-[0.68rem] font-bold text-[#252525]"
+      style={{ backgroundColor: fill }}
+    >
+      {children}
+    </span>
+  )
+}
+
 function VideoCard({ video }: { video: YouTubeVideo }) {
   return (
     <a
       href={`https://www.youtube.com/watch?v=${video.videoId}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative block h-full overflow-hidden rounded-lg bg-[rgba(28,28,28,0.8)] no-underline"
+      className="receipt-tear group block h-full rounded-t-[26px] bg-[#1E1E1E] p-2 pb-5 no-underline transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5"
     >
-      <div className="relative w-full overflow-hidden" style={{ paddingBottom: '56.25%' }}>
-        <img
-          src={video.thumbnail}
-          alt={video.title}
-          className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-          loading="lazy"
-        />
-        {/* Play icon overlay */}
-        <div className="absolute inset-0 flex items-center justify-center bg-black/20 transition-colors duration-300 group-hover:bg-black/10">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 shadow-lg transition-transform duration-300 group-hover:scale-110">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="#252525" className="ml-0.5">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          </div>
-        </div>
-      </div>
-      <div className="flex items-center justify-between gap-3 px-4 py-3">
-        <div className="min-w-0">
-          <p className="truncate text-sm font-medium text-white/85">{video.title}</p>
-          <p className="mt-0.5 text-[0.65rem] font-semibold tracking-[0.14em] uppercase text-white/45">
-            {video.views > 0 ? `${video.views.toLocaleString()} views` : 'YouTube video'}
-          </p>
-        </div>
-        <span className="shrink-0 rounded-full bg-white/5 px-2.5 py-1 text-[0.62rem] font-semibold tracking-[0.12em] uppercase text-white/65">
-          {video.year}
+      <div className="relative aspect-video overflow-hidden rounded-[20px]">
+        <img src={video.thumbnail} alt={video.title} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+        <span className="absolute left-2.5 top-2.5">
+          <StatChip fill="#FFD9D3">{video.year}</StatChip>
         </span>
+        <span className="absolute bottom-2.5 right-2.5 grid size-9 place-items-center rounded-full bg-white transition-transform duration-300 group-hover:scale-110">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#252525" className="ml-0.5" aria-hidden>
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </span>
+      </div>
+      <div className="px-2.5 pb-2 pt-3">
+        <p className="line-clamp-2 text-sm font-medium leading-snug text-white/90">{video.title}</p>
+        {video.views > 0 && <p className="mt-1 text-xs text-white/55">{video.views.toLocaleString()} views</p>}
       </div>
     </a>
   )
 }
-
-/* ------------------------------------------------------------------ */
-/*  Instagram reel card                                                */
-/* ------------------------------------------------------------------ */
 
 function InstagramReelCard({ reel }: { reel: InstagramReel }) {
   return (
@@ -240,56 +461,98 @@ function InstagramReelCard({ reel }: { reel: InstagramReel }) {
       href={reel.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative block h-full overflow-hidden rounded-lg bg-[rgba(28,28,28,0.8)] no-underline"
+      className="receipt-tear group block h-full rounded-t-[26px] bg-[#1E1E1E] p-2 pb-5 no-underline transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5"
     >
-      <div className="relative w-full overflow-hidden" style={{ paddingBottom: '100%' }}>
-        <img
-          src={reel.thumbnail}
-          alt={reel.caption}
-          className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-          loading="lazy"
-        />
-        {/* Likes & comments overlay - top-left */}
-        <div className="absolute top-2.5 left-2.5 flex items-center gap-2.5 rounded-lg bg-black/55 px-2.5 py-1.5 backdrop-blur-sm">
-          <span className="flex items-center gap-1 text-[0.68rem] font-semibold text-white/90">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="text-red-400">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-            </svg>
-            {reel.likes}
-          </span>
-          <span className="flex items-center gap-1 text-[0.68rem] font-semibold text-white/90">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="text-white/70">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-            </svg>
-            {reel.comments}
-          </span>
-        </div>
-        {/* Pinned indicator - top-right */}
+      <div className="relative aspect-square overflow-hidden rounded-[20px]">
+        <img src={reel.thumbnail} alt={reel.caption} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+        <span className="absolute left-2.5 top-2.5">
+          <StatChip fill="#FFD6E7">
+            <span className="inline-flex items-center gap-1">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="#D62976" aria-hidden>
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+              {reel.likes}
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="#252525" fillOpacity=".7" aria-hidden>
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+              {reel.comments}
+            </span>
+          </StatChip>
+        </span>
         {reel.pinned && (
-          <div className="absolute top-2.5 right-2.5 flex h-7 w-7 items-center justify-center rounded-full bg-accent shadow-lg">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="#252525">
+          <span className="absolute right-2.5 top-2.5 grid size-7 place-items-center rounded-full bg-accent" title="Pinned">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="#252525" aria-hidden>
               <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z" />
             </svg>
-          </div>
+          </span>
         )}
-        {/* Play icon for reels */}
         {reel.type === 'reel' && (
-          <div className="absolute right-2.5 bottom-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-lg transition-transform duration-300 group-hover:scale-110">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="#252525" className="ml-0.5">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </div>
-          </div>
+          <span className="absolute bottom-2.5 right-2.5 grid size-9 place-items-center rounded-full bg-white transition-transform duration-300 group-hover:scale-110">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#252525" className="ml-0.5" aria-hidden>
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </span>
         )}
       </div>
-      {/* Caption */}
-      <div className="px-4 py-3">
-        <p className="line-clamp-2 text-sm leading-snug text-white/85">
-          {reel.caption || `Instagram ${reel.type}`}
-        </p>
+      <div className="px-2.5 pb-2 pt-3">
+        <p className="line-clamp-2 text-sm leading-snug text-white/90">{reel.caption || `Instagram ${reel.type}`}</p>
       </div>
     </a>
+  )
+}
+
+function BlockHeader({
+  title,
+  note,
+  fill,
+  icon,
+  action,
+}: {
+  title: string
+  note?: string
+  fill: string
+  icon?: React.ReactNode
+  action?: React.ReactNode
+}) {
+  return (
+    <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+      <div className="flex items-center gap-3.5">
+        <span className="grid size-11 shrink-0 place-items-center rounded-2xl" style={{ backgroundColor: fill }}>
+          {icon}
+        </span>
+        <div>
+          <h3 className="text-[clamp(1.3rem,2vw,1.75rem)] font-bold leading-tight tracking-[-0.02em] text-white">{title}</h3>
+          {note && <p className="mt-0.5 text-sm text-white/60">{note}</p>}
+        </div>
+      </div>
+      {action}
+    </div>
+  )
+}
+
+function PillButton({
+  children,
+  onClick,
+  disabled,
+  fill,
+}: {
+  children: React.ReactNode
+  onClick: () => void
+  disabled?: boolean
+  fill: string
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className="mx-auto mt-6 flex items-center justify-center gap-2 rounded-full px-6 py-3 text-xs font-extrabold uppercase tracking-[0.12em] text-[#252525] transition-transform duration-300 hover:-translate-y-0.5 disabled:pointer-events-none disabled:opacity-60"
+      style={{ backgroundColor: fill }}
+    >
+      {children}
+    </button>
   )
 }
 
@@ -380,91 +643,8 @@ function FizzleEdge({ side }: { side: 'left' | 'right' }) {
 /* ------------------------------------------------------------------ */
 /*  Desktop collapsible panel with vertical label                      */
 /* ------------------------------------------------------------------ */
-
-function CollapsiblePanel({
-  label,
-  isOpen,
-  onToggle,
-  children,
-}: {
-  label: string
-  isOpen: boolean
-  onToggle: () => void
-  children: React.ReactNode
-}) {
-  return (
-    <div className="rounded-lg overflow-hidden">
-      <div className="flex">
-        {/* Vertical label strip */}
-        <button
-          onClick={onToggle}
-          className="relative flex-shrink-0 w-16 flex items-center justify-center cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] transition-colors duration-300 py-6"
-        >
-          <span
-            className="text-[0.8rem] font-bold uppercase tracking-[0.2em] text-white/60 whitespace-nowrap transition-colors duration-300 hover:text-accent"
-            style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
-          >
-            {label}
-          </span>
-          {isOpen && (
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              className="absolute bottom-4 text-white/40"
-            >
-              <path d="M6 9l6 6 6-6" />
-            </svg>
-          )}
-        </button>
-
-        {/* Panel content — always mounted, height animated via grid trick */}
-        <div className="relative flex-1 min-w-0">
-          <div
-            className="grid transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
-            style={{ gridTemplateRows: isOpen ? '1fr' : '0fr' }}
-          >
-            <div className="overflow-hidden">
-              <div className="p-6">
-                {children}
-              </div>
-            </div>
-          </div>
-
-          {/* "Click to open" hint when collapsed — vertically centered */}
-          <button
-            onClick={onToggle}
-            className={`absolute inset-0 flex items-center justify-center text-[0.75rem] font-semibold tracking-[0.15em] uppercase text-white/35 hover:text-accent cursor-pointer transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-              isOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
-            }`}
-          >
-            Click to open
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-/* ------------------------------------------------------------------ */
 /*  Section                                                            */
 /* ------------------------------------------------------------------ */
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { duration: 0.5, staggerChildren: 0.06 },
-  },
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-}
 
 const REELS_PER_PAGE = 12
 
@@ -482,16 +662,10 @@ interface CommunityTile {
   isPlaceholder: boolean
 }
 
-export function CommunitySection({
-  data,
-  socialLinks = [],
-  youtubeVideos = [],
-}: CommunitySectionProps) {
-  const heading = data?.heading ?? 'Our Community'
-  const subheading = data?.subheading ?? 'Connect with us on social media'
+export function CommunityExtras({ data, socialLinks = [], youtubeVideos = [] }: CommunitySectionProps) {
+  const prefersReducedMotion = useReducedMotion()
   const allowedPlatforms = data?.platforms ?? DEFAULT_PLATFORMS
 
-  // Instagram reels - fetched client-side in batches from Sanity entries
   const reelEntries = useMemo(() => {
     const entries = data?.instagramReels ?? []
     return [...entries].reverse().sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0))
@@ -534,7 +708,6 @@ export function CommunitySection({
     setReelsLoading(false)
   }, [reelEntries])
 
-  // Load first batch on mount
   const mountedRef = useRef(false)
   useEffect(() => {
     if (reelEntries.length > 0 && !mountedRef.current) {
@@ -542,16 +715,11 @@ export function CommunitySection({
       loadReels(0)
     }
   }, [reelEntries, loadReels])
+
   const hasVideos = youtubeVideos.length > 0
-  const [socialsOpen, setSocialsOpen] = useState(true)
-  const [reelsOpen, setReelsOpen] = useState(true)
-  const [videosOpen, setVideosOpen] = useState(true)
-  const [activeTab, setActiveTab] = useState<'socials' | 'reels' | 'videos'>('socials')
   const [selectedYear, setSelectedYear] = useState<number | 'all'>('all')
 
-  const filteredLinks = socialLinks.filter((link) =>
-    allowedPlatforms.includes(link.platform)
-  )
+  const filteredLinks = socialLinks.filter((link) => allowedPlatforms.includes(link.platform))
 
   const tiles: CommunityTile[] =
     filteredLinks.length > 0
@@ -568,6 +736,11 @@ export function CommunitySection({
           isPlaceholder: true,
         }))
 
+  const instagramLink = socialLinks.find((link) => link.platform === 'instagram')?.url
+  const youtubeLink = socialLinks.find((link) => link.platform === 'youtube')?.url
+  const InstagramIcon = PLATFORM_ICONS.instagram
+  const YouTubeIcon = PLATFORM_ICONS.youtube
+
   const years = useMemo(() => {
     return [...new Set(youtubeVideos.map((v) => v.year))].sort((a, b) => b - a)
   }, [youtubeVideos])
@@ -577,326 +750,137 @@ export function CommunitySection({
     return youtubeVideos.filter((v) => v.year === selectedYear)
   }, [youtubeVideos, selectedYear])
 
-  /* ---- Mobile content (tabs) ---- */
-  const mobileTabs = useMemo(() => {
-    const tabs: ('socials' | 'reels' | 'videos')[] = ['socials']
-    if (hasReels) tabs.push('reels')
-    if (hasVideos) tabs.push('videos')
-    return tabs
-  }, [hasReels, hasVideos])
+  const externalLink = (href: string | undefined, label: string) =>
+    href ? (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-4 py-2 text-xs font-bold uppercase tracking-[0.1em] text-white no-underline transition-colors hover:border-white/40"
+      >
+        {label}
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <path d="M7 17 17 7M8 7h9v9" />
+        </svg>
+      </a>
+    ) : null
 
-  const tabLabels: Record<'socials' | 'reels' | 'videos', string> = {
-    socials: 'Socials',
-    reels: 'Reels',
-    videos: 'Videos',
-  }
+  const spinner = (
+    <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+    </svg>
+  )
 
-  const mobileContent = (
-    <div className="lg:hidden">
-      {/* Mobile tabs */}
-      {mobileTabs.length > 1 && (
-        <div className="mb-6 flex flex-wrap items-center gap-3">
-          <div className="inline-flex gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] p-1.5">
-            {mobileTabs.map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`relative overflow-hidden rounded-md px-4 py-2.5 text-xs font-semibold tracking-[0.12em] uppercase transition-colors duration-300 ${
-                  activeTab === tab
-                    ? 'text-[#252525]'
-                    : 'text-white/65 hover:text-white'
-                }`}
-              >
-                {activeTab === tab && (
-                  <motion.span
-                    layoutId="community-tab-mobile"
-                    className="absolute inset-0 rounded-md bg-accent"
-                    transition={{ type: 'spring', stiffness: 350, damping: 30 }}
-                  />
-                )}
-                <span className="relative z-10">
-                  {tabLabels[tab]}
-                </span>
-              </button>
-            ))}
-          </div>
+  return (
+    <>
+      <ReceiptStrip
+        tiles={tiles}
+        reduced={Boolean(prefersReducedMotion)}
+        heading={data?.heading ?? 'Our Community'}
+        subheading={data?.subheading ?? 'Connect with us on social media'}
+      />
 
-          {activeTab === 'videos' && years.length > 1 && (
-            <label className="ml-auto inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.03] px-3 py-2 text-[0.72rem] font-semibold tracking-[0.12em] uppercase text-white/60">
-              Year
-              <select
-                value={selectedYear}
-                onChange={(e) =>
-                  setSelectedYear(
-                    e.target.value === 'all' ? 'all' : Number(e.target.value)
-                  )
-                }
-                className="rounded-full border border-white/10 bg-black/30 px-3 py-1 text-[0.7rem] tracking-[0.08em] text-white outline-none focus:border-accent"
-              >
-                <option value="all">All</option>
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
-        </div>
-      )}
-
-      {/* Mobile content */}
-      <AnimatePresence mode="wait">
-        {activeTab === 'socials' && (
-          <motion.div
-            key="socials-mobile"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.3 }}
-            className="grid grid-cols-1 gap-4 sm:grid-cols-2"
-          >
-            {tiles.map((tile, index) => (
-              <SocialTiltCard
-                key={tile._key}
-                platform={tile.platform}
-                url={tile.url}
-                description={tile.description}
-                isPlaceholder={tile.isPlaceholder}
-                index={index}
+      {(hasReels || hasVideos) && (
+        <div className="mx-auto mt-14 flex max-w-[1240px] flex-col gap-16 px-6 md:mt-20 md:px-8">
+          {hasReels && (
+            <div>
+              <BlockHeader
+                title="Latest reels"
+                note="Straight from our Instagram"
+                fill="#FFD6E7"
+                icon={InstagramIcon ? <InstagramIcon size={20} className="text-[#D62976]" /> : null}
+                action={externalLink(instagramLink, 'Open Instagram')}
               />
-            ))}
-          </motion.div>
-        )}
-
-        {activeTab === 'reels' && (
-          <motion.div
-            key="reels-mobile"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-              {loadedReels.map((reel) => (
-                <div key={reel.shortcode} className="animate-fade-in-up">
-                  <InstagramReelCard reel={reel} />
-                </div>
-              ))}
-            </div>
-            {hasMoreReels && (
-              <button
-                onClick={() => loadReels(fetchedUpTo)}
-                disabled={reelsLoading}
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-white/3 py-3 text-xs font-semibold tracking-[0.12em] uppercase text-white/60 transition-colors hover:text-accent disabled:pointer-events-none disabled:opacity-60"
-              >
-                {reelsLoading ? (
-                  <>
-                    <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                    </svg>
-                    Loading...
-                  </>
-                ) : (
-                  'Load more reels'
-                )}
-              </button>
-            )}
-          </motion.div>
-        )}
-
-        {activeTab === 'videos' && (
-          <motion.div
-            key="videos-mobile"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.3 }}
-          >
-            {filteredVideos.length > 0 ? (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {filteredVideos.map((video, index) => (
-                  <motion.div
-                    key={video.videoId}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    transition={{ duration: 0.42, delay: index * 0.04, ease: [0.22, 1, 0.36, 1] }}
-                  >
-                    <VideoCard video={video} />
-                  </motion.div>
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                {loadedReels.map((reel) => (
+                  <div key={reel.shortcode} className="animate-fade-in-up">
+                    <InstagramReelCard reel={reel} />
+                  </div>
                 ))}
               </div>
-            ) : (
-              <p className="rounded-lg border border-dashed border-white/20 bg-white/[0.02] py-14 text-center text-white/45">
-                No videos to display.
-              </p>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  )
-
-  /* ---- Desktop content (collapsible panels with vertical labels) ---- */
-  const desktopContent = (
-    <div className="hidden lg:flex flex-col gap-4">
-      {/* Socials panel (always open, no collapse) */}
-      <div className="rounded-xl overflow-hidden">
-        <div className="flex">
-          <div className="relative shrink-0 w-16 flex items-center justify-center bg-white/3 py-6">
-            <span
-              className="text-[0.8rem] font-bold uppercase tracking-[0.2em] text-white/60 whitespace-nowrap"
-              style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
-            >
-              Socials
-            </span>
-          </div>
-          <div className="flex-1 min-w-0 p-6">
-            <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${Math.min(tiles.length, 4)}, 1fr)` }}>
-              {tiles.map((tile, index) => (
-                <SocialTiltCard
-                  key={tile._key}
-                  platform={tile.platform}
-                  url={tile.url}
-                  isPlaceholder={tile.isPlaceholder}
-                  index={index}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Reels panel */}
-      {hasReels && (
-        <CollapsiblePanel
-          label="Reels"
-          isOpen={reelsOpen}
-          onToggle={() => setReelsOpen((v) => !v)}
-        >
-          <div className="grid grid-cols-4 gap-4">
-            {loadedReels.map((reel) => (
-              <div key={reel.shortcode} className="animate-fade-in-up transition-transform duration-300 hover:-translate-y-1">
-                <InstagramReelCard reel={reel} />
-              </div>
-            ))}
-          </div>
-          {hasMoreReels && (
-            <button
-              onClick={() => loadReels(fetchedUpTo)}
-              disabled={reelsLoading}
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-white/3 py-3 text-xs font-semibold tracking-[0.12em] uppercase text-white/60 transition-colors hover:text-accent disabled:pointer-events-none disabled:opacity-60"
-            >
-              {reelsLoading ? (
-                <>
-                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                  Loading...
-                </>
-              ) : (
-                'Load more reels'
+              {hasMoreReels && (
+                <PillButton onClick={() => loadReels(fetchedUpTo)} disabled={reelsLoading} fill="#FFD6E7">
+                  {reelsLoading ? (
+                    <>
+                      {spinner}
+                      Loading
+                    </>
+                  ) : (
+                    'Load more reels'
+                  )}
+                </PillButton>
               )}
-            </button>
+            </div>
           )}
-        </CollapsiblePanel>
-      )}
 
-      {/* Videos panel */}
-      {hasVideos && (
-        <CollapsiblePanel
-          label="Videos"
-          isOpen={videosOpen}
-          onToggle={() => setVideosOpen((v) => !v)}
-        >
-          {years.length > 1 && (
-            <div className="mb-4">
-              <label className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.03] px-3 py-2 text-[0.72rem] font-semibold tracking-[0.12em] uppercase text-white/60">
-                Year
-                <select
-                  value={selectedYear}
-                  onChange={(e) =>
-                    setSelectedYear(
-                      e.target.value === 'all' ? 'all' : Number(e.target.value)
-                    )
-                  }
-                  className="rounded-full border border-white/10 bg-black/30 px-3 py-1 text-[0.7rem] tracking-[0.08em] text-white outline-none focus:border-accent"
-                >
-                  <option value="all">All</option>
-                  {years.map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
+          {hasVideos && (
+            <div>
+              <BlockHeader
+                title="Videos"
+                note="From our YouTube channel"
+                fill="#FFD9D3"
+                icon={YouTubeIcon ? <YouTubeIcon size={20} className="text-[#E62117]" /> : null}
+                action={
+                  <div className="flex flex-wrap items-center gap-2">
+                    {years.length > 1 && (
+                      <div className="flex flex-wrap gap-1.5 rounded-full bg-white/[0.06] p-1">
+                        {(['all', ...years] as const).map((year) => (
+                          <button
+                            key={year}
+                            type="button"
+                            onClick={() => setSelectedYear(year)}
+                            className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors ${
+                              selectedYear === year ? 'bg-[#FFD9D3] text-[#252525]' : 'text-white/70 hover:text-white'
+                            }`}
+                          >
+                            {year === 'all' ? 'All' : year}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    {externalLink(youtubeLink, 'Open YouTube')}
+                  </div>
+                }
+              />
+              {filteredVideos.length > 0 ? (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                  {filteredVideos.map((video) => (
+                    <VideoCard key={video.videoId} video={video} />
                   ))}
-                </select>
-              </label>
+                </div>
+              ) : (
+                <p className="rounded-[26px] border border-dashed border-white/20 py-14 text-center text-white/55">
+                  No videos to display.
+                </p>
+              )}
             </div>
           )}
-
-          {filteredVideos.length > 0 ? (
-            <div className="grid grid-cols-4 gap-4">
-              {filteredVideos.map((video, index) => (
-                <motion.div
-                  key={video.videoId}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.2 }}
-                  transition={{ duration: 0.42, delay: index * 0.04, ease: [0.22, 1, 0.36, 1] }}
-                  whileHover={{ y: -4 }}
-                >
-                  <VideoCard video={video} />
-                </motion.div>
-              ))}
-            </div>
-          ) : (
-            <p className="rounded-2xl border border-dashed border-white/20 bg-white/[0.02] py-14 text-center text-white/45">
-              No videos to display.
-            </p>
-          )}
-        </CollapsiblePanel>
+        </div>
       )}
-    </div>
+    </>
   )
+}
+
+export function CommunitySection(props: CommunitySectionProps) {
+  const heading = props.data?.heading ?? 'Our Community'
+  const subheading = props.data?.subheading ?? 'Connect with us on social media'
 
   return (
     <RibbonAwareSection
       backgroundClassName="bg-background"
       className="overflow-hidden"
-      contentClassName="relative py-[clamp(5.8rem,10vw,8.2rem)] px-6 md:px-8"
+      contentClassName="relative py-[clamp(5rem,9vw,7.5rem)]"
     >
       <FizzleEdge side="left" />
       <FizzleEdge side="right" />
-      <motion.div
-        className="relative mx-auto max-w-[1240px]"
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.14 }}
-        variants={containerVariants}
-      >
-        {/* Header */}
-        <motion.div
-          variants={itemVariants}
-          className="mb-8 flex flex-wrap items-end justify-between gap-4"
-        >
-          <div className="space-y-3">
-            <h2 className="text-[clamp(2.2rem,4.6vw,3.8rem)] font-semibold leading-[1.01] text-foreground">
-              {heading}
-            </h2>
-          </div>
-          <p className="max-w-[26rem] text-sm leading-relaxed text-white/55 md:text-base">
-            {subheading}
-          </p>
-        </motion.div>
-
-        {/* Desktop: collapsible panels | Mobile: tabs */}
-        <motion.div variants={itemVariants}>
-          {desktopContent}
-          {mobileContent}
-        </motion.div>
-      </motion.div>
+      <div className="mx-auto mb-10 flex max-w-[1240px] flex-wrap items-end justify-between gap-4 px-6 md:px-8">
+        <h2 className="text-[clamp(2.2rem,4.6vw,3.8rem)] font-extrabold leading-[1.01] tracking-[-0.03em] text-foreground">
+          {heading}
+        </h2>
+        <p className="max-w-[26rem] text-sm leading-relaxed text-white/65 md:text-base">{subheading}</p>
+      </div>
+      <CommunityExtras {...props} />
     </RibbonAwareSection>
   )
 }

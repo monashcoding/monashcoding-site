@@ -133,3 +133,10 @@ html {
   animation-timing-function: linear;
   animation-fill-mode: forwards;
 }
+
+/* Torn receipt bottom edge */
+.receipt-tear {
+  --tear: 14px;
+  -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / var(--tear) 100%;
+  mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / var(--tear) 100%;
+}
