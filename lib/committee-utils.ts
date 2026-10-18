@@ -13,16 +13,18 @@ export const TEAM_ORDER: TeamSlug[] = [
 ]
 
 // Role priority within management team (lower = higher priority)
-const MANAGEMENT_ROLE_PRIORITY: Record<string, number> = {
-  president: 0,
-  'vice president': 1,
-  secretary: 2,
-  treasurer: 3,
-}
+// Checked in order, so 'vice president' must come before 'president'
+// (otherwise "vice president".includes("president") matches first)
+const MANAGEMENT_ROLE_PRIORITY: [string, number][] = [
+  ['vice president', 1],
+  ['president', 0],
+  ['secretary', 2],
+  ['treasurer', 3],
+]
 
 function getManagementRolePriority(role: string): number {
   const normalized = role.toLowerCase().trim()
-  for (const [key, priority] of Object.entries(MANAGEMENT_ROLE_PRIORITY)) {
+  for (const [key, priority] of MANAGEMENT_ROLE_PRIORITY) {
     if (normalized.includes(key)) return priority
   }
   return 99
