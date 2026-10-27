@@ -92,6 +92,86 @@ async function fetchAndCache(url: string): Promise<InstagramReel | null> {
 /* ------------------------------------------------------------------ */
 
 async function fetchSingleReel(url: string): Promise<InstagramReel | null> {
+  const match = url.match(/\/(p|reel)\/([^/?]+)/)
+  if (!match) return null
+  const shortcode = match[2]
+  const type = match[1] === 'reel' ? 'reel' : 'post'
+
+  // The embed page serves the clean cover frame plus likes and caption.
+  // og:image now has a play button composited onto it, so og is only used
+  // for the comment count/date and as a fallback when the embed fails.
+  const [embed, og] = await Promise.all([
+    fetchEmbed(match[1], shortcode),
+    fetchOgMeta(url),
+  ])
+  if (embed) {
+    return {
+      url,
+      shortcode,
+      type,
+      thumbnail: embed.thumbnail,
+      caption: embed.caption || og?.caption || '',
+      date: og?.date ?? '',
+      likes: embed.likes || og?.likes || '',
+      comments: og?.comments ?? '',
+    }
+  }
+  if (og) return { url, shortcode, type, ...og }
+
+  return null
+}
+
+async function fetchEmbed(
+  kind: string,
+  shortcode: string
+): Promise<Pick<InstagramReel, 'thumbnail' | 'caption' | 'likes' | 'comments'> | null> {
+  try {
+    const res = await fetch(
+      `https://www.instagram.com/${kind}/${shortcode}/embed/captioned/`,
+      {
+        // A full browser UA gets the JS app shell; a bare one gets static HTML.
+        headers: { 'User-Agent': 'Mozilla/5.0' },
+        cache: 'no-store',
+      }
+    )
+    if (!res.ok) return null
+
+    const html = await res.text()
+    const thumbnail = html.match(
+      /<img[^>]*class="EmbeddedMediaImage"[^>]*src="([^"]+)"/
+    )?.[1]
+    if (!thumbnail) return null
+
+    const likes =
+      html.match(/class="SocialProof"[^>]*>\s*<a[^>]*>([\d,.\w]+)\s+likes?</)?.[1] ?? ''
+
+    // Caption div starts with the username link; everything after it is the caption.
+    const captionHtml =
+      html.match(/class="Caption">([\s\S]*?)<\/div>/)?.[1] ?? ''
+    const caption = decodeHtmlEntities(
+      captionHtml
+        .replace(/<a[^>]*class="CaptionUsername"[^>]*>[\s\S]*?<\/a>/, '')
+        .replace(/<br\s*\/?>/g, '\n')
+        .replace(/<[^>]+>/g, '')
+    )
+      .replace(/\n\s*\n+/g, '\n')
+      .trim()
+
+    return {
+      thumbnail: decodeHtmlEntities(thumbnail),
+      caption,
+      likes,
+      // The embed page doesn't show a comment count
+      comments: '',
+    }
+  } catch {
+    return null
+  }
+}
+
+async function fetchOgMeta(
+  url: string
+): Promise<Pick<InstagramReel, 'thumbnail' | 'caption' | 'date' | 'likes' | 'comments'> | null> {
   try {
     // Instagram only serves og: meta tags to known bot/crawler User-Agents.
     // A regular browser UA gets a JS-only app shell with no metadata.
@@ -107,19 +187,14 @@ async function fetchSingleReel(url: string): Promise<InstagramReel | null> {
 
     if (!thumbnail) return null
 
-    const shortcode = url.match(/\/(p|reel)\/([^/?]+)/)?.[2] ?? ''
-    const type = url.includes('/reel/') ? 'reel' : 'post'
     const parsed = description ? parseOgDescription(description) : null
 
     return {
-      url,
-      shortcode,
       thumbnail: decodeHtmlEntities(thumbnail),
       caption: parsed?.caption ?? '',
       date: parsed?.date ?? '',
-      likes: parsed?.likes ?? '0',
-      comments: parsed?.comments ?? '0',
-      type,
+      likes: parsed?.likes ?? '',
+      comments: parsed?.comments ?? '',
     }
   } catch {
     return null
