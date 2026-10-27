@@ -234,11 +234,11 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
 
         <motion.div
           layout
-          className="relative z-50 flex flex-1 items-center justify-end pointer-events-auto"
+          className="relative z-50 flex flex-1 items-center justify-end pointer-events-none"
           transition={{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }}
         >
           <div
-            className={`flex min-w-0 flex-1 items-center gap-2 rounded-[14px] border p-1.5 transition-[background-color,border-color,backdrop-filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] lg:flex-none lg:gap-2.5 ${
+            className={`pointer-events-auto flex min-w-0 flex-1 items-center gap-2 rounded-[14px] border p-1.5 transition-[background-color,border-color,backdrop-filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] lg:flex-none lg:gap-2.5 ${
               showNavBacking ? "border-white/10 bg-[#0c0c0c]/90 backdrop-blur-sm" : "border-transparent bg-transparent"
             }`}
           >
