@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Stat } from "@/lib/sanity/types";
+import type { Stat } from "@/lib/sanity/types";
 
 const cutoutVariant = {
   width: 802,

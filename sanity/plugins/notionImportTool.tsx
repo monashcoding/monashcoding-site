@@ -42,6 +42,7 @@ function parseCSVRow(row: string): string[] {
 
   for (let i = 0; i < row.length; i++) {
     const char = row[i]
+
     if (inQuotes) {
       if (char === '"') {
         if (i + 1 < row.length && row[i + 1] === '"') {
@@ -64,12 +65,15 @@ function parseCSVRow(row: string): string[] {
       }
     }
   }
+
   fields.push(current)
+
   return fields
 }
 
 function parseCSV(content: string): Record<string, string>[] {
   const lines = content.split('\n').filter((l) => l.trim())
+
   if (lines.length < 2) return []
 
   // Remove BOM if present
@@ -94,10 +98,13 @@ function parseCSV(content: string): Record<string, string>[] {
 function parseFirstDayFromMd(content: string): string | undefined {
   // Look for **First Day**: or **First day**: pattern
   const match = content.match(/\*\*First [Dd]ay\*\*\s*:\s*(.+)/i)
+
   if (match) {
     const val = match[1].trim()
+
     if (val && val !== '' && val.length < 50) return normalizeFirstDay(val)
   }
+
   return undefined
 }
 
@@ -108,9 +115,11 @@ function parseImagesFromMd(content: string): string[] {
   const regex = /!\[.*?\]\(([^)]+)\)/g
   const images: string[] = []
   let match
+
   while ((match = regex.exec(content)) !== null) {
     images.push(match[1]) // Keep encoded, we'll decode later
   }
+
   return images
 }
 
@@ -118,6 +127,7 @@ function parseImagesFromMd(content: string): string[] {
 
 function getMimeType(filename: string): string {
   const ext = filename.split('.').pop()?.toLowerCase()
+
   switch (ext) {
     case 'jpg':
     case 'jpeg':
@@ -140,6 +150,7 @@ function getMimeType(filename: string): string {
 
 function isHeicFile(filename: string): boolean {
   const ext = filename.split('.').pop()?.toLowerCase()
+
   return ext === 'heic' || ext === 'heif'
 }
 
@@ -148,15 +159,18 @@ function isHeicFile(filename: string): boolean {
 async function convertHeicToJpeg(data: ArrayBuffer, filename: string): Promise<{ data: ArrayBuffer; filename: string; mimeType: string }> {
   const blob = new Blob([data], { type: 'image/heic' })
   const { default: heic2any } = await import('heic2any')
+
   const converted = await heic2any({
     blob,
     toType: 'image/jpeg',
     quality: 0.9,
   })
+
   // heic2any can return a single blob or array of blobs
   const resultBlob = Array.isArray(converted) ? converted[0] : converted
   const newData = await resultBlob.arrayBuffer()
   const newFilename = filename.replace(/\.heic$/i, '.jpg').replace(/\.heif$/i, '.jpg')
+
   return { data: newData, filename: newFilename, mimeType: 'image/jpeg' }
 }
 
@@ -169,6 +183,7 @@ async function parseNotionZip(file: File): Promise<ParsedMember[]> {
   // Handle nested zip (zip inside zip)
   const entries = Object.keys(zip.files)
   const innerZipEntry = entries.find((name) => name.endsWith('.zip'))
+
   if (innerZipEntry) {
     const innerData = await zip.files[innerZipEntry].async('arraybuffer')
     zip = await JSZip.loadAsync(innerData)
@@ -209,6 +224,7 @@ async function parseNotionZip(file: File): Promise<ParsedMember[]> {
 
     // Skip empty rows, templates, and entries without a name
     if (!name || name === 'Profile Template') continue
+
     // Skip entries without a role
     if (!role) continue
 
@@ -216,6 +232,7 @@ async function parseNotionZip(file: File): Promise<ParsedMember[]> {
 
     // Parse past roles from CSV (comma-separated)
     const pastRolesRaw = row['Past Roles']?.trim()
+
     const pastRoles = pastRolesRaw
       ? pastRolesRaw.split(',').map((r) => r.trim()).filter(Boolean)
       : undefined
@@ -236,6 +253,7 @@ async function parseNotionZip(file: File): Promise<ParsedMember[]> {
 
     // Find the first usable image from the .md file
     let imageData: ParsedMember['imageData'] = undefined
+
     if (mdContent) {
       const imagePaths = parseImagesFromMd(mdContent)
 
@@ -260,6 +278,7 @@ async function parseNotionZip(file: File): Promise<ParsedMember[]> {
             if (!f.endsWith(imageFilename)) return false
             const parts = f.split('/')
             const folderName = parts[parts.length - 2] || ''
+
             return folderHint && folderName.startsWith(folderHint)
           }),
           // Match by filename in any folder containing the member's name
@@ -270,6 +289,7 @@ async function parseNotionZip(file: File): Promise<ParsedMember[]> {
 
         for (const tryPath of possiblePaths) {
           const imageFile = zip.files[tryPath]
+
           if (imageFile && !imageFile.dir) {
             const data = await imageFile.async('arraybuffer')
             const filename = tryPath.split('/').pop() || 'photo.jpg'
@@ -285,6 +305,7 @@ async function parseNotionZip(file: File): Promise<ParsedMember[]> {
             } else {
               imageData = { data, filename, mimeType: getMimeType(filename) }
             }
+
             if (imageData) break
           }
         }
@@ -325,6 +346,7 @@ function NotionImportToolComponent() {
 
   const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
+
     if (!file) return
 
     setStatus('parsing')
@@ -369,12 +391,15 @@ function NotionImportToolComponent() {
 
         // Upload image if present
         let photoAsset: { _type: string; _ref: string } | undefined
+
         if (member.imageData) {
           try {
             const blob = new Blob([member.imageData.data], { type: member.imageData.mimeType })
+
             const asset = await client.assets.upload('image', blob, {
               filename: member.imageData.filename,
             })
+
             photoAsset = { _type: 'reference', _ref: asset._id }
           } catch {
             // If image upload fails, continue without photo
@@ -389,15 +414,25 @@ function NotionImportToolComponent() {
         }
 
         if (member.team) fields.team = member.team
+
         if (member.isAlumni) fields.isAlumni = true
+
         if (member.pastRoles) fields.pastRoles = member.pastRoles
+
         if (member.birthday) fields.birthday = member.birthday
+
         if (member.linkedIn) fields.linkedIn = member.linkedIn
+
         if (member.discordHandle) fields.discordHandle = member.discordHandle
+
         if (member.bentoMe) fields.bentoMe = member.bentoMe
+
         if (member.gender) fields.gender = member.gender
+
         if (member.mbti) fields.mbti = member.mbti
+
         if (member.firstDay) fields.firstDay = member.firstDay
+
         if (photoAsset) {
           fields.photo = {
             _type: 'image',
@@ -424,8 +459,11 @@ function NotionImportToolComponent() {
 
     setStatus('done')
     const parts: string[] = []
+
     if (created > 0) parts.push(`created ${created}`)
+
     if (updated > 0) parts.push(`updated ${updated}`)
+
     if (skipped > 0) parts.push(`skipped ${skipped}`)
     setProgress(`Import complete! ${parts.join(', ')} members.`)
   }, [members, client, existingMode])
@@ -436,6 +474,7 @@ function NotionImportToolComponent() {
     setProgress('')
     setError('')
     setImportCount(0)
+
     if (fileInputRef.current) fileInputRef.current.value = ''
   }, [])
 
@@ -579,6 +618,7 @@ function NotionImportToolComponent() {
               <tbody>
                 {members.map((m, i) => {
                   const empty = '\u2014'
+
                   return (
                     <tr key={i} style={{ borderBottom: '1px solid #222' }}>
                       <td style={{ padding: '0.3rem 0.4rem', whiteSpace: 'nowrap' }}>{m.name}</td>

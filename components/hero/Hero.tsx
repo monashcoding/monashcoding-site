@@ -21,7 +21,7 @@ import {
   type PointerEvent,
   type ReactNode,
 } from 'react'
-import { EventDocument, HeroData, HeroMedia, SanityImage } from '@/lib/sanity/types'
+import type { EventDocument, HeroData, HeroMedia, SanityImage } from '@/lib/sanity/types'
 import { HeroDescription } from '@/lib/sanity/portableText'
 import { MEMBER_SIGNUP_URL } from '@/lib/links'
 import { HERO_APPS } from '@/lib/apps'
@@ -51,12 +51,15 @@ const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : us
 
 function imageUrl(image: SanityImage | undefined): string {
   if (!image?.asset?.url) return '/hero-image-optimized.jpg'
+
   if (image.asset.url.startsWith('/')) return image.asset.url
+
   return urlFor(image).width(1920).height(1080).fit('crop').url()
 }
 
 function TextReveal({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
   const timing = { duration: 1.3, delay, ease: 'easeInOut' as const, times: [0, 0.25, 0.6, 1] }
+
   return (
     <span className="relative inline-block overflow-x-clip">
       <span className="invisible">{children}</span>
@@ -111,15 +114,19 @@ function HeroBackdrop({ data, scrollProgress }: { data: HeroData | null; scrollP
   useEffect(() => {
     if (media.length <= 1 || (currentIsVideo && videoPlaying)) return
     const timer = setInterval(() => setIndex((value) => (value + 1) % media.length), interval)
+
     return () => clearInterval(timer)
   }, [media.length, interval, currentIsVideo, videoPlaying])
 
   useEffect(() => {
     if (current?._type !== 'heroVideo') {
       setVideoPlaying(false)
+
       return
     }
+
     const video = videoRefs.current.get(current._key)
+
     if (!video) return
     video.currentTime = 0
     video
@@ -130,6 +137,7 @@ function HeroBackdrop({ data, scrollProgress }: { data: HeroData | null; scrollP
 
   const onVideoEnd = () => {
     setVideoPlaying(false)
+
     if (media.length > 1) setIndex((value) => (value + 1) % media.length)
   }
 
@@ -177,6 +185,7 @@ function HeroBackdrop({ data, scrollProgress }: { data: HeroData | null; scrollP
 
 function TitleLockup({ lines }: { lines: string[] }) {
   const label = lines.join(' ')
+
   if (lines.length !== 3) {
     return (
       <h1 className="text-[clamp(2.5rem,10vw,3.5rem)] font-extrabold leading-[1] tracking-[-0.03em] text-white lg:text-[clamp(2.75rem,4.6vw,5.25rem)]">
@@ -188,8 +197,10 @@ function TitleLockup({ lines }: { lines: string[] }) {
       </h1>
     )
   }
+
   const [first, second, third] = lines
   const joiner = /^(of|for|the|and)\s+(.+)$/i.exec(third)
+
   return (
     <h1
       aria-label={label}
@@ -224,11 +235,13 @@ function RollingSubdomain({ word, reduced }: { word: string; reduced: boolean })
 
   useIsomorphicLayoutEffect(() => {
     const node = sizerRef.current
+
     if (!node) return
     const update = () => setWidth(node.getBoundingClientRect().width)
     update()
     const observer = new ResizeObserver(update)
     observer.observe(node)
+
     return () => observer.disconnect()
   }, [word])
 
@@ -293,6 +306,7 @@ function ShowcaseRail({
   onPick: (index: number) => void
 }) {
   const [hovered, setHovered] = useState<string | null>(null)
+
   return (
     <div className="relative flex w-14 shrink-0 flex-col pt-[56px]">
       <ol className="relative flex flex-1 flex-col items-center justify-between py-3">
@@ -300,6 +314,7 @@ function ShowcaseRail({
         {entries.map((entry) => {
           const isActive = entry.key === activeKey
           const isHovered = hovered === entry.key
+
           return (
             <li key={entry.key} className="relative z-10 flex items-center">
               <button
@@ -414,6 +429,7 @@ function eventItem({ event, upcoming }: HeroEvent): StageItem {
 
 function projectItem(app: (typeof HERO_APPS)[number]): StageItem {
   const [sub, ...rest] = app.host.split('.')
+
   return {
     id: `app-${app.id}`,
     name: app.name,
@@ -440,6 +456,7 @@ function defaultEventIndex(events: HeroEvent[]) {
   events.forEach((entry, i) => {
     if (entry.upcoming) index = i
   })
+
   return index
 }
 
@@ -465,6 +482,7 @@ export function Hero({ data, timeline }: HeroProps) {
     () => (mode === 'events' ? events.map(eventItem) : HERO_APPS.map(projectItem)),
     [mode, events]
   )
+
   const current = activeIndex % items.length
   const activeEvent = mode === 'events' ? events[current] : undefined
   const activeApp = mode === 'projects' ? HERO_APPS[current] : undefined
@@ -487,11 +505,14 @@ export function Hero({ data, timeline }: HeroProps) {
   useIsomorphicLayoutEffect(() => {
     const measure = () => {
       const button = modeRefs.current[mode]
+
       if (button) setPill({ x: button.offsetLeft, width: button.offsetWidth })
     }
+
     measure()
     window.addEventListener('resize', measure)
     document.fonts?.ready.then(measure)
+
     return () => window.removeEventListener('resize', measure)
   }, [mode])
 
@@ -503,8 +524,10 @@ export function Hero({ data, timeline }: HeroProps) {
   }
 
   const activeMonth = activeEvent ? months.find((month) => month.key === activeEvent.monthKey) : undefined
+
   const railEntries: RailEntry[] = months.map((month) => {
     const inMonth = events.filter((entry) => entry.monthKey === month.key)
+
     return {
       key: month.key,
       title: month.label,
@@ -518,6 +541,7 @@ export function Hero({ data, timeline }: HeroProps) {
       target: events.findIndex((entry) => entry.monthKey === month.key),
     }
   })
+
   const activeRailKey = activeEvent?.monthKey
 
   const pauseHandlers = {
@@ -566,6 +590,7 @@ export function Hero({ data, timeline }: HeroProps) {
                   )}
                   {modes.map((option) => {
                     const selected = option === mode
+
                     return (
                       <button
                         key={option}

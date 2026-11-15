@@ -225,6 +225,7 @@ export const hero = defineType({
                 message?.[0]?.children
                   ?.map((child: { text?: string }) => child.text)
                   .join('') || 'Empty announcement'
+
               return {
                 title: text.length > 50 ? text.slice(0, 50) + '...' : text,
               }
@@ -242,6 +243,7 @@ export const hero = defineType({
     },
     prepare({ titleLines, heroMedia }) {
       const count = heroMedia?.length || 0
+
       return {
         title: titleLines?.join(' ') || 'Hero Section',
         subtitle: count ? `${count} media item(s) in slideshow` : 'No media',

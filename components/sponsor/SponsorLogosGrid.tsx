@@ -5,7 +5,7 @@ import { motion, useMotionTemplate, useReducedMotion, useScroll, useTransform, t
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SanityImage, SponsorLogo } from "@/lib/sanity/types";
+import type { SanityImage, SponsorLogo } from "@/lib/sanity/types";
 import { urlFor } from "@/sanity/lib/image";
 
 interface SponsorLogosGridProps {
@@ -17,6 +17,7 @@ interface SponsorLogosGridProps {
 
 function getImageUrl(image: SanityImage | undefined): string {
   if (!image?.asset?.url) return '';
+
   // Force a consistent height/width for logos to look good in a row
   return image.asset.url || urlFor(image).height(200).fit('max').url();
 }
@@ -49,6 +50,7 @@ const SIGN_AREA = { left: -22, width: 144, height: 36, top: SIGN_BOTTOM - 36 };
 
 function MaxHoldingSign({ reduced }: { reduced: boolean }) {
   const [active, setActive] = useState(false);
+
   return (
     <motion.div
       className="w-full"
@@ -128,8 +130,10 @@ export function SponsorLogosGrid({
       setCompact(window.innerWidth < 768);
       setBigCorner(Math.min(MAX_BIG_CORNER, Math.round(window.innerWidth * 0.1)));
     };
+
     update();
     window.addEventListener("resize", update);
+
     return () => window.removeEventListener("resize", update);
   }, []);
 

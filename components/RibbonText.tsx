@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useId, useRef, useState } from 'react'
-import { getRibbonPoints, getRibbonThickness, RibbonPoint } from '@/components/RibbonContext'
+import { getRibbonPoints, getRibbonThickness, type RibbonPoint } from '@/components/RibbonContext'
 
 // Generate SVG path from ribbon points (matches WebGL shader taper logic)
 function generateRibbonPath(points: RibbonPoint[], thickness: number): string {
@@ -46,12 +46,15 @@ function generateRibbonPath(points: RibbonPoint[], thickness: number): string {
 
   // Build SVG path: upper edge forward, lower edge backward
   let path = `M ${upperPoints[0].x} ${upperPoints[0].y}`
+
   for (let i = 1; i < upperPoints.length; i++) {
     path += ` L ${upperPoints[i].x} ${upperPoints[i].y}`
   }
+
   for (let i = lowerPoints.length - 1; i >= 0; i--) {
     path += ` L ${lowerPoints[i].x} ${lowerPoints[i].y}`
   }
+
   path += ' Z'
 
   return path
@@ -86,6 +89,7 @@ function useRibbonClipPath(containerRef: React.RefObject<HTMLElement | null>) {
     }
 
     updateClip()
+
     return () => cancelAnimationFrame(animationId)
   }, [containerRef])
 

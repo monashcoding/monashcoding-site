@@ -139,6 +139,7 @@ class RetroEffectImpl extends Effect {
       ['colorNum', new THREE.Uniform(4.0)],
       ['pixelSize', new THREE.Uniform(2.0)]
     ]);
+
     super('RetroEffect', ditherFragmentShader, { uniforms });
     this.uniforms = uniforms;
   }
@@ -160,8 +161,10 @@ const WrappedRetro = wrapEffect(RetroEffectImpl);
 
 const RetroEffect = forwardRef((props, ref) => {
   const { colorNum, pixelSize } = props;
+
   return <WrappedRetro ref={ref} colorNum={colorNum} pixelSize={pixelSize} />;
 });
+
 RetroEffect.displayName = 'RetroEffect';
 
 function DitheredWaves({
@@ -193,9 +196,12 @@ function DitheredWaves({
 
   useEffect(() => {
     const dpr = gl.getPixelRatio();
+
     const w = Math.floor(size.width * dpr),
       h = Math.floor(size.height * dpr);
+
     const res = waveUniformsRef.current.resolution.value;
+
     if (res.x !== w || res.y !== h) {
       res.set(w, h);
     }
@@ -210,7 +216,9 @@ function DitheredWaves({
     }
 
     if (u.waveSpeed.value !== waveSpeed) u.waveSpeed.value = waveSpeed;
+
     if (u.waveFrequency.value !== waveFrequency) u.waveFrequency.value = waveFrequency;
+
     if (u.waveAmplitude.value !== waveAmplitude) u.waveAmplitude.value = waveAmplitude;
 
     if (!prevColor.current.every((v, i) => v === waveColor[i])) {

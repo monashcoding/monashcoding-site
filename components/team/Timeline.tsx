@@ -4,7 +4,7 @@ import { useRef, useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { gsap } from 'gsap'
 import { ChevronDown } from 'lucide-react'
-import { TimelineEvent } from '@/lib/sanity/types'
+import type { TimelineEvent } from '@/lib/sanity/types'
 
 interface TimelineProps {
   events: TimelineEvent[]
@@ -38,6 +38,7 @@ function YearMenuItem({
   const findClosestEdge = (mouseX: number, mouseY: number, width: number, height: number) => {
     const topEdgeDist = (mouseX - width / 2) ** 2 + mouseY ** 2
     const bottomEdgeDist = (mouseX - width / 2) ** 2 + (mouseY - height) ** 2
+
     return topEdgeDist < bottomEdgeDist ? 'top' : 'bottom'
   }
 
@@ -45,14 +46,17 @@ function YearMenuItem({
     const calculateRepetitions = () => {
       if (!marqueeInnerRef.current) return
       const marqueeContent = marqueeInnerRef.current.querySelector('.marquee__part')
+
       if (!marqueeContent) return
       const contentWidth = (marqueeContent as HTMLElement).offsetWidth
       const viewportWidth = window.innerWidth
       const needed = Math.ceil(viewportWidth / contentWidth) + 2
       setRepetitions(Math.max(6, needed))
     }
+
     calculateRepetitions()
     window.addEventListener('resize', calculateRepetitions)
+
     return () => window.removeEventListener('resize', calculateRepetitions)
   }, [year])
 
@@ -60,9 +64,12 @@ function YearMenuItem({
     const setupMarquee = () => {
       if (!marqueeInnerRef.current) return
       const marqueeContent = marqueeInnerRef.current.querySelector('.marquee__part')
+
       if (!marqueeContent) return
       const contentWidth = (marqueeContent as HTMLElement).offsetWidth
+
       if (contentWidth === 0) return
+
       if (animationRef.current) animationRef.current.kill()
       animationRef.current = gsap.to(marqueeInnerRef.current, {
         x: -contentWidth,
@@ -71,9 +78,12 @@ function YearMenuItem({
         repeat: -1,
       })
     }
+
     const timer = setTimeout(setupMarquee, 50)
+
     return () => {
       clearTimeout(timer)
+
       if (animationRef.current) animationRef.current.kill()
     }
   }, [year, repetitions])
@@ -184,6 +194,7 @@ function EventsGrid({ events }: { events: TimelineEvent[] }) {
 
   useEffect(() => {
     const el = rootRef.current
+
     if (!el) return
     setX.current = gsap.quickSetter(el, '--x', 'px') as (value: number) => void
     setY.current = gsap.quickSetter(el, '--y', 'px') as (value: number) => void
@@ -209,6 +220,7 @@ function EventsGrid({ events }: { events: TimelineEvent[] }) {
 
   const handleMove = (e: React.PointerEvent) => {
     const r = rootRef.current?.getBoundingClientRect()
+
     if (!r) return
     moveTo(e.clientX - r.left, e.clientY - r.top)
 
@@ -217,6 +229,7 @@ function EventsGrid({ events }: { events: TimelineEvent[] }) {
       hasInteracted.current = true
       gsap.to(chromaRef.current, { opacity: 1, duration: 0.4, overwrite: true })
     }
+
     gsap.to(fadeRef.current, { opacity: 0, duration: 0.25, overwrite: true })
   }
 
@@ -332,6 +345,7 @@ function HeaderItem({ text }: { text: string }) {
   const findClosestEdge = (mouseX: number, mouseY: number, width: number, height: number) => {
     const topEdgeDist = (mouseX - width / 2) ** 2 + mouseY ** 2
     const bottomEdgeDist = (mouseX - width / 2) ** 2 + (mouseY - height) ** 2
+
     return topEdgeDist < bottomEdgeDist ? 'top' : 'bottom'
   }
 
@@ -339,14 +353,17 @@ function HeaderItem({ text }: { text: string }) {
     const calculateRepetitions = () => {
       if (!marqueeInnerRef.current) return
       const marqueeContent = marqueeInnerRef.current.querySelector('.marquee__part')
+
       if (!marqueeContent) return
       const contentWidth = (marqueeContent as HTMLElement).offsetWidth
       const viewportWidth = window.innerWidth
       const needed = Math.ceil(viewportWidth / contentWidth) + 2
       setRepetitions(Math.max(6, needed))
     }
+
     calculateRepetitions()
     window.addEventListener('resize', calculateRepetitions)
+
     return () => window.removeEventListener('resize', calculateRepetitions)
   }, [text])
 
@@ -354,9 +371,12 @@ function HeaderItem({ text }: { text: string }) {
     const setupMarquee = () => {
       if (!marqueeInnerRef.current) return
       const marqueeContent = marqueeInnerRef.current.querySelector('.marquee__part')
+
       if (!marqueeContent) return
       const contentWidth = (marqueeContent as HTMLElement).offsetWidth
+
       if (contentWidth === 0) return
+
       if (animationRef.current) animationRef.current.kill()
       animationRef.current = gsap.to(marqueeInnerRef.current, {
         x: -contentWidth,
@@ -365,9 +385,12 @@ function HeaderItem({ text }: { text: string }) {
         repeat: -1,
       })
     }
+
     const timer = setTimeout(setupMarquee, 50)
+
     return () => {
       clearTimeout(timer)
+
       if (animationRef.current) animationRef.current.kill()
     }
   }, [text, repetitions])
@@ -449,11 +472,13 @@ export default function Timeline({ events }: TimelineProps) {
     const yearMatch = event.date.match(/\d{4}/)
     const year = yearMatch ? yearMatch[0] : 'Unknown'
     const existingGroup = acc.find((g) => g.year === year)
+
     if (existingGroup) {
       existingGroup.events.push(event)
     } else {
       acc.push({ year, events: [event] })
     }
+
     return acc
   }, [])
 

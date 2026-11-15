@@ -5,7 +5,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { NavigationData, NavItem, PageVisibility } from "@/lib/sanity/types";
+import type { NavigationData, NavItem, PageVisibility } from "@/lib/sanity/types";
 import { NAV_PREVIEWS } from "@/components/navigation/navPreviewConfig";
 
 const defaultNavItems: Omit<NavItem, "_key">[] = [
@@ -169,11 +169,14 @@ export function QuickLinksSection({ data }: QuickLinksSectionProps) {
   const navItems = useMemo(() => {
     const raw = (data?.navItems?.filter((i) => i.href !== "/") ?? defaultNavItems) as NavItem[];
     const pageVisibility = data?.pageVisibility;
+
     if (!pageVisibility) return raw;
 
     return raw.filter((item) => {
       const key = visibilityMap[item.href];
+
       if (!key) return true;
+
       return pageVisibility[key] === true;
     });
   }, [data]);
@@ -189,6 +192,7 @@ export function QuickLinksSection({ data }: QuickLinksSectionProps) {
           const description = NAV_PREVIEWS[item.href]?.description;
           const isFirst = index === 0;
           const isLast = index === navItems.length - 1;
+
           return (
             <motion.li
               key={item.href}

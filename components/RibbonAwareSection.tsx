@@ -1,4 +1,4 @@
-import { ReactNode, forwardRef, Ref } from 'react'
+import { type ReactNode, forwardRef, type Ref } from 'react'
 import { cn } from '@/lib/utils'
 
 interface RibbonAwareSectionProps {

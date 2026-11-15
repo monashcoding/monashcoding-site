@@ -26,6 +26,7 @@ const CircularText = ({ text, spinDuration = 20, onHover = 'speedUp', className 
 
   const handleHoverStart = useCallback(() => {
     const start = rotation.get();
+
     if (!onHover) return;
 
     let transitionConfig;

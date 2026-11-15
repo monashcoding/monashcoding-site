@@ -29,9 +29,11 @@ function startBackgroundRefresh() {
   if (refreshTimer) return
   refreshTimer = setInterval(async () => {
     const urls = [...cache.keys()]
+
     if (urls.length === 0) return
     await Promise.allSettled(urls.map((url) => fetchAndCache(url)))
   }, REFRESH_INTERVAL)
+
   // Don't block process exit
   if (refreshTimer && typeof refreshTimer === 'object' && 'unref' in refreshTimer) {
     refreshTimer.unref()
@@ -73,17 +75,21 @@ export async function fetchInstagramReels(
 
 async function getOrFetch(url: string): Promise<InstagramReel | null> {
   const cached = cache.get(url)
+
   if (cached && Date.now() - cached.fetchedAt < CACHE_TTL) {
     return cached.data
   }
+
   return fetchAndCache(url)
 }
 
 async function fetchAndCache(url: string): Promise<InstagramReel | null> {
   const reel = await fetchSingleReel(url)
+
   if (reel) {
     cache.set(url, { data: reel, fetchedAt: Date.now() })
   }
+
   return reel
 }
 
@@ -93,6 +99,7 @@ async function fetchAndCache(url: string): Promise<InstagramReel | null> {
 
 async function fetchSingleReel(url: string): Promise<InstagramReel | null> {
   const match = url.match(/\/(p|reel)\/([^/?]+)/)
+
   if (!match) return null
   const shortcode = match[2]
   const type = match[1] === 'reel' ? 'reel' : 'post'
@@ -104,6 +111,7 @@ async function fetchSingleReel(url: string): Promise<InstagramReel | null> {
     fetchEmbed(match[1], shortcode),
     fetchOgMeta(url),
   ])
+
   if (embed) {
     return {
       url,
@@ -116,6 +124,7 @@ async function fetchSingleReel(url: string): Promise<InstagramReel | null> {
       comments: og?.comments ?? '',
     }
   }
+
   if (og) return { url, shortcode, type, ...og }
 
   return null
@@ -134,12 +143,15 @@ async function fetchEmbed(
         cache: 'no-store',
       }
     )
+
     if (!res.ok) return null
 
     const html = await res.text()
+
     const thumbnail = html.match(
       /<img[^>]*class="EmbeddedMediaImage"[^>]*src="([^"]+)"/
     )?.[1]
+
     if (!thumbnail) return null
 
     const likes =
@@ -148,6 +160,7 @@ async function fetchEmbed(
     // Caption div starts with the username link; everything after it is the caption.
     const captionHtml =
       html.match(/class="Caption">([\s\S]*?)<\/div>/)?.[1] ?? ''
+
     const caption = decodeHtmlEntities(
       captionHtml
         .replace(/<a[^>]*class="CaptionUsername"[^>]*>[\s\S]*?<\/a>/, '')
@@ -179,6 +192,7 @@ async function fetchOgMeta(
       headers: { 'User-Agent': 'facebookexternalhit/1.1' },
       cache: 'no-store',
     })
+
     if (!res.ok) return null
 
     const html = await res.text()
@@ -210,7 +224,9 @@ function extractMetaContent(html: string, property: string): string | null {
     `<meta[^>]*property=["']${property}["'][^>]*content=["']([^"']+)["']` +
       `|<meta[^>]*content=["']([^"']+)["'][^>]*property=["']${property}["']`
   )
+
   const match = html.match(regex)
+
   return match?.[1] ?? match?.[2] ?? null
 }
 
@@ -221,10 +237,12 @@ function parseOgDescription(desc: string): {
   caption: string
 } {
   const decoded = decodeHtmlEntities(desc)
+
   // Format: "123 likes, 45 comments - username on Month Day, Year: "caption""
   const match = decoded.match(
     /^([\d,.\w]+)\s+likes?,\s*([\d,.\w]+)\s+comments?\s*-\s*\S+\s+on\s+(.+?):\s*(?:["\u201C])([\s\S]+?)(?:["\u201D])\.?\s*$/
   )
+
   if (match) {
     return {
       likes: match[1],
@@ -233,6 +251,7 @@ function parseOgDescription(desc: string): {
       caption: match[4],
     }
   }
+
   return { likes: '0', comments: '0', date: '', caption: decoded }
 }
 

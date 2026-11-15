@@ -3,13 +3,13 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
-import { CommunitySectionData, SocialLink } from '@/lib/sanity/types'
+import type { CommunitySectionData, SocialLink } from '@/lib/sanity/types'
 import type { YouTubeVideo } from '@/lib/youtube/feed'
 import type { InstagramReel } from '@/lib/instagram/feed'
 import {
   PLATFORM_ICONS,
   PLATFORM_LABELS,
-  SocialPlatform,
+  type SocialPlatform,
 } from '@/lib/socialPlatforms'
 
 const DEFAULT_PLATFORMS: SocialPlatform[] = [
@@ -173,6 +173,7 @@ export function SocialTiltCard({
 
   if (url) {
     const isMailto = url.toLowerCase().startsWith('mailto:')
+
     return (
       <a
         href={url}
@@ -210,8 +211,10 @@ const PLATFORM_PASTELS: Partial<Record<SocialPlatform, { fill: string; ink: stri
 
 function handleFrom(url?: string) {
   if (!url) return null
+
   try {
     const path = new URL(url).pathname.split('/').filter(Boolean)[0]
+
     return path && !path.startsWith('company') && !path.startsWith('channel') ? `@${path.replace(/^@/, '')}` : null
   } catch {
     return null
@@ -222,12 +225,15 @@ function Barcode({ seed, color, className = 'h-7' }: { seed: string; color: stri
   const bars: { x: number; w: number }[] = []
   let x = 0
   let hash = 7
+
   for (let i = 0; i < 34; i++) {
     hash = (hash * 31 + seed.charCodeAt(i % seed.length) + i) % 101
     const width = 1 + (hash % 3)
+
     if (i % 2 === 0) bars.push({ x, w: width })
     x += width + 1 + (hash % 2)
   }
+
   return (
     <svg viewBox={`0 0 ${x} 20`} preserveAspectRatio="none" className={`w-full ${className}`} aria-hidden>
       {bars.map((bar) => (
@@ -324,14 +330,17 @@ function ReceiptCard({
   )
 
   const isGrid = variant === 'grid'
+
   const className = isGrid
     ? 'receipt-tear group relative isolate flex min-h-[14rem] flex-col overflow-hidden rounded-t-[18px] px-4 pb-7 pt-4 no-underline outline-none focus-visible:brightness-95'
     : 'receipt-tear group relative isolate flex h-[calc(var(--h-compact)+1.25rem)] flex-col overflow-hidden px-2.5 pb-5 pt-3 no-underline outline-none focus-visible:brightness-95 xl:h-[var(--h-full)] xl:px-4 xl:pb-7 xl:pt-4'
+
   const style = {
     backgroundColor: palette.fill,
     '--h-compact': `${12.5 + rank * 1.5}rem`,
     '--h-full': `${15.5 + rank * 2.5}rem`,
   } as React.CSSProperties
+
   const body = isGrid ? (
     fullBody('flex h-full flex-col')
   ) : (
@@ -341,6 +350,7 @@ function ReceiptCard({
       {fullBody('hidden h-full flex-col xl:flex')}
     </>
   )
+
   const inner = live ? (
     <a href={tile.url} target="_blank" rel="noopener noreferrer" aria-label={`${label}: ${subtitle}`} className={className} style={style}>
       {body}
@@ -571,9 +581,11 @@ function FizzleEdge({ side }: { side: 'left' | 'right' }) {
 
   useEffect(() => {
     const canvas = canvasRef.current
+
     if (!canvas) return
 
     const ctx = canvas.getContext('2d')
+
     if (!ctx) return
 
     let animId: number
@@ -589,6 +601,7 @@ function FizzleEdge({ side }: { side: 'left' | 'right' }) {
       resize()
       particles.length = 0
       const count = Math.floor(canvas.height / 8)
+
       for (let i = 0; i < count; i++) {
         particles.push({
           x: Math.random() * canvas.width,
@@ -603,6 +616,7 @@ function FizzleEdge({ side }: { side: 'left' | 'right' }) {
 
     const draw = (t: number) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
+
       for (const p of particles) {
         const flicker = Math.sin(t * 0.001 * p.speed * 3 + p.phase) * 0.5 + 0.5
         const alpha = p.opacity * flicker
@@ -617,11 +631,13 @@ function FizzleEdge({ side }: { side: 'left' | 'right' }) {
         ctx.fill()
 
         p.y -= p.speed
+
         if (p.y < -2) {
           p.y = canvas.height + 2
           p.x = Math.random() * canvas.width
         }
       }
+
       animId = requestAnimationFrame(draw)
     }
 
@@ -629,6 +645,7 @@ function FizzleEdge({ side }: { side: 'left' | 'right' }) {
     animId = requestAnimationFrame(draw)
 
     window.addEventListener('resize', resize)
+
     return () => {
       cancelAnimationFrame(animId)
       window.removeEventListener('resize', resize)
@@ -674,6 +691,7 @@ export function CommunityExtras({ data, socialLinks = [], youtubeVideos = [] }: 
 
   const reelEntries = useMemo(() => {
     const entries = data?.instagramReels ?? []
+
     return [...entries].reverse().sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0))
   }, [data?.instagramReels])
 
@@ -687,6 +705,7 @@ export function CommunityExtras({ data, socialLinks = [], youtubeVideos = [] }: 
 
   const loadReels = useCallback(async (startFrom: number) => {
     if (loadingRef.current) return
+
     if (startFrom >= reelEntries.length) return
     loadingRef.current = true
     setReelsLoading(true)
@@ -701,15 +720,20 @@ export function CommunityExtras({ data, socialLinks = [], youtubeVideos = [] }: 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ urls: nextBatch.map((e) => e.url) }),
       })
+
       const { reels } = (await res.json()) as { reels: InstagramReel[] }
+
       const merged = reels.map((reel) => {
         const entry = nextBatch.find((e) => e.url === reel.url)
+
         return { ...reel, pinned: entry?.pinned ?? false }
       })
+
       setLoadedReels((prev) => [...prev, ...merged])
     } catch {
       // Silently skip failed batch
     }
+
     loadingRef.current = false
     setReelsLoading(false)
   }, [reelEntries])
@@ -753,6 +777,7 @@ export function CommunityExtras({ data, socialLinks = [], youtubeVideos = [] }: 
 
   const filteredVideos = useMemo(() => {
     if (selectedYear === 'all') return youtubeVideos
+
     return youtubeVideos.filter((v) => v.year === selectedYear)
   }, [youtubeVideos, selectedYear])
 

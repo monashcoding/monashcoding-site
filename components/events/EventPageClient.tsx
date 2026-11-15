@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { useRef, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
-import { EventDocument } from '@/lib/sanity/types'
+import type { EventDocument } from '@/lib/sanity/types'
 import { TAG_STYLES, TAG_LABELS } from '@/lib/events/eventTags'
 import { EventBody } from '@/lib/sanity/eventPortableText'
 import { urlFor } from '@/sanity/lib/image'
@@ -13,6 +13,7 @@ import { EventReminderForm } from '@/components/events/EventReminderForm'
 
 function formatEventDate(dateStr: string, endDateStr?: string): string {
   const date = new Date(dateStr)
+
   const opts: Intl.DateTimeFormatOptions = {
     weekday: 'long',
     day: 'numeric',
@@ -20,23 +21,29 @@ function formatEventDate(dateStr: string, endDateStr?: string): string {
     year: 'numeric',
     timeZone: 'Australia/Melbourne',
   }
+
   const timeOpts: Intl.DateTimeFormatOptions = {
     hour: 'numeric',
     minute: '2-digit',
     timeZone: 'Australia/Melbourne',
   }
+
   const formatted = date.toLocaleDateString('en-AU', opts)
   const time = date.toLocaleTimeString('en-AU', timeOpts)
 
   if (endDateStr) {
     const endDate = new Date(endDateStr)
     const endFormatted = endDate.toLocaleDateString('en-AU', opts)
+
     if (formatted === endFormatted) {
       const endTime = endDate.toLocaleTimeString('en-AU', timeOpts)
+
       return `${formatted}, ${time} - ${endTime}`
     }
+
     return `${formatted} - ${endFormatted}`
   }
+
   return `${formatted} at ${time}`
 }
 
@@ -51,6 +58,7 @@ export function EventPageClient({ event }: EventPageClientProps) {
 
   useEffect(() => {
     const now = new Date()
+
     if (event.endDate) {
       setIsPast(new Date(event.endDate) < now)
     } else {

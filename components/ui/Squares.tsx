@@ -35,6 +35,7 @@ const Squares: React.FC<SquaresProps> = ({
 
   useEffect(() => {
     const canvas = canvasRef.current
+
     if (!canvas) return
     const ctx = canvas.getContext('2d')
 
@@ -78,6 +79,7 @@ const Squares: React.FC<SquaresProps> = ({
 
     const updateAnimation = () => {
       const effectiveSpeed = Math.max(speed, 0.1)
+
       switch (direction) {
         case 'right':
           gridOffset.current.x = (gridOffset.current.x - effectiveSpeed + squareSize) % squareSize
@@ -133,6 +135,7 @@ const Squares: React.FC<SquaresProps> = ({
 
     return () => {
       window.removeEventListener('resize', resizeCanvas)
+
       if (requestRef.current) cancelAnimationFrame(requestRef.current)
       canvas.removeEventListener('mousemove', handleMouseMove)
       canvas.removeEventListener('mouseleave', handleMouseLeave)

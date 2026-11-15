@@ -1,8 +1,8 @@
 "use client";
 
 
-import { motion, Variants } from "framer-motion";
-import { ContactPageData, SocialLink } from "@/lib/sanity/types";
+import { motion, type Variants } from "framer-motion";
+import type { ContactPageData, SocialLink } from "@/lib/sanity/types";
 
 import { RibbonAwareSection } from "@/components/RibbonAwareSection";
 import ContactForm from "@/components/contact/ContactForm";

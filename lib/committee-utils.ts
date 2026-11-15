@@ -1,4 +1,4 @@
-import { CommitteeMember, TeamSlug } from '@/lib/sanity/types'
+import type { CommitteeMember, TeamSlug } from '@/lib/sanity/types'
 
 export const TEAM_ORDER: TeamSlug[] = [
   'management',
@@ -24,9 +24,11 @@ const MANAGEMENT_ROLE_PRIORITY: [string, number][] = [
 
 function getManagementRolePriority(role: string): number {
   const normalized = role.toLowerCase().trim()
+
   for (const [key, priority] of MANAGEMENT_ROLE_PRIORITY) {
     if (normalized.includes(key)) return priority
   }
+
   return 99
 }
 
@@ -42,10 +44,15 @@ function isDirector(role: string): boolean {
 // Role priority within media team (lower = higher priority)
 function getMediaRolePriority(role: string): number {
   const normalized = role.toLowerCase()
+
   if (/short\s*form/.test(normalized) && /director/.test(normalized)) return 0
+
   if (/long\s*form/.test(normalized) && /director/.test(normalized)) return 1
+
   if (/short\s*form/.test(normalized) && /officer/.test(normalized)) return 2
+
   if (/long\s*form/.test(normalized) && /officer/.test(normalized)) return 3
+
   return 99
 }
 
@@ -54,12 +61,14 @@ export function sortMembers(members: CommitteeMember[]): CommitteeMember[] {
     // Sort by team order first
     const teamOrderA = TEAM_ORDER.indexOf(a.team)
     const teamOrderB = TEAM_ORDER.indexOf(b.team)
+
     if (teamOrderA !== teamOrderB) return teamOrderA - teamOrderB
 
     // Within management, sort by role priority
     if (a.team === 'management') {
       const priorityA = getManagementRolePriority(a.role)
       const priorityB = getManagementRolePriority(b.role)
+
       if (priorityA !== priorityB) return priorityA - priorityB
     }
 
@@ -67,13 +76,16 @@ export function sortMembers(members: CommitteeMember[]): CommitteeMember[] {
     if (a.team === 'media') {
       const priorityA = getMediaRolePriority(a.role)
       const priorityB = getMediaRolePriority(b.role)
+
       if (priorityA !== priorityB) return priorityA - priorityB
     }
 
     // Directors first within each team
     const aIsDirector = isDirector(a.role)
     const bIsDirector = isDirector(b.role)
+
     if (aIsDirector && !bIsDirector) return -1
+
     if (!aIsDirector && bIsDirector) return 1
 
     // Then alphabetical by name

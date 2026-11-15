@@ -255,6 +255,7 @@ export const committeePage = defineType({
                 projects: 'Projects',
                 outreach: 'Outreach',
               }
+
               return {
                 title: teamLabels[team] || team,
                 subtitle: description,

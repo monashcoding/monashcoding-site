@@ -2,8 +2,8 @@
 
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { PortableText, PortableTextComponents } from '@portabletext/react'
-import { AboutUsPageData } from '@/lib/sanity/types'
+import { PortableText, type PortableTextComponents } from '@portabletext/react'
+import type { AboutUsPageData } from '@/lib/sanity/types'
 import { urlFor } from '@/sanity/lib/image'
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
 import { FadeInImage } from '@/components/ui/FadeInImage'
@@ -243,6 +243,7 @@ function TypewriterText({
       {words.map((word, wi) => {
         const wordStart = globalIndex
         globalIndex += word.length
+
         if (wi < words.length - 1) globalIndex += 1
 
         return (
@@ -250,6 +251,7 @@ function TypewriterText({
             {word.split('').map((char, ci) => {
               const idx = wordStart + ci
               const bold = isBold(idx)
+
               return (
                 <motion.span
                   key={ci}
@@ -596,6 +598,7 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
                   const { text: summaryText, boldRanges } = blocksToTextAndBoldRanges(j.summary)
                   const prefixed = `> ${summaryText}`
                   const offsetRanges = boldRanges.map(([s, e]) => [s + 2, e + 2] as [number, number])
+
                   return (
                     <motion.div
                       key={j._key}
@@ -619,6 +622,7 @@ export default function AboutUsPageClient({ data }: AboutUsPageClientProps) {
                   const { text: lastText, boldRanges: lastBold } = blocksToTextAndBoldRanges(lastYear.summary)
                   const prefixed = `> ${lastText}`
                   const offsetRanges = lastBold.map(([s, e]) => [s + 2, e + 2] as [number, number])
+
                   return (
                     <motion.div
                       initial="hidden"

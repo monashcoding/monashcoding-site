@@ -51,6 +51,7 @@ function MacLogoModel({ mouse, gyro, isMobile, onLoaded }: ModelProps) {
     if (!logoMesh?.geometry) return null;
     const geo = logoMesh.geometry.clone();
     geo.center();
+
     return geo;
   }, [logoMesh?.geometry]);
 
@@ -139,8 +140,10 @@ export default function MacLogo3D({ className }: { className?: string }) {
     const checkMobile = () => {
       setIsMobile(window.matchMedia("(pointer: coarse)").matches);
     };
+
     checkMobile();
     window.addEventListener("resize", checkMobile);
+
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
@@ -164,6 +167,7 @@ export default function MacLogo3D({ className }: { className?: string }) {
       ) {
         try {
           const permission = await (DeviceOrientationEvent as unknown as { requestPermission: () => Promise<string> }).requestPermission();
+
           if (permission === "granted") {
             window.addEventListener("deviceorientation", handleOrientation);
           }
@@ -177,6 +181,7 @@ export default function MacLogo3D({ className }: { className?: string }) {
     };
 
     requestGyroPermission();
+
     return () => window.removeEventListener("deviceorientation", handleOrientation);
   }, [isMobile, handleOrientation]);
 
@@ -193,6 +198,7 @@ export default function MacLogo3D({ className }: { className?: string }) {
     };
 
     window.addEventListener("mousemove", handleMouseMove);
+
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [isMobile]);
 

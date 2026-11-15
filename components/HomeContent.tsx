@@ -1,6 +1,6 @@
 'use client'
 
-import { HomepageSection, EventDocument, SocialLink, SponsorPageData } from '@/lib/sanity/types'
+import type { HomepageSection, EventDocument, SocialLink, SponsorPageData } from '@/lib/sanity/types'
 import type { YouTubeVideo } from '@/lib/youtube/feed'
 import { SponsorLogosGrid } from '@/components/sponsor/SponsorLogosGrid'
 import { SectionRenderer } from '@/components/home'

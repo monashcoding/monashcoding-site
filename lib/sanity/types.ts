@@ -1,4 +1,4 @@
-import { PortableTextBlock } from '@portabletext/types'
+import type { PortableTextBlock } from '@portabletext/types'
 import type { SocialPlatform } from '@/lib/socialPlatforms'
 
 // Common types

@@ -114,9 +114,11 @@ const communitySectionSchema = defineArrayMember({
                   .uri({ scheme: ['https'] })
                   .custom((url) => {
                     if (typeof url !== 'string') return true
+
                     if (!url.match(/instagram\.com\/(reel|p)\//)) {
                       return 'URL must be an Instagram reel or post URL'
                     }
+
                     return true
                   }),
             }),
@@ -133,7 +135,9 @@ const communitySectionSchema = defineArrayMember({
             prepare({ url, pinned }: { url?: string; pinned?: boolean }) {
               const shortcode =
                 url?.match(/\/(reel|p)\/([A-Za-z0-9_-]+)/)?.[2] ?? ''
+
               const type = url?.includes('/reel/') ? 'Reel' : 'Post'
+
               return {
                 title: `${pinned ? '(Pinned) ' : ''}${shortcode || 'No URL'}`,
                 subtitle: type,

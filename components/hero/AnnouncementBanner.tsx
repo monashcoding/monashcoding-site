@@ -2,9 +2,9 @@
 
 import { AnimatePresence, motion } from 'framer-motion'
 import { X } from 'lucide-react'
-import { PortableText, PortableTextComponents } from '@portabletext/react'
+import { PortableText, type PortableTextComponents } from '@portabletext/react'
 import { useEffect, useState, useCallback } from 'react'
-import { Announcement } from '@/lib/sanity/types'
+import type { Announcement } from '@/lib/sanity/types'
 import Squares from '@/components/ui/Squares'
 
 const STORAGE_KEY = 'mac-announcement-dismissed'
@@ -15,6 +15,7 @@ const announcementComponents: PortableTextComponents = {
     link: ({ children, value }) => {
       const href = value?.href || '#'
       const openInNewTab = value?.openInNewTab !== false
+
       return (
         <a
           href={href}
@@ -46,11 +47,14 @@ export function AnnouncementBanner({ announcements, cycleDuration = 5 }: Announc
   // Check dismissal state on client mount and detect iframe context
   useEffect(() => {
     setIsClient(true)
+
     // Hide announcements when rendered inside an iframe (e.g. nav preview card)
     if (window.self !== window.top) {
       setIsDismissed(true)
+
       return
     }
+
     const dismissed = sessionStorage.getItem(STORAGE_KEY) === 'true'
     setIsDismissed(dismissed)
   }, [])

@@ -1,7 +1,7 @@
 'use client'
 
-import { PortableText, PortableTextComponents } from '@portabletext/react'
-import { PortableTextBlock } from '@portabletext/types'
+import { PortableText, type PortableTextComponents } from '@portabletext/react'
+import type { PortableTextBlock } from '@portabletext/types'
 import Image from 'next/image'
 import { urlFor } from '@/sanity/lib/image'
 
@@ -9,6 +9,7 @@ const eventBodyComponents: PortableTextComponents = {
   types: {
     image: ({ value }) => {
       if (!value?.asset) return null
+
       return (
         <figure className="my-8">
           <Image

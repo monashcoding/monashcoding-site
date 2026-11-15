@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
 import { RibbonBlock } from '@/components/RibbonText'
-import { FooterColumn, NavItem, SocialLink } from '@/lib/sanity/types'
+import type { FooterColumn, NavItem, SocialLink } from '@/lib/sanity/types'
 import { PLATFORM_ICONS, PLATFORM_LABELS } from '@/lib/socialPlatforms'
 
 const defaultColumns: FooterColumn[] = [
@@ -27,6 +27,7 @@ export function Footer({ navItems, socialLinks }: FooterProps) {
   const tagline = 'Monash Association of Coding - Empowering students through code since 2019.'
 
   let columns: FooterColumn[]
+
   if (navItems && navItems.length > 0) {
     columns = [
       {
@@ -90,7 +91,9 @@ export function Footer({ navItems, socialLinks }: FooterProps) {
               <ul className="list-none p-0 m-0 grid grid-cols-2 gap-x-6 gap-y-3">
                 {socialLinks.filter((link) => link.platform !== 'email').map((link) => {
                   const Icon = PLATFORM_ICONS[link.platform]
+
                   if (!Icon) return null
+
                   return (
                     <li key={link._key}>
                       <a
@@ -108,8 +111,10 @@ export function Footer({ navItems, socialLinks }: FooterProps) {
               </ul>
               {socialLinks.filter((link) => link.platform === 'email').map((link) => {
                 const Icon = PLATFORM_ICONS[link.platform]
+
                 if (!Icon) return null
                 const emailAddress = link.url.replace(/^mailto:/i, '')
+
                 return (
                   <div key={link._key} className="mt-3">
                     <a

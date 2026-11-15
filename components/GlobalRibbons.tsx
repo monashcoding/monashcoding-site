@@ -2,7 +2,7 @@
 
 import { memo } from 'react'
 import dynamic from 'next/dynamic'
-import { setRibbonCanvas, setRibbonPoints, RibbonPoint } from './RibbonContext'
+import { setRibbonCanvas, setRibbonPoints, type RibbonPoint } from './RibbonContext'
 
 const Ribbons = dynamic(() => import('@/components/Ribbons'), { ssr: false })
 
@@ -11,6 +11,7 @@ export { RibbonProvider } from './RibbonContext'
 // Stable references to prevent useEffect re-runs
 const RIBBON_COLORS = ['#FFE330']
 const RIBBON_BACKGROUND: number[] = [0, 0, 0, 0]
+
 const RIBBON_CONFIG = {
   baseSpring: 0.03,
   baseFriction: 0.9,

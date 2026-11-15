@@ -48,6 +48,7 @@ export default function SponsorForm() {
   // Validate email format
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     return emailRegex.test(email);
   };
 
@@ -69,14 +70,17 @@ export default function SponsorForm() {
     }
     
     if (!formData.subject.trim()) newErrors.subject = "Subject is required";
+
     if (!formData.message.trim()) newErrors.message = "Message is required";
 
     setErrors(newErrors);
+
     return !newErrors.name && !newErrors.email && !newErrors.subject && !newErrors.message;
   };
 
   const handleSendEmail = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (!validate()) return;
 
     try {
