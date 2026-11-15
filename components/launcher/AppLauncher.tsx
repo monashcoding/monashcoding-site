@@ -5,14 +5,9 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { ArrowUpRight, LogOut } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { COMMITTEE_APPS, PUBLIC_APPS, type MacApp } from '@/lib/apps'
-import {
-  initials,
-  signInWithMac,
-  signOutOfMac,
-  useMacSession,
-  type MacProvider,
-  type MacSession,
-} from '@/lib/mac-auth'
+import type { MacProvider, MacSession } from '@monashcoding/auth/client'
+import { useMacSession } from '@monashcoding/auth/react'
+import { displayName, initials, macAuth, signOutOfMac } from '@/lib/mac-auth'
 import { AppIcon } from './AppIcon'
 
 export const OPEN_LAUNCHER_EVENT = 'mac:open-launcher'
@@ -29,6 +24,7 @@ function LauncherDots({ active }: { active: boolean }) {
       {Array.from({ length: 9 }, (_, i) => {
         const row = Math.floor(i / 3)
         const col = i % 3
+
         return (
           <motion.rect
             key={i}
@@ -77,8 +73,9 @@ function AccountSection({ session }: { session: MacSession }) {
   const start = async (provider: MacProvider) => {
     setPending(provider)
     setError(null)
+
     try {
-      await signInWithMac(provider)
+      await macAuth.signIn(provider)
     } catch {
       setPending(null)
       setError("Couldn't reach MAC sign-in. Try again in a moment.")
@@ -136,11 +133,11 @@ function AccountSection({ session }: { session: MacSession }) {
   return (
     <div className="flex items-center gap-3 px-5 py-5">
       <span className="grid size-10 shrink-0 place-items-center rounded-full bg-accent text-sm font-bold text-accent-foreground">
-        {initials(user.name)}
+        {initials(displayName(user))}
       </span>
       <span className="min-w-0 flex-1">
         <span className="flex items-center gap-2">
-          <span className="truncate text-sm font-semibold text-white">{user.name}</span>
+          <span className="truncate text-sm font-semibold text-white">{displayName(user)}</span>
           {isCommittee && (
             <span className="shrink-0 rounded-sm border border-white/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-white/70">
               {user.team ?? 'Committee'}
@@ -164,6 +161,7 @@ function AccountSection({ session }: { session: MacSession }) {
 
 function linkProps(app: MacApp) {
   const external = /^https?:\/\//.test(app.url)
+
   return external ? { href: app.url, target: '_blank', rel: 'noopener noreferrer' } : { href: app.url }
 }
 
@@ -202,7 +200,7 @@ interface AppLauncherProps {
 }
 
 export function AppLauncher({ open, onOpenChange }: AppLauncherProps) {
-  const session = useMacSession()
+  const session = useMacSession(macAuth)
   const pathname = usePathname()
   const buttonRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
@@ -212,6 +210,7 @@ export function AppLauncher({ open, onOpenChange }: AppLauncherProps) {
   useEffect(() => {
     const handler = () => onOpenChange(true)
     window.addEventListener(OPEN_LAUNCHER_EVENT, handler)
+
     return () => window.removeEventListener(OPEN_LAUNCHER_EVENT, handler)
   }, [onOpenChange])
 
@@ -230,13 +229,17 @@ export function AppLauncher({ open, onOpenChange }: AppLauncherProps) {
         buttonRef.current?.focus()
       }
     }
+
     const onPointer = (event: PointerEvent) => {
       const target = event.target as Node
+
       if (panelRef.current?.contains(target) || buttonRef.current?.contains(target)) return
       onOpenChange(false)
     }
+
     document.addEventListener('keydown', onKey)
     document.addEventListener('pointerdown', onPointer)
+
     return () => {
       document.removeEventListener('keydown', onKey)
       document.removeEventListener('pointerdown', onPointer)
@@ -272,7 +275,7 @@ export function AppLauncher({ open, onOpenChange }: AppLauncherProps) {
             }`}
             aria-hidden
           >
-            {initials(session.user.name)}
+            {initials(displayName(session.user))}
           </span>
         )}
       </button>
