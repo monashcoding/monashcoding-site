@@ -28,8 +28,10 @@ function useCompact() {
     setCompact(query.matches)
     const onChange = (event: MediaQueryListEvent) => setCompact(event.matches)
     query.addEventListener('change', onChange)
+
     return () => query.removeEventListener('change', onChange)
   }, [])
+
   return compact
 }
 
@@ -39,10 +41,15 @@ function poseFor(offset: number, count: number, reduced: boolean, step: number):
       ? { x: 0, y: 0, scale: 1, opacity: 1, zIndex: 3 }
       : { x: 0, y: 0, scale: 1, opacity: 0, zIndex: 0 }
   }
+
   if (offset === 0) return { x: 0, y: 0, scale: 1, opacity: 1, zIndex: 3 }
+
   if (count > 3 && offset === count - 1) return { x: -step * 1.2, y: step * 1.35, scale: 0.97, opacity: 0, zIndex: 4 }
+
   if (offset === 1) return { x: step, y: -step, scale: 0.94, opacity: 1, zIndex: 2 }
+
   if (offset === 2) return { x: step * 2, y: -step * 2, scale: 0.88, opacity: 1, zIndex: 1 }
+
   return { x: step * 3, y: -step * 3, scale: 0.82, opacity: 0, zIndex: 0 }
 }
 
@@ -84,12 +91,14 @@ export function AppStage({
         <AnimatePresence initial={false}>
         {items.map((item, index) => {
           const offset = (index - activeIndex + items.length) % items.length
+
           if (offset > 3 && offset !== items.length - 1) return null
           const pose = poseFor(offset, items.length, reduced, step)
           const entering = poseFor(3, items.length + 4, reduced, step)
           const isFront = offset === 0
           const isPeeking = !reduced && (offset === 1 || offset === 2)
           const linkProps = item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {}
+
           return (
             <motion.div
               key={item.id}

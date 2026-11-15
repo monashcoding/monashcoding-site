@@ -117,6 +117,7 @@ export default function Aurora(props) {
 
   useEffect(() => {
     const ctn = ctnDom.current;
+
     if (!ctn) return;
 
     const renderer = new Renderer({
@@ -124,6 +125,7 @@ export default function Aurora(props) {
       premultipliedAlpha: true,
       antialias: true
     });
+
     const gl = renderer.gl;
     gl.clearColor(0, 0, 0, 0);
     gl.enable(gl.BLEND);
@@ -137,19 +139,23 @@ export default function Aurora(props) {
       const width = ctn.offsetWidth;
       const height = ctn.offsetHeight;
       renderer.setSize(width, height);
+
       if (program) {
         program.uniforms.uResolution.value = [width, height];
       }
     }
+
     window.addEventListener('resize', resize);
 
     const geometry = new Triangle(gl);
+
     if (geometry.attributes.uv) {
       delete geometry.attributes.uv;
     }
 
     const colorStopsArray = colorStops.map(hex => {
       const c = new Color(hex);
+
       return [c.r, c.g, c.b];
     });
 
@@ -169,6 +175,7 @@ export default function Aurora(props) {
     ctn.appendChild(gl.canvas);
 
     let animateId = 0;
+
     const update = t => {
       animateId = requestAnimationFrame(update);
       const { time = t * 0.01, speed = 1.0 } = propsRef.current;
@@ -178,10 +185,12 @@ export default function Aurora(props) {
       const stops = propsRef.current.colorStops ?? colorStops;
       program.uniforms.uColorStops.value = stops.map(hex => {
         const c = new Color(hex);
+
         return [c.r, c.g, c.b];
       });
       renderer.render({ scene: mesh });
     };
+
     animateId = requestAnimationFrame(update);
 
     resize();
@@ -189,9 +198,11 @@ export default function Aurora(props) {
     return () => {
       cancelAnimationFrame(animateId);
       window.removeEventListener('resize', resize);
+
       if (ctn && gl.canvas.parentNode === ctn) {
         ctn.removeChild(gl.canvas);
       }
+
       gl.getExtension('WEBGL_lose_context')?.loseContext();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

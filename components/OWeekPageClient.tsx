@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect, useCallback, useRef } from "react";
-import { OWeekPageData } from "@/lib/sanity/types";
+import type { OWeekPageData } from "@/lib/sanity/types";
 
 // Page data (2026 pamphlet)
 const pageImages: { src: string; alt: string; w: number; h: number; bg?: string }[] = [
@@ -45,6 +45,7 @@ const qrOverlays: Record<
 const WAVE_W = 1440;
 const WAVE_OPACITIES = [1, 0.4, 0.15];
 const WAVE_DURATIONS = [12, 22, 20];
+
 const WAVE_DIRECTIONS: [string, string][] = [
   [`-${WAVE_W} 0`, "0 0"],   // solid: right
   [`-${WAVE_W} 0`, "0 0"],   // opaque: right
@@ -57,11 +58,14 @@ function buildWavePath(center: number, amp: number, fillY: number) {
   const up = +(center - a).toFixed(1);
   const dn = +(center + a).toFixed(1);
   let d = `M0,${center}`;
+
   for (let x = 0; x < WAVE_W * 2; x += 360) {
     const cy = (x / 360) % 2 === 0 ? up : dn;
     d += ` C${x + 120},${cy} ${x + 240},${cy} ${x + 360},${center}`;
   }
+
   d += ` L${WAVE_W * 2},${fillY} L0,${fillY} Z`;
+
   return d;
 }
 
@@ -81,6 +85,7 @@ function OceanWaves({ color, position }: { color: string; position: "top" | "bot
     >
       {WAVE_OPACITIES.map((opacity, i) => {
         const id = `wave-${position}-${i}`;
+
         return (
           <svg
             key={i}
@@ -126,16 +131,20 @@ export default function OWeekPageClient({ data }: OWeekPageClientProps) {
   useEffect(() => {
     const el = firstPageRef.current;
     const ct = scrollRef.current;
+
     if (!el || !ct) return;
+
     const measure = () => {
       const h = el.clientHeight;
       setPageH(h);
       setSnapPad(Math.max(0, (ct.clientHeight - h) / 2));
     };
+
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(el);
     ro.observe(ct);
+
     return () => ro.disconnect();
   }, []);
 
@@ -155,6 +164,7 @@ export default function OWeekPageClient({ data }: OWeekPageClientProps) {
     body.style.position = "fixed";
     body.style.width = "100%";
     body.style.overscrollBehavior = "none";
+
     return () => {
       html.style.overflow = prevHtml;
       html.style.overscrollBehavior = prevOverscrollHtml;
@@ -168,11 +178,15 @@ export default function OWeekPageClient({ data }: OWeekPageClientProps) {
   // Track current page from scroll position
   useEffect(() => {
     const container = scrollRef.current;
+
     if (!container || pageH === 0) return;
+
     const onScroll = () => {
       setCurrentPage(Math.min(Math.round(container.scrollTop / pageH), totalPages - 1));
     };
+
     container.addEventListener("scroll", onScroll, { passive: true });
+
     return () => container.removeEventListener("scroll", onScroll);
   }, [totalPages, pageH]);
 
@@ -180,22 +194,28 @@ export default function OWeekPageClient({ data }: OWeekPageClientProps) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const container = scrollRef.current;
+
       if (!container || pageH === 0) return;
+
       if (e.key === "ArrowDown" || e.key === "ArrowRight") {
         e.preventDefault();
         container.scrollBy({ top: pageH, behavior: "smooth" });
       }
+
       if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
         e.preventDefault();
         container.scrollBy({ top: -pageH, behavior: "smooth" });
       }
     };
+
     window.addEventListener("keydown", onKey);
+
     return () => window.removeEventListener("keydown", onKey);
   }, [pageH]);
 
   const scrollToPage = useCallback((page: number) => {
     const container = scrollRef.current;
+
     if (!container || page < 0 || page >= totalPages || pageH === 0) return;
     container.scrollTo({ top: page * pageH, behavior: "smooth" });
   }, [totalPages, pageH]);

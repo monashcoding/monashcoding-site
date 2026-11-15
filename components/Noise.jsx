@@ -11,9 +11,11 @@ const Noise = ({
 
   useEffect(() => {
     const canvas = grainRef.current;
+
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d', { alpha: true });
+
     if (!ctx) return;
 
     let frame = 0;
@@ -48,6 +50,7 @@ const Noise = ({
       if (frame % patternRefreshInterval === 0) {
         drawGrain();
       }
+
       frame++;
       animationId = window.requestAnimationFrame(loop);
     };

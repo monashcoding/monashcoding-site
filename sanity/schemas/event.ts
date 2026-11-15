@@ -97,7 +97,9 @@ export const event = defineType({
               validation: (Rule) =>
                 Rule.custom((value, context) => {
                   const parent = context.parent as { linkType?: string }
+
                   if (parent?.linkType === 'url' && !value) return 'URL is required'
+
                   return true
                 }).uri({ scheme: ['http', 'https'], allowRelative: true }),
               hidden: ({ parent }) => parent?.linkType !== 'url',
@@ -195,6 +197,7 @@ export const event = defineType({
       tag?: string
     }) {
       const d = date ? new Date(date).toLocaleDateString() : 'No date'
+
       return {
         title: title || 'Untitled Event',
         subtitle: `${tag || 'event'} — ${d}`,

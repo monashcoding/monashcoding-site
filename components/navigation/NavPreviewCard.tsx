@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { NavPreviewConfig } from "./navPreviewConfig";
+import type { NavPreviewConfig } from "./navPreviewConfig";
 
 interface NavPreviewCardProps {
   preview: NavPreviewConfig | null;

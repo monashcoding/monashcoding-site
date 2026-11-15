@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Renderer, Transform, Vec3, Color, Polyline } from 'ogl';
 
 const RIBBON_KEY = '__RIBBON_INSTANCE__';
+
 // New value on each module evaluation - lets us detect HMR reloads
 const MODULE_ID = Symbol('ribbon');
 
@@ -19,6 +20,7 @@ function initRibbon(config) {
   // Tear down old instance (HMR reload or failed previous init)
   if (existing?.cancel) existing.cancel();
   const staleContainer = document.getElementById('ribbon-container');
+
   if (staleContainer) staleContainer.remove();
   delete window[RIBBON_KEY];
 
@@ -46,6 +48,7 @@ function initRibbon(config) {
   document.body.prepend(container);
 
   let renderer;
+
   try {
     // Cap DPR at 2 to avoid massive canvas on high-DPI mobile devices
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -53,6 +56,7 @@ function initRibbon(config) {
   } catch {
     // WebGL not available — remove container and bail
     container.remove();
+
     return;
   }
 
@@ -61,6 +65,7 @@ function initRibbon(config) {
   // Verify we actually got a working context
   if (!gl) {
     container.remove();
+
     return;
   }
 
@@ -85,6 +90,7 @@ function initRibbon(config) {
   // Handle WebGL context loss/restore
   gl.canvas.addEventListener('webglcontextlost', (e) => {
     e.preventDefault();
+
     if (window[RIBBON_KEY]) window[RIBBON_KEY].healthy = false;
   });
   gl.canvas.addEventListener('webglcontextrestored', () => {
@@ -165,6 +171,7 @@ function initRibbon(config) {
     renderer.setSize(width, height);
     lines.forEach(line => line.polyline.resize());
   }
+
   window.addEventListener('resize', resize);
 
   const center = (colors.length - 1) / 2;
@@ -172,6 +179,7 @@ function initRibbon(config) {
     const spring = baseSpring + (Math.random() - 0.5) * 0.05;
     const friction = baseFriction + (Math.random() - 0.5) * 0.05;
     const thickness = baseThickness + (Math.random() - 0.5) * 3;
+
     const mouseOffset = new Vec3(
       (index - center) * offsetFactor + (Math.random() - 0.5) * 0.01,
       0,
@@ -187,9 +195,11 @@ function initRibbon(config) {
 
     const count = pointCount;
     const points = [];
+
     for (let i = 0; i < count; i++) {
       points.push(new Vec3());
     }
+
     line.points = points;
 
     line.polyline = new Polyline(gl, {
@@ -213,8 +223,10 @@ function initRibbon(config) {
   resize();
 
   const mouse = new Vec3();
+
   function updateMouse(e) {
     let x, y;
+
     if (e.changedTouches && e.changedTouches.length) {
       x = e.changedTouches[0].clientX;
       y = e.changedTouches[0].clientY;
@@ -224,11 +236,13 @@ function initRibbon(config) {
     } else {
       return;
     }
+
     // Use window dimensions since container is fixed fullscreen
     const width = window.innerWidth;
     const height = window.innerHeight;
     mouse.set((x / width) * 2 - 1, (y / height) * -2 + 1, 0);
   }
+
   window.addEventListener('pointermove', updateMouse);
   window.addEventListener('touchstart', updateMouse, { passive: true });
   window.addEventListener('touchmove', updateMouse, { passive: true });
@@ -266,9 +280,11 @@ function initRibbon(config) {
           line.points[i].lerp(line.points[i - 1], 0.9);
         }
       }
+
       if (line.polyline.mesh.program.uniforms.uTime) {
         line.polyline.mesh.program.uniforms.uTime.value = currentTime * 0.001;
       }
+
       line.polyline.updateGeometry();
     });
 
@@ -280,9 +296,11 @@ function initRibbon(config) {
         x: (p.x + 1) * 0.5 * width,
         y: (1 - (p.y + 1) * 0.5) * height
       }));
+
       onPointsUpdate(screenPoints, baseThickness);
     }
   }
+
   update();
 }
 

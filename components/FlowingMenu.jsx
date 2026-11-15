@@ -43,12 +43,14 @@ function MenuItem({ link, text, image, speed, textColor, marqueeBgColor, marquee
   const findClosestEdge = (mouseX, mouseY, width, height) => {
     const topEdgeDist = distMetric(mouseX, mouseY, width / 2, 0);
     const bottomEdgeDist = distMetric(mouseX, mouseY, width / 2, height);
+
     return topEdgeDist < bottomEdgeDist ? 'top' : 'bottom';
   };
 
   const distMetric = (x, y, x2, y2) => {
     const xDiff = x - x2;
     const yDiff = y - y2;
+
     return xDiff * xDiff + yDiff * yDiff;
   };
 
@@ -58,6 +60,7 @@ function MenuItem({ link, text, image, speed, textColor, marqueeBgColor, marquee
 
       // Get the first marquee part to measure content width
       const marqueeContent = marqueeInnerRef.current.querySelector('.marquee__part');
+
       if (!marqueeContent) return;
 
       const contentWidth = marqueeContent.offsetWidth;
@@ -71,6 +74,7 @@ function MenuItem({ link, text, image, speed, textColor, marqueeBgColor, marquee
 
     calculateRepetitions();
     window.addEventListener('resize', calculateRepetitions);
+
     return () => window.removeEventListener('resize', calculateRepetitions);
   }, [text, image]);
 
@@ -79,9 +83,11 @@ function MenuItem({ link, text, image, speed, textColor, marqueeBgColor, marquee
       if (!marqueeInnerRef.current) return;
 
       const marqueeContent = marqueeInnerRef.current.querySelector('.marquee__part');
+
       if (!marqueeContent) return;
 
       const contentWidth = marqueeContent.offsetWidth;
+
       if (contentWidth === 0) return;
 
       if (animationRef.current) {
@@ -102,6 +108,7 @@ function MenuItem({ link, text, image, speed, textColor, marqueeBgColor, marquee
 
     return () => {
       clearTimeout(timer);
+
       if (animationRef.current) {
         animationRef.current.kill();
       }

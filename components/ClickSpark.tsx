@@ -38,6 +38,7 @@ export default function ClickSpark({
   const createSpark = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       const container = containerRef.current;
+
       if (!container) return;
 
       if (activeSparkCount.current >= MAX_CONCURRENT_SPARKS) return;

@@ -4,12 +4,13 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
-import { EventDocument } from '@/lib/sanity/types'
+import type { EventDocument } from '@/lib/sanity/types'
 import { TAG_STYLES, TAG_LABELS } from '@/lib/events/eventTags'
 import { urlFor } from '@/sanity/lib/image'
 
 function formatEventDate(dateStr: string, endDateStr?: string): string {
   const date = new Date(dateStr)
+
   const dateOpts: Intl.DateTimeFormatOptions = {
     weekday: 'short',
     day: 'numeric',
@@ -17,11 +18,13 @@ function formatEventDate(dateStr: string, endDateStr?: string): string {
     year: 'numeric',
     timeZone: 'Australia/Melbourne',
   }
+
   const timeOpts: Intl.DateTimeFormatOptions = {
     hour: 'numeric',
     minute: '2-digit',
     timeZone: 'Australia/Melbourne',
   }
+
   const formattedDate = date.toLocaleDateString('en-AU', dateOpts)
   const formattedTime = date.toLocaleTimeString('en-AU', timeOpts)
 
@@ -29,8 +32,10 @@ function formatEventDate(dateStr: string, endDateStr?: string): string {
     const endDate = new Date(endDateStr)
     const endFormattedDate = endDate.toLocaleDateString('en-AU', dateOpts)
     const endFormattedTime = endDate.toLocaleTimeString('en-AU', timeOpts)
+
     return `${formattedDate}, ${formattedTime} - ${endFormattedDate}, ${endFormattedTime}`
   }
+
   return `${formattedDate}, ${formattedTime}`
 }
 
@@ -46,6 +51,7 @@ export function EventCard({ event, index, disableGreyOut = false }: EventCardPro
 
   useEffect(() => {
     const now = new Date()
+
     if (event.endDate) {
       // If the event has an end time, only archive after the end time
       setIsPast(new Date(event.endDate) < now)

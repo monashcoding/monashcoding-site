@@ -1,9 +1,17 @@
 export * from './aboutUs'
+
 export * from './home'
+
 export * from './navigation'
+
 export * from './committee'
+
 export * from './sponsor'
+
 export * from './contact'
+
 export * from './socialLinks'
+
 export * from './oweek'
+
 export * from './events'

@@ -3,7 +3,7 @@
 import { useMemo, useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { RibbonAwareSection } from '@/components/RibbonAwareSection'
-import { EventsSectionData, EventDocument, EventTag } from '@/lib/sanity/types'
+import type { EventsSectionData, EventDocument, EventTag } from '@/lib/sanity/types'
 import { EVENT_TAGS } from '@/lib/events/eventTags'
 import { EventCard } from '@/components/events/EventCard'
 
@@ -13,9 +13,11 @@ function FizzleEdge({ side }: { side: 'left' | 'right' }) {
 
   useEffect(() => {
     const canvas = canvasRef.current
+
     if (!canvas) return
 
     const ctx = canvas.getContext('2d')
+
     if (!ctx) return
 
     let animId: number
@@ -31,6 +33,7 @@ function FizzleEdge({ side }: { side: 'left' | 'right' }) {
       resize()
       particles.length = 0
       const count = Math.floor(canvas.height / 8)
+
       for (let i = 0; i < count; i++) {
         particles.push({
           x: Math.random() * canvas.width,
@@ -45,6 +48,7 @@ function FizzleEdge({ side }: { side: 'left' | 'right' }) {
 
     const draw = (t: number) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
+
       for (const p of particles) {
         const flicker = Math.sin(t * 0.001 * p.speed * 3 + p.phase) * 0.5 + 0.5
         const alpha = p.opacity * flicker
@@ -61,11 +65,13 @@ function FizzleEdge({ side }: { side: 'left' | 'right' }) {
 
         // Slow drift upward
         p.y -= p.speed
+
         if (p.y < -2) {
           p.y = canvas.height + 2
           p.x = Math.random() * canvas.width
         }
       }
+
       animId = requestAnimationFrame(draw)
     }
 
@@ -73,6 +79,7 @@ function FizzleEdge({ side }: { side: 'left' | 'right' }) {
     animId = requestAnimationFrame(draw)
 
     window.addEventListener('resize', resize)
+
     return () => {
       cancelAnimationFrame(animId)
       window.removeEventListener('resize', resize)
@@ -132,6 +139,7 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
   const [visibleCount, setVisibleCount] = useState(INITIAL_GRID_COUNT)
 
   const now = useMemo(() => new Date(), [])
+
   const todayMelbourne = useMemo(
     () => now.toLocaleDateString('en-CA', { timeZone: 'Australia/Melbourne' }),
     [now],
@@ -141,6 +149,7 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
     return (e: EventDocument) => {
       if (e.endDate) return new Date(e.endDate) < now
       const eventDay = new Date(e.date).toLocaleDateString('en-CA', { timeZone: 'Australia/Melbourne' })
+
       return todayMelbourne > eventDay
     }
   }, [now, todayMelbourne])
@@ -155,6 +164,7 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
     if (activeTag === 'all') {
       const upcoming = events.filter((e) => !isPastEvent(e))
       const past = events.filter(isPastEvent).sort(sortByDateDesc)
+
       return [...upcoming, ...past]
     }
 
@@ -162,6 +172,7 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
     const tagged = events.filter((e) => e.tag === activeTag)
     const upcoming = tagged.filter((e) => !isPastEvent(e))
     const past = tagged.filter(isPastEvent).sort(sortByDateDesc)
+
     return [...upcoming, ...past]
   }, [activeTag, events, isPastEvent])
 
@@ -171,13 +182,17 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
     if (filteredEvents.length === 0 || isArchivesView) return null
     // Only upcoming events can be featured
     const upcomingEvents = filteredEvents.filter((e) => !isPastEvent(e))
+
     if (upcomingEvents.length === 0) return null
+
     return upcomingEvents.find((event) => event.isPinned) ?? upcomingEvents[0]
   }, [filteredEvents, isArchivesView, isPastEvent])
 
   const remainingEvents = useMemo(() => {
     if (isArchivesView) return filteredEvents
+
     if (!featuredEvent) return filteredEvents
+
     return filteredEvents.filter((event) => event._id !== featuredEvent._id)
   }, [filteredEvents, featuredEvent, isArchivesView])
 
@@ -222,6 +237,7 @@ export function EventsSection({ data, events = [] }: EventsSectionProps) {
         >
           {FILTER_OPTIONS.map((filter) => {
             const active = activeTag === filter.value
+
             return (
               <motion.button
                 key={filter.value}

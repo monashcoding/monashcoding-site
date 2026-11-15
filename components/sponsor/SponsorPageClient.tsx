@@ -1,8 +1,8 @@
 "use client";
 
-import { motion, AnimatePresence, Variants } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { useEffect, useState } from "react";
-import { SponsorPageData, Stat, SponsorTier } from "@/lib/sanity/types";
+import type { SponsorPageData, Stat, SponsorTier } from "@/lib/sanity/types";
 import { RibbonAwareSection } from "@/components/RibbonAwareSection";
 import { SponsorLogosGrid } from "@/components/sponsor/SponsorLogosGrid";
 import ScrollZoomHero  from "@/components/sponsor/SponsorHeroSectionTop";
@@ -47,6 +47,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
     email: "",
     message: "",
   });
+
   const [formStatus, setFormStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [copied, setCopied] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -73,17 +74,22 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
     const newErrors: Record<string, string> = {};
 
     if (!formData.contactName.trim()) newErrors.contactName = "Contact name is required";
+
     if (!formData.email.trim()) newErrors.email = "Email is required";
+
     if (!formData.companyName.trim()) newErrors.companyName = "Company name is required";
+
     if (!formData.message.trim()) newErrors.message = "Message is required";
 
     setErrors(newErrors);
+
     return Object.keys(newErrors).length === 0;
   };
 
   // Handle form submission
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
+
   if (!validate()) return;
   setFormStatus("loading");
 
@@ -173,6 +179,7 @@ export default function SponsorPageClient({ data }: SponsorPageClientProps) {
             <div className="space-y-4">
               {reasons.map((reason, index) => {
                 const variant = cutoutVariants[index % cutoutVariants.length];
+
                 return (
                   <div key={reason._key} className="flex flex-col md:flex-row items-center gap-6">
                     {reason.image && (

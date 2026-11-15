@@ -5,12 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
-import { NavigationData, PageVisibility, SocialLink } from "@/lib/sanity/types";
+import type { NavigationData, PageVisibility, SocialLink } from "@/lib/sanity/types";
 import { PLATFORM_ICONS, PLATFORM_LABELS } from "@/lib/socialPlatforms";
 import { MEMBER_SIGNUP_URL } from "@/lib/links";
 import { AppLauncher } from "./launcher/AppLauncher";
 
 const MacLogo3D = dynamic(() => import("./MacLogo3D"), { ssr: false });
+
 import NavPreviewCard from "./navigation/NavPreviewCard";
 import { getPreviewConfig, DEFAULT_PREVIEW_HREF } from "./navigation/navPreviewConfig";
 
@@ -149,6 +150,7 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
   const pathname = usePathname();
   const router = useRouter();
   const isHomePage = pathname === "/";
+
   // Get preview config for hovered item (falls back to default when nothing hovered
   // or when no preview exists for the hovered path)
   const previewConfig =
@@ -162,12 +164,15 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
   // Filter nav items based on page visibility
   const navItems = useMemo(() => {
     const pageVisibility = data?.pageVisibility;
+
     if (!pageVisibility) return rawNavItems;
 
     return rawNavItems.filter((item) => {
       const visibilityKey = visibilityMap[item.href];
+
       // If no visibility key for this path, always show
       if (!visibilityKey) return true;
+
       // Only show if the page is visible (shown === true)
       return pageVisibility[visibilityKey] === true;
     });
@@ -179,6 +184,7 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
     setIsDesktop(mq.matches);
     const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
     mq.addEventListener("change", handler);
+
     return () => mq.removeEventListener("change", handler);
   }, []);
 
@@ -191,6 +197,7 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
     const handleScroll = () => setHasScrolled(window.scrollY > 8);
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -198,6 +205,7 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
 
   const handleLauncherChange = useCallback((open: boolean) => {
     setIsLauncherOpen(open);
+
     if (open) setIsOpen(false);
   }, []);
 
@@ -207,6 +215,7 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
     } else {
       document.body.style.overflow = "";
     }
+
     return () => {
       document.body.style.overflow = "";
     };
@@ -392,6 +401,7 @@ export default function Navigation({ data, socialLinks }: NavigationProps) {
                   const iconSize = 36;
                   const IconComponent = PLATFORM_ICONS[link.platform];
                   const label = PLATFORM_LABELS[link.platform] || link.platform;
+
                   return (
                     <a
                       key={link._key || link.platform}

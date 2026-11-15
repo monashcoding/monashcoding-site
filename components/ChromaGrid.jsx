@@ -74,10 +74,12 @@ export const ChromaGrid = ({
       url: 'https://aws.amazon.com/'
     }
   ];
+
   const data = items?.length ? items : demo;
 
   useEffect(() => {
     const el = rootRef.current;
+
     if (!el) return;
     setX.current = gsap.quickSetter(el, '--x', 'px');
     setY.current = gsap.quickSetter(el, '--y', 'px');

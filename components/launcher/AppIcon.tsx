@@ -121,8 +121,11 @@ export function AppIcon({ name, size = 48, className = '' }: { name: AppGlyph; s
       />
     )
   }
+
   const Icon = ICONS[name]
+
   if (!Icon) return null
+
   return (
     <svg viewBox="0 0 48 48" width={size} height={size} className={`shrink-0 ${className}`} aria-hidden>
       <Icon />
