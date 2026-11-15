@@ -39,6 +39,10 @@ API**. That means:
   - `NEXT_PUBLIC_SANITY_PROJECT_ID`
   - `NEXT_PUBLIC_SANITY_DATASET` (default `production`)
   - `NEXT_PUBLIC_SANITY_API_VERSION` (default `2024-01-18`)
+  - `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` (optional) — the PostHog project shared by
+    every MAC app; PostHog stays off when unset
+  - `NEXT_PUBLIC_GA_ID` (optional) — Google Analytics id; defaults to the site's
+    id in `lib/env.ts`
 - **Runtime only (set in Dokploy, never build args):** the actual secrets, used
   only by API routes.
   - `RESEND_API_KEY` — contact form email (`/api/send`, `/api/event-reminder`)
