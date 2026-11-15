@@ -18,6 +18,7 @@ export function EventReminderForm({ label, eventTitle, eventDate, eventSlug }: E
     e.preventDefault()
 
     const trimmed = email.trim()
+
     if (!trimmed) return
 
     setStatus('loading')
@@ -37,7 +38,7 @@ export function EventReminderForm({ label, eventTitle, eventDate, eventSlug }: E
 
       if (!res.ok) {
         const data = await res.json()
-        throw new Error(data.error || 'Something went wrong')
+        throw new Error(data.issues?.[0]?.message || data.message || 'Something went wrong')
       }
 
       setStatus('success')

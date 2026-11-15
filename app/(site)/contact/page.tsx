@@ -2,16 +2,19 @@ import { client, sanityFetchOptions } from "@/sanity/lib/client";
 
 // Static generation - revalidated via webhook on Sanity publish
 export const revalidate = false;
+
 import { contactPageQuery } from "@/sanity/lib/queries";
-import { ContactPageData } from "@/lib/sanity/types";
+import type { ContactPageData } from "@/lib/sanity/types";
 import ContactPageClient from "@/components/contact/ContactPageClient";
 import { getSocialLinksData } from "@/lib/sanity/fetchers";
+import { logger } from "@/lib/log";
 
 async function getContactPageData(): Promise<ContactPageData | null> {
   try {
     return await client.fetch(contactPageQuery, {}, sanityFetchOptions(['contactPage']));
   } catch (error) {
-    console.error("Error fetching contact page data:", error);
+    logger.error("Error fetching contact page data", error);
+
     return null;
   }
 }

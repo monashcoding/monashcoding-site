@@ -1,167 +1,109 @@
+import { clientAddress, handleRoute, parseBody } from '@monashcoding/server';
+import { groq } from 'next-sanity';
+import { z } from 'zod';
 import { EmailTemplate } from '@/components/contact/EmailTemplate';
+import { logger } from '@/lib/log';
+import type { NoParams } from '@/lib/route';
+import { contactLimiter } from '@/lib/rate-limit';
 import { getResend } from '@/lib/resend';
 import { client } from '@/sanity/lib/client';
-import { groq } from 'next-sanity';
 
 const FALLBACK_FROM = 'noreply@monashcoding.com';
 const FALLBACK_TO = 'projects@monashcoding.com';
+const DEFAULT_SUBJECT = 'New Message from Monash Coding Site';
 
 const emailConfigQuery = groq`*[_type == "contactPage"][0]{ senderEmail, recipientEmail }`;
 
-function isNonEmptyString(value: unknown): value is string {
-  return typeof value === 'string' && value.trim().length > 0;
+const log = logger.child('send');
+
+const text = z.string().trim().min(1);
+
+// Basic email pattern; not exhaustive but sufficient for simple validation
+const email = z.string().trim().regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Must be a valid email address.');
+
+const sponsorForm = z.object({
+  type: z.literal('sponsor'),
+  companyName: text,
+  contactName: text,
+  email,
+  message: text,
+});
+
+const contactForm = z.object({
+  name: text,
+  emailAddress: email,
+  // A missing, blank or non-string subject falls back to the default
+  subject: z.string().refine((value) => value.trim().length > 0).catch(DEFAULT_SUBJECT),
+  message: text,
+});
+
+type Form = z.infer<typeof sponsorForm> | z.infer<typeof contactForm>;
+
+// A body without `type: "sponsor"` is the regular contact form
+const anyForm = z.looseObject({});
+
+function parseForm(body: z.infer<typeof anyForm>): Form {
+  return body.type === 'sponsor' ? sponsorForm.parse(body) : contactForm.parse(body);
 }
 
-function isValidEmail(value: unknown): value is string {
-  if (typeof value !== 'string') return false;
-  const email = value.trim();
-  // Basic email pattern; not exhaustive but sufficient for simple validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return email.length > 0 && emailRegex.test(email);
+interface Email {
+  from: string;
+  to: string;
+  replyTo: string;
+  subject: string;
+  name: string;
+  message: string;
 }
 
-export async function POST(req: Request) {
-  try {
-    // Get the form data from the request
-    const body = await req.json();
+async function toEmail(body: Form): Promise<Email> {
+  if ('type' in body) {
+    const subject = `Sponsorship Inquiry from ${body.companyName}`;
 
-    if (!body || typeof body !== 'object') {
-      return Response.json(
-        { error: 'Invalid request body; expected JSON object.' },
-        { status: 400 },
-      );
-    }
-
-    const formType = body.type as string | undefined;
-
-    // Handle sponsor form
-    if (formType === 'sponsor') {
-      const {
-        companyName,
-        contactName,
-        email,
-        message,
-      } = body as {
-        companyName?: unknown;
-        contactName?: unknown;
-        email?: unknown;
-        message?: unknown;
-      };
-
-      if (!isNonEmptyString(companyName)) {
-        return Response.json(
-          { error: 'Field "companyName" is required and must be a non-empty string.' },
-          { status: 400 },
-        );
-      }
-
-      if (!isNonEmptyString(contactName)) {
-        return Response.json(
-          { error: 'Field "contactName" is required and must be a non-empty string.' },
-          { status: 400 },
-        );
-      }
-
-      if (!isValidEmail(email)) {
-        return Response.json(
-          { error: 'Field "email" is required and must be a valid email address.' },
-          { status: 400 },
-        );
-      }
-
-      if (!isNonEmptyString(message)) {
-        return Response.json(
-          { error: 'Field "message" is required and must be a non-empty string.' },
-          { status: 400 },
-        );
-      }
-
-      const { data, error } = await getResend().emails.send({
-        from: 'noreply@monashcoding.com',
-        to: 'sponsorship@monashcoding.com',
-        replyTo: (email as string).trim(),
-        subject: `Sponsorship Inquiry from ${companyName}`,
-        react: EmailTemplate({
-          name: `${contactName} (${companyName})`,
-          emailAddress: (email as string).trim(),
-          subject: `Sponsorship Inquiry from ${companyName}`,
-          message: (message as string).trim(),
-        }),
-      });
-
-      if (error) {
-        console.error('Resend API error:', error);
-        return Response.json({ error }, { status: 500 });
-      }
-
-      return Response.json(data);
-    }
-
-    // Handle regular contact form (default)
-    const {
-      name,
-      emailAddress,
+    return {
+      from: 'noreply@monashcoding.com',
+      to: 'sponsorship@monashcoding.com',
+      replyTo: body.email,
       subject,
-      message,
-    } = body as {
-      name?: unknown;
-      emailAddress?: unknown;
-      subject?: unknown;
-      message?: unknown;
+      name: `${body.contactName} (${body.companyName})`,
+      message: body.message,
     };
-
-    if (!isNonEmptyString(name)) {
-      return Response.json(
-        { error: 'Field "name" is required and must be a non-empty string.' },
-        { status: 400 },
-      );
-    }
-
-    if (!isValidEmail(emailAddress)) {
-      return Response.json(
-        { error: 'Field "emailAddress" is required and must be a valid email address.' },
-        { status: 400 },
-      );
-    }
-
-    if (!isNonEmptyString(message)) {
-      return Response.json(
-        { error: 'Field "message" is required and must be a non-empty string.' },
-        { status: 400 },
-      );
-    }
-
-    // Fetch email config from Sanity
-    const config = await client.fetch<{ senderEmail?: string; recipientEmail?: string } | null>(emailConfigQuery);
-    const fromEmail = config?.senderEmail || FALLBACK_FROM;
-    const toEmail = config?.recipientEmail || FALLBACK_TO;
-
-    const normalizedSubject =
-      typeof subject === 'string' && subject.trim().length > 0
-        ? subject
-        : 'New Message from Monash Coding Site';
-
-    const { data, error } = await getResend().emails.send({
-      from: fromEmail,
-      to: toEmail,
-      replyTo: (emailAddress as string).trim(), // User's email will be set as reply-to
-      subject: normalizedSubject,
-      react: EmailTemplate({
-        name: (name as string).trim(),
-        emailAddress: (emailAddress as string).trim(),
-        subject: normalizedSubject,
-        message: (message as string).trim(),
-      }),
-    });
-
-    if (error) {
-      console.error('Resend API error:', error);
-      return Response.json({ error }, { status: 500 });
-    }
-
-    return Response.json(data);
-  } catch (error) {
-    console.error('Catch error:', error);
-    return Response.json({ error: String(error) }, { status: 500 });
   }
+
+  // Fetch email config from Sanity
+  const config = await client.fetch<{ senderEmail?: string; recipientEmail?: string } | null>(emailConfigQuery);
+
+  return {
+    from: config?.senderEmail || FALLBACK_FROM,
+    to: config?.recipientEmail || FALLBACK_TO,
+    replyTo: body.emailAddress, // User's email will be set as reply-to
+    subject: body.subject,
+    name: body.name,
+    message: body.message,
+  };
 }
+
+export const POST = handleRoute<NoParams>(async (request) => {
+  contactLimiter.enforce(clientAddress(request.headers));
+
+  const body = await parseBody(request, anyForm);
+  const mail = await toEmail(parseForm(body));
+
+  const { data, error } = await getResend().emails.send({
+    from: mail.from,
+    to: mail.to,
+    replyTo: mail.replyTo,
+    subject: mail.subject,
+    react: EmailTemplate({
+      name: mail.name,
+      emailAddress: mail.replyTo,
+      subject: mail.subject,
+      message: mail.message,
+    }),
+  });
+
+  if (error) {
+    throw new Error(`Resend rejected the email: ${error.name}: ${error.message}`);
+  }
+
+  return Response.json(data);
+}, { logger: log });

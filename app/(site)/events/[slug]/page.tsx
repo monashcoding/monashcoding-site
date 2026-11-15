@@ -1,14 +1,16 @@
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { client, sanityFetchOptions } from '@/sanity/lib/client'
 import { eventBySlugQuery, eventSlugsQuery } from '@/sanity/lib/queries'
-import { EventDocument } from '@/lib/sanity/types'
+import type { EventDocument } from '@/lib/sanity/types'
 import { EventPageClient } from '@/components/events/EventPageClient'
+import { logger } from '@/lib/log'
 
 export const revalidate = false
 
 export async function generateStaticParams() {
   const slugs: string[] = await client.fetch(eventSlugsQuery)
+
   return slugs.map((slug) => ({ slug }))
 }
 
@@ -19,7 +21,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params
   const event = await getEvent(slug)
+
   if (!event) return { title: 'Event Not Found' }
+
   return {
     title: `${event.title} | MAC Events`,
     description: event.description,
@@ -34,7 +38,8 @@ async function getEvent(slug: string): Promise<EventDocument | null> {
       sanityFetchOptions(['event'])
     )
   } catch (error) {
-    console.error('Failed to fetch event:', error)
+    logger.error('Failed to fetch event', error)
+
     return null
   }
 }

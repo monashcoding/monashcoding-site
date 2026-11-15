@@ -1,7 +1,7 @@
 'use server'
 
 import { client, sanityFetchOptions } from '@/sanity/lib/client'
-import { CommitteeMember } from '@/lib/sanity/types'
+import type { CommitteeMember } from '@/lib/sanity/types'
 import { sortMembers } from '@/lib/committee-utils'
 import {
   activeCommitteeMembersQuery,
@@ -9,7 +9,7 @@ import {
   alumniCommitteeMembersCountQuery,
   committeeMembersByTeamFilteredQuery,
 } from '@/sanity/lib/queries'
-import { FilterOption, ALUMNI_PAGE_SIZE, PaginatedMembersResult } from './constants'
+import { type FilterOption, ALUMNI_PAGE_SIZE, type PaginatedMembersResult } from './constants'
 
 export async function fetchCommitteeMembersByFilter(
   filter: FilterOption

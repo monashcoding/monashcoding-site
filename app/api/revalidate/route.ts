@@ -1,39 +1,27 @@
+import { handleRoute, httpError, parseBody } from '@monashcoding/server'
 import { revalidateTag } from 'next/cache'
-import { NextRequest } from 'next/server'
+import { z } from 'zod'
+import { env } from '@/lib/env'
+import { logger } from '@/lib/log'
+import type { NoParams } from '@/lib/route'
 
-export async function POST(request: NextRequest) {
-  try {
-    const secret = request.headers.get('x-sanity-webhook-secret')
+const document = z.object({ _type: z.string().min(1, 'Missing document type') })
 
-    if (secret !== process.env.SANITY_WEBHOOK_SECRET) {
-      return Response.json(
-        { message: 'Invalid secret' },
-        { status: 401 }
-      )
-    }
+export const POST = handleRoute<NoParams>(async (request) => {
+  const secret = request.headers.get('x-sanity-webhook-secret')
 
-    const body = await request.json()
-    const { _type } = body
-
-    if (!_type) {
-      return Response.json(
-        { message: 'Missing document type' },
-        { status: 400 }
-      )
-    }
-
-    // Revalidate the tag matching the Sanity document type
-    revalidateTag(_type, { expire: 0 })
-
-    return Response.json({
-      revalidated: true,
-      tag: _type,
-    })
-  } catch (error) {
-    console.error('Revalidation error:', error)
-    return Response.json(
-      { message: 'Error revalidating', error: String(error) },
-      { status: 500 }
-    )
+  // An unset secret matches nothing, so the route is closed until it is configured
+  if (!env.SANITY_WEBHOOK_SECRET || secret !== env.SANITY_WEBHOOK_SECRET) {
+    throw httpError.unauthenticated('Invalid secret')
   }
-}
+
+  const { _type } = await parseBody(request, document)
+
+  // Revalidate the tag matching the Sanity document type
+  revalidateTag(_type, { expire: 0 })
+
+  return Response.json({
+    revalidated: true,
+    tag: _type,
+  })
+}, { logger: logger.child('revalidate') })

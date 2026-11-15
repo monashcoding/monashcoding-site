@@ -1,17 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { handleRoute, parseBody } from '@monashcoding/server'
+import { z } from 'zod'
 import { fetchInstagramReels } from '@/lib/instagram/feed'
+import { logger } from '@/lib/log'
+import type { NoParams } from '@/lib/route'
 
-export async function POST(req: NextRequest) {
-  try {
-    const { urls } = (await req.json()) as { urls?: string[] }
-    if (!urls || !Array.isArray(urls) || urls.length === 0) {
-      return NextResponse.json({ reels: [] })
-    }
-    // Limit to 12 per request to avoid timeouts
-    const limited = urls.slice(0, 12)
-    const reels = await fetchInstagramReels(limited)
-    return NextResponse.json({ reels })
-  } catch {
-    return NextResponse.json({ reels: [] })
-  }
-}
+const reelRequest = z.object({ urls: z.array(z.string()).default([]) })
+
+export const POST = handleRoute<NoParams>(async (request) => {
+  const { urls } = await parseBody(request, reelRequest)
+  // Limit to 12 per request to avoid timeouts
+  const reels = await fetchInstagramReels(urls.slice(0, 12))
+
+  return Response.json({ reels })
+}, { logger: logger.child('instagram') })
