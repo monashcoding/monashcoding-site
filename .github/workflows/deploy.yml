@@ -84,6 +84,8 @@ jobs:
             NEXT_PUBLIC_SANITY_DATASET=${{ vars.NEXT_PUBLIC_SANITY_DATASET || 'production' }}
             NEXT_PUBLIC_SANITY_API_VERSION=${{ vars.NEXT_PUBLIC_SANITY_API_VERSION || '2024-01-18' }}
             NEXT_PUBLIC_SANITY_PROJECT_ID=${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+            NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN=${{ vars.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN }}
+            NEXT_PUBLIC_GA_ID=${{ vars.NEXT_PUBLIC_GA_ID }}
 
       # Tell Dokploy to pull the new image and redeploy. Create the app in
       # Dokploy with provider "Docker" pointing at
