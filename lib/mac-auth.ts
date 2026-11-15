@@ -1,114 +1,69 @@
-'use client'
+import { createMacAuthClient, type MacSession } from '@monashcoding/auth/client'
+import { env } from '@/lib/env'
 
-import { useEffect, useState } from 'react'
+// localhost is not a trusted origin for auth.monashcoding.com, so outside production
+// NEXT_PUBLIC_MAC_AUTH_MOCK=member|committee answers the token request with a made-up
+// session. The token is unsigned: the browser client only decodes it for display.
+function mockToken(mock: 'member' | 'committee'): string {
+  const encode = (json: string) =>
+    btoa(json).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 
-export const MAC_AUTH_URL = process.env.NEXT_PUBLIC_MAC_AUTH_URL ?? 'https://auth.monashcoding.com'
-
-export type MacProvider = 'google' | 'microsoft'
-
-export interface MacUser {
-  macUserId: string
-  name: string
-  email: string
-  roles: string[]
-  team: string | null
-}
-
-export type MacSession =
-  | { status: 'loading' }
-  | { status: 'signed-out' }
-  | { status: 'signed-in'; user: MacUser }
-
-// The site only reads the token to decide what to show. Apps that act on it verify it
-// against the JWKS themselves, so decoding without verification is fine here.
-function decodeClaims(token: string): MacUser | null {
-  try {
-    const payload = token.split('.')[1]
-    const json = atob(payload.replace(/-/g, '+').replace(/_/g, '/'))
-    const claims = JSON.parse(json)
-    if (!claims.macUserId) return null
-    return {
-      macUserId: claims.macUserId,
-      name: claims.name || claims.email,
-      email: claims.email,
-      roles: Array.isArray(claims.roles) ? claims.roles : [],
-      team: claims.team ?? null,
-    }
-  } catch {
-    return null
-  }
-}
-
-function mockUser(): MacUser | null {
-  if (process.env.NODE_ENV === 'production') return null
-  const mock = process.env.NEXT_PUBLIC_MAC_AUTH_MOCK
-  if (mock !== 'member' && mock !== 'committee') return null
-  return {
+  const claims = {
     macUserId: 'dev-user',
     name: 'Alex Chen',
     email: 'alex.chen@student.monash.edu',
     roles: mock === 'committee' ? ['member', 'committee'] : ['member'],
     team: mock === 'committee' ? 'Projects' : null,
+    exp: Math.floor(Date.now() / 1000) + 60 * 60,
+  }
+
+  return `${encode(JSON.stringify({ alg: 'none', typ: 'JWT' }))}.${encode(JSON.stringify(claims))}.mock`
+}
+
+function mockFetch(): typeof fetch | undefined {
+  if (env.NODE_ENV === 'production') return undefined
+  const mock = env.NEXT_PUBLIC_MAC_AUTH_MOCK
+
+  if (mock !== 'member' && mock !== 'committee') return undefined
+
+  return async (input, init) => {
+    const url = input instanceof Request ? input.url : String(input)
+
+    if (url === `${env.NEXT_PUBLIC_MAC_AUTH_URL}/api/auth/token`) {
+      return Response.json({ token: mockToken(mock) })
+    }
+
+    if (url === `${env.NEXT_PUBLIC_MAC_AUTH_URL}/api/auth/sign-out`) {
+      return Response.json({})
+    }
+
+    return fetch(input, init)
   }
 }
 
-let sessionRequest: Promise<MacUser | null> | null = null
-
-function fetchUser(): Promise<MacUser | null> {
-  const mock = mockUser()
-  if (mock) return Promise.resolve(mock)
-  sessionRequest ??= fetch(`${MAC_AUTH_URL}/api/auth/token`, { credentials: 'include' })
-    .then(async (res) => {
-      if (!res.ok) return null
-      const { token } = await res.json()
-      return typeof token === 'string' ? decodeClaims(token) : null
-    })
-    .catch(() => null)
-  return sessionRequest
-}
-
-export function useMacSession(): MacSession {
-  const [session, setSession] = useState<MacSession>({ status: 'loading' })
-
-  useEffect(() => {
-    let cancelled = false
-    fetchUser().then((user) => {
-      if (cancelled) return
-      setSession(user ? { status: 'signed-in', user } : { status: 'signed-out' })
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
-  return session
-}
-
-export async function signInWithMac(provider: MacProvider): Promise<void> {
-  const res = await fetch(`${MAC_AUTH_URL}/api/auth/sign-in/social`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify({ provider, callbackURL: window.location.href }),
-  })
-  if (!res.ok) throw new Error(`sign-in failed (${res.status})`)
-  const { url } = await res.json()
-  window.location.assign(url)
-}
+export const macAuth = createMacAuthClient({
+  authUrl: env.NEXT_PUBLIC_MAC_AUTH_URL,
+  fetch: mockFetch(),
+})
 
 export async function signOutOfMac(): Promise<void> {
-  if (mockUser()) {
-    window.location.reload()
-    return
-  }
-  await fetch(`${MAC_AUTH_URL}/api/auth/sign-out`, { method: 'POST', credentials: 'include' })
-  sessionRequest = null
+  await macAuth.signOut()
   window.location.reload()
+}
+
+// mac-auth sends an empty name for an account that has none.
+export function displayName(user: NonNullable<MacSession['user']>): string {
+  return user.name || user.email
 }
 
 export function initials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean)
-  if (parts.length === 0) return '?'
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+  const first = parts[0]
+  const last = parts.at(-1)
+
+  if (!first || !last) return '?'
+
+  if (parts.length === 1) return first.slice(0, 2).toUpperCase()
+
+  return (first.charAt(0) + last.charAt(0)).toUpperCase()
 }
