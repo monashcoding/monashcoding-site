@@ -1,7 +1,7 @@
-const CHANNEL_ID =
-  process.env.YOUTUBE_CHANNEL_ID ?? 'UCxEz0QrpHJyLiWsVFgfUrRw'
-const CHANNEL_HANDLE =
-  process.env.YOUTUBE_CHANNEL_HANDLE ?? 'MonashAssociationofCoding'
+import { env } from '@/lib/env'
+
+const CHANNEL_ID = env.YOUTUBE_CHANNEL_ID
+const CHANNEL_HANDLE = env.YOUTUBE_CHANNEL_HANDLE
 
 export interface YouTubeVideo {
   videoId: string
@@ -19,21 +19,24 @@ export interface YouTubeVideo {
  * Shorts are filtered out by checking for `/shorts/` in the link URL.
  */
 export async function fetchYouTubeVideos(): Promise<YouTubeVideo[]> {
-  const playlistId = process.env.YOUTUBE_PLAYLIST_ID
+  const playlistId = env.YOUTUBE_PLAYLIST_ID
 
   // If a curated playlist is set, use standard RSS (playlist feeds are already focused)
   if (playlistId) {
     const feedUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`
+
     return fetchAndParse(feedUrl)
   }
 
   // Try scriptbarrel proxy first (returns up to 50 videos)
   const proxyUrl = `https://scriptbarrel.com/xml.cgi?channel_id=${CHANNEL_ID}&name=%40${CHANNEL_HANDLE}`
   const videos = await fetchAndParse(proxyUrl)
+
   if (videos.length > 0) return videos
 
   // Fall back to standard YouTube RSS (15 video limit)
   const fallbackUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`
+
   return fetchAndParse(fallbackUrl)
 }
 
@@ -42,8 +45,10 @@ async function fetchAndParse(feedUrl: string): Promise<YouTubeVideo[]> {
     const res = await fetch(feedUrl, {
       next: { revalidate: 3600 },
     })
+
     if (!res.ok) return []
     const xml = await res.text()
+
     return parseYouTubeFeed(xml)
   } catch {
     return []
@@ -58,6 +63,7 @@ async function parseYouTubeFeed(xml: string): Promise<YouTubeVideo[]> {
     // If the feed has /shorts/ links (standard YouTube RSS), filter directly
     const linkMatch = entry.match(/<link rel="alternate" href="([^"]+)"/)
     const link = linkMatch?.[1] ?? ''
+
     if (link.includes('/shorts/')) continue
 
     const videoIdMatch = entry.match(/<yt:videoId>([^<]+)</)
@@ -67,6 +73,7 @@ async function parseYouTubeFeed(xml: string): Promise<YouTubeVideo[]> {
     const thumbMatch = entry.match(/<media:thumbnail url="([^"]+)"/)
 
     const videoId = videoIdMatch?.[1]
+
     if (!videoId) continue
 
     const published = publishedMatch?.[1] ?? ''
@@ -90,6 +97,7 @@ async function parseYouTubeFeed(xml: string): Promise<YouTubeVideo[]> {
           method: 'HEAD',
           redirect: 'manual',
         })
+
         // 303 redirect means it's NOT a Short
         return res.status !== 200
       } catch {

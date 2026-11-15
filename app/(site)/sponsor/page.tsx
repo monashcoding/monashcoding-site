@@ -2,15 +2,18 @@ import { client, sanityFetchOptions } from "@/sanity/lib/client";
 
 // Static generation - revalidated via webhook on Sanity publish
 export const revalidate = false;
+
 import { sponsorPageQuery } from "@/sanity/lib/queries";
-import { SponsorPageData } from "@/lib/sanity/types";
+import type { SponsorPageData } from "@/lib/sanity/types";
 import SponsorPageClient from "@/components/sponsor/SponsorPageClient";
+import { logger } from "@/lib/log";
 
 async function getSponsorPageData(): Promise<SponsorPageData | null> {
   try {
     return await client.fetch(sponsorPageQuery, {}, sanityFetchOptions(['sponsorPage']));
   } catch (error) {
-    console.error("Error fetching sponsor page data:", error);
+    logger.error("Error fetching sponsor page data", error);
+
     return null;
   }
 }

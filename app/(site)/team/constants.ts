@@ -1,4 +1,4 @@
-import { CommitteeMember, TeamSlug } from '@/lib/sanity/types'
+import type { CommitteeMember, TeamSlug } from '@/lib/sanity/types'
 
 export type FilterOption = TeamSlug | 'all' | 'alumni'
 

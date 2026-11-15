@@ -1,10 +1,13 @@
 import type { NextConfig } from "next";
 import withBundleAnalyzer from "@next/bundle-analyzer";
+import { env } from "./lib/env";
 
 const nextConfig: NextConfig = {
   // Emit a self-contained server bundle (.next/standalone/server.js) so the
   // Docker runtime image doesn't need node_modules or the package manager.
   output: "standalone",
+  // PostHog calls /ingest/e/ with a trailing slash
+  skipTrailingSlashRedirect: true,
   images: {
     remotePatterns: [
       {
@@ -26,5 +29,5 @@ const nextConfig: NextConfig = {
 };
 
 export default withBundleAnalyzer({
-  enabled: process.env.ANALYZE === "true",
+  enabled: env.ANALYZE,
 })(nextConfig);
