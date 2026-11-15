@@ -1,22 +1,20 @@
-import { GoogleAnalytics } from "@next/third-parties/google";
 import Navigation from "@/components/Navigation";
 import ClickSpark from "@/components/ClickSpark";
+import { Analytics } from "@/components/Analytics";
 import { RibbonProvider } from "@/components/GlobalRibbons";
 import { Footer } from "@/components/home/Footer";
 import { client, sanityFetchOptions } from "@/sanity/lib/client";
 import { navigationQuery } from "@/sanity/lib/queries";
-import { NavigationData } from "@/lib/sanity/types";
+import type { NavigationData } from "@/lib/sanity/types";
 import { getSocialLinksData } from "@/lib/sanity/fetchers";
-
-// Public by design (it ships in every page), so it lives in code, not .env.
-// Lives in the (site) layout so the Sanity studio at /studio isn't tracked.
-const GA_MEASUREMENT_ID = "G-69933Q0KLF";
+import { logger } from "@/lib/log";
 
 async function getNavigationData(): Promise<NavigationData | null> {
   try {
     return await client.fetch(navigationQuery, {}, sanityFetchOptions(['navigation']));
   } catch (error) {
-    console.error("Error fetching navigation:", error);
+    logger.error("Error fetching navigation", error);
+
     return null;
   }
 }
@@ -46,7 +44,8 @@ export default async function SiteLayout({
         {children}
         <Footer navItems={navigationData?.navItems} socialLinks={socialLinksData?.links} />
       </ClickSpark>
-      <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />
+      {/* In the (site) layout so the Sanity studio at /studio isn't tracked. */}
+      <Analytics />
     </RibbonProvider>
   );
 }
